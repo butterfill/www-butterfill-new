@@ -1,0 +1,27 @@
+---
+// src/pages/writing/[...slug].astro
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+
+// This function runs at build time to find all publications
+// and tell Astro to create a page for each one.
+export async function getStaticPaths() {
+  const writingEntries = await getCollection('writing');
+  return writingEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render(); // This gets the Markdown content
+---
+<PageLayout title={entry.data.title}>
+  <div class="mb-4 text-sm text-slate-600 dark:text-slate-400">
+    <p><strong>Authors:</strong> {entry.data.authors}</p>
+    <p><strong>Published:</strong> {entry.data.year}</p>
+    {entry.data.journal && <p><strong>Journal:</strong> {entry.data.journal}</p>}
+    {entry.data.doi && <p><a href={`http://dx.doi.org/${entry.data.doi}`} target="_blank">DOI: {entry.data.doi}</a></p>}
+  </div>
+  <Content /> <!-- This renders the main body of the Markdown file -->
+</PageLayout>

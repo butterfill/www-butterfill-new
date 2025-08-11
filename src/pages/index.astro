@@ -1,16 +1,25 @@
 ---
+// src/pages/index.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 
+// Get the 5 most recent publications
+const recentWriting = (await getCollection('writing')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+).slice(0, 5);
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Stephen Butterfill | Home">
+  <div class="p-8">
+    <h2 class="text-2xl font-bold mb-4">Recent Writing</h2>
+    <ul>
+      {recentWriting.map(item => (
+        <li class="mb-2">
+          <a href={`/writing/${item.slug}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
+            {item.data.title} ({item.data.year})
+          </a>
+        </li>
+      ))}
+    </ul>
+    <!-- We will add the sidebar and other sections here later -->
+  </div>
+</BaseLayout>

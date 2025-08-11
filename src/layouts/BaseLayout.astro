@@ -1,0 +1,29 @@
+---
+// src/layouts/BaseLayout.astro
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <!-- We will add the dark mode script here in a later task -->
+  </head>
+  <body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+    <header>
+      <!-- Header content will go here later -->
+    </header>
+    <main>
+      <slot /> <!-- Page content will be injected here -->
+    </main>
+    <footer>
+      <!-- Footer content will go here later -->
+    </footer>
+  </body>
+</html>
