@@ -9,6 +9,23 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.12.9"
+    "@astrojs/svelte": "^7.1.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "astro": "^5.12.9",
+    "svelte": "^5.38.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@lucide/svelte": "^0.539.0",
+    "clsx": "^2.1.1",
+    "cson-parser": "^4.0.9",
+    "fs-extra": "^11.3.1",
+    "pug": "^3.0.3",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^2.1.0",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.3.6",
+    "yaml": "^2.8.1"
   }
 }
