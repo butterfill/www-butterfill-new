@@ -8,6 +8,7 @@ journal: Consciousness and Cognition
 volume: "36"
 pages: 438--451
 doi: 10.1016/j.concog.2015.03.008
+pdfUrl: /pdf/perceiving_expressions_emotion.pdf
 ---
 
 ## Abstract

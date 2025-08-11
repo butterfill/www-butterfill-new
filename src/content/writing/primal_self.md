@@ -8,6 +8,7 @@ journal: Current Zoology
 volume: "61"
 number: "2"
 pages: 368--381
+pdfUrl: /pdf/primal_self.pdf
 ---
 
 ## Abstract

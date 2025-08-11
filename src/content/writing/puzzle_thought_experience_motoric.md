@@ -8,6 +8,7 @@ volume: "192"
 number: "6"
 pages: 1923-1936
 doi: 10.1007/s11229-015-0672-x
+pdfUrl: /pdf/puzzle_thought_experience_motoric.pdf
 ---
 
 ## Abstract

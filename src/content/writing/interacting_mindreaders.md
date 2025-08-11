@@ -8,6 +8,7 @@ volume: "165"
 number: "3"
 pages: 841-863
 doi: 10.1007/s11098-012-9980-x
+pdfUrl: /pdf/interacting_mindreaders.pdf
 ---
 
 ## Abstract

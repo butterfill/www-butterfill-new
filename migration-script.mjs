@@ -5,11 +5,10 @@ import pug from 'pug';
 import yaml from 'yaml';
 
 // --- CONFIGURATION ---
-// Path to the source content in the OLD project directory
 const OLD_DOCS_DIR = '../www-butterfill-old/src/documents';
+const OLD_RAW_DIR = '../www-butterfill-old/src/raw';
 const OLD_FILES_DIR = '../www-butterfill-old/src/files';
 
-// Path to the destination content in the NEW project directory
 const NEW_CONTENT_DIR = 'src/content';
 const PUBLIC_DIR = 'public';
 
@@ -31,15 +30,12 @@ async function findSourceFiles() {
   return allFiles.filter(file => {
     const fullPath = path.join(OLD_DOCS_DIR, file);
     if (!fs.statSync(fullPath).isFile()) {
-      return false; // Ignore directories
+      return false;
     }
 
-    // Normalize path separators to always be '/' for consistent matching
     const normalizedPath = file.replace(/\\/g, '/');
-    const parts = normalizedPath.split('/');
-    const collection = parts[0];
+    const collection = normalizedPath.split('/')[0];
 
-    // Only include files from the root of 'writing', 'talks', or 'teaching' directories
     return ['writing', 'talks', 'teaching'].includes(collection) &&
            (file.endsWith('.html') || file.endsWith('.html.md') || file.endsWith('.jade'));
   });
@@ -68,60 +64,54 @@ function extractFrontmatter(content) {
  * @returns {{newData: object, bodyAbstract: string}}
  */
 function transformFrontmatter(oldData, oldFilePath) {
-  if (!oldData) return { newData: {}, bodyAbstract: '' };
+    if (!oldData) return { newData: {}, bodyAbstract: '' };
 
-  const newData = {};
-  const normalizedPath = oldFilePath.replace(/\\/g, '/');
+    const newData = {};
+    const normalizedPath = oldFilePath.replace(/\\/g, '/');
 
-  // --- Common fields ---
-  newData.title = oldData.title || 'Untitled';
-  newData.authors = oldData.authors || 'Unknown';
+    newData.title = oldData.title || 'Untitled';
+    newData.authors = oldData.authors || 'Unknown';
 
-  if (oldData.date) {
-    try {
-      // Create a valid Date object before converting to ISO string
-      newData.pubDate = new Date(oldData.date);
-    } catch (e) {
-      console.warn(`Invalid date format for ${oldFilePath}: ${oldData.date}`);
+    if (oldData.date) {
+        try {
+            newData.pubDate = new Date(oldData.date);
+        } catch (e) {
+            console.warn(`Invalid date format for ${oldFilePath}: ${oldData.date}`);
+        }
     }
-  }
 
-  // --- Collection-specific fields ---
-  if (normalizedPath.startsWith('writing/')) {
-    newData.year = oldData.year ? parseInt(oldData.year, 10) : (newData.pubDate ? newData.pubDate.getFullYear() : undefined);
-    if (isNaN(newData.year)) delete newData.year;
-
-    if (oldData.isForthcoming !== undefined) newData.isForthcoming = oldData.isForthcoming;
-    if (oldData.journal) newData.journal = oldData.journal;
-    if (oldData.booktitle) newData.booktitle = oldData.booktitle;
-    if (oldData.volume) newData.volume = String(oldData.volume);
-    if (oldData.number) newData.number = String(oldData.number);
-    if (oldData.pages) newData.pages = oldData.pages;
-    if (oldData.doi) newData.doi = oldData.doi;
-  } else if (normalizedPath.startsWith('talks/')) {
-    if (oldData.date_end && newData.pubDate) {
-        const startDate = newData.pubDate;
-        // Handles cases where date_end is just the day of the month
-        const endDate = new Date(startDate.getFullYear(), startDate.getMonth(), parseInt(oldData.date_end, 10));
-        newData.endDate = endDate;
+    if (normalizedPath.startsWith('writing/')) {
+        newData.year = oldData.year ? parseInt(oldData.year, 10) : (newData.pubDate ? newData.pubDate.getFullYear() : undefined);
+        if (isNaN(newData.year)) delete newData.year;
+        if (oldData.isForthcoming !== undefined) newData.isForthcoming = oldData.isForthcoming;
+        if (oldData.journal) newData.journal = oldData.journal;
+        if (oldData.booktitle) newData.booktitle = oldData.booktitle;
+        if (oldData.volume) newData.volume = String(oldData.volume);
+        if (oldData.number) newData.number = String(oldData.number);
+        if (oldData.pages) newData.pages = oldData.pages;
+        if (oldData.doi) newData.doi = oldData.doi;
+    } else if (normalizedPath.startsWith('talks/')) {
+        if (oldData.date_end && newData.pubDate) {
+            const startDate = newData.pubDate;
+            const endDate = new Date(startDate.getFullYear(), startDate.getMonth(), parseInt(oldData.date_end, 10));
+            newData.endDate = endDate;
+        }
+        if (oldData.event) newData.event = oldData.event;
+        if (oldData.address) newData.address = oldData.address;
+    } else if (normalizedPath.startsWith('teaching/')) {
+        if (oldData.year) newData.year = String(oldData.year);
+        if (oldData.term) newData.term = oldData.term;
+        if (oldData.place) newData.place = oldData.place;
+        if (oldData.lectures) newData.lectures = oldData.lectures;
+        if (oldData.abstract) newData.abstract = oldData.abstract;
     }
-    if (oldData.event) newData.event = oldData.event;
-    if (oldData.address) newData.address = oldData.address;
-  } else if (normalizedPath.startsWith('teaching/')) {
-    if (oldData.year) newData.year = String(oldData.year);
-    if (oldData.term) newData.term = oldData.term;
-    if (oldData.place) newData.place = oldData.place;
-    if (oldData.lectures) newData.lectures = oldData.lectures;
-    if (oldData.abstract) newData.abstract = oldData.abstract;
-  }
 
-  // --- Abstract to body ---
-  let bodyAbstract = '';
-  if (oldData.abstract && !normalizedPath.startsWith('teaching/')) {
-      bodyAbstract = `## Abstract\n\n${oldData.abstract.trim()}\n\n`;
-  }
+    let bodyAbstract = '';
+    if (oldData.abstract && !normalizedPath.startsWith('teaching/')) {
+        bodyAbstract = `## Abstract\n\n${oldData.abstract.trim()}\n\n`;
+    }
 
-  return { newData, bodyAbstract };
+    return { newData, bodyAbstract };
 }
 
 /**
@@ -133,7 +123,6 @@ function transformFrontmatter(oldData, oldFilePath) {
 function processBody(body, oldFilePath) {
   if (oldFilePath.endsWith('.jade')) {
     try {
-      // Render pug with pretty option to make the HTML readable
       return pug.render(body, { pretty: true });
     } catch (e) {
       console.error(`Error rendering pug for ${oldFilePath}:`, e);
@@ -153,9 +142,8 @@ async function handleAssets(newData, oldData, oldFilePath) {
   const basename = path.basename(oldFilePath, path.extname(oldFilePath)).replace(/\.html$/, '');
   const normalizedPath = oldFilePath.replace(/\\/g, '/');
 
-  // PDFs for publications
   if (oldData.pdf && normalizedPath.startsWith('writing/')) {
-    const oldPdfPath = path.join(OLD_FILES_DIR, 'pdf', `${basename}.pdf`);
+    const oldPdfPath = path.join(OLD_RAW_DIR, 'pdf', `${basename}.pdf`);
     if (await fs.pathExists(oldPdfPath)) {
       const newPdfPath = path.join(PUBLIC_DIR, 'pdf', `${basename}.pdf`);
       await fs.ensureDir(path.dirname(newPdfPath));
@@ -164,10 +152,9 @@ async function handleAssets(newData, oldData, oldFilePath) {
     }
   }
 
-  // PDFs for talks (handouts and slides)
   if (normalizedPath.startsWith('talks/')) {
     if (oldData.handout) {
-      const oldPdfPath = path.join(OLD_FILES_DIR, 'pdf', 'talks', `${basename}.handout.pdf`);
+      const oldPdfPath = path.join(OLD_RAW_DIR, 'pdf', 'talks', `${basename}.handout.pdf`);
       if (await fs.pathExists(oldPdfPath)) {
         const newPdfPath = path.join(PUBLIC_DIR, 'pdf', 'talks', `${basename}.handout.pdf`);
         await fs.ensureDir(path.dirname(newPdfPath));
@@ -176,7 +163,7 @@ async function handleAssets(newData, oldData, oldFilePath) {
       }
     }
     if (oldData.slides) {
-      const oldPdfPath = path.join(OLD_FILES_DIR, 'pdf', 'talks', `${basename}.slides.pdf`);
+      const oldPdfPath = path.join(OLD_RAW_DIR, 'pdf', 'talks', `${basename}.slides.pdf`);
       if (await fs.pathExists(oldPdfPath)) {
         const newPdfPath = path.join(PUBLIC_DIR, 'pdf', 'talks', `${basename}.slides.pdf`);
         await fs.ensureDir(path.dirname(newPdfPath));
@@ -186,9 +173,8 @@ async function handleAssets(newData, oldData, oldFilePath) {
     }
   }
 
-  // Deck.js slide images for talks
-  if (oldData.deckslides && normalizedPath.startsWith('talks/')) {
-    const oldImgDirPath = path.join(OLD_DOCS_DIR, 'img', 'talks', basename);
+  if (normalizedPath.startsWith('talks/')) {
+    const oldImgDirPath = path.join(OLD_FILES_DIR, 'img', 'talks', basename);
     if (await fs.pathExists(oldImgDirPath)) {
       const newImgDirPath = path.join(PUBLIC_DIR, 'img', 'talks', basename);
       await fs.ensureDir(newImgDirPath);
@@ -208,12 +194,11 @@ async function handleAssets(newData, oldData, oldFilePath) {
  */
 function generateRedirectRule(oldFilePath) {
   const normalizedPath = oldFilePath.replace(/\\/g, '/');
-  const parts = normalizedPath.split('/');
-  const collection = parts[0];
-
   const oldUrl = `/${normalizedPath}`.replace(/\.jade$/, '.html');
-  const slug = path.basename(normalizedPath, path.extname(normalizedPath)).replace(/\.html$/, '');
-  const newUrl = `/${collection}/${slug}/`;
+  
+  // **FIXED LOGIC**: Create the new URL by replacing the extension, not by using basename
+  const newRelativePath = normalizedPath.replace(/\.(jade|html\.md|html)$/, '');
+  const newUrl = `/${newRelativePath}/`;
 
   return `${oldUrl}    ${newUrl}    301`;
 }
@@ -224,7 +209,6 @@ function generateRedirectRule(oldFilePath) {
 async function main() {
   console.log('Starting migration...');
 
-  // 1. Clear existing content and asset directories
   console.log('Clearing old content...');
   await fs.emptyDir(path.join(NEW_CONTENT_DIR, 'writing'));
   await fs.emptyDir(path.join(NEW_CONTENT_DIR, 'talks'));
@@ -238,11 +222,12 @@ async function main() {
   console.log(`Found ${sourceFiles.length} source files to migrate.`);
 
   if (sourceFiles.length === 0) {
-    console.error("No source files found. Check the OLD_CONTENT_DIR path and the filter logic in findSourceFiles.");
+    console.error("No source files found. Check paths and filter logic.");
     return;
   }
 
   for (const oldFilePath of sourceFiles) {
+    console.log(`Processing: ${oldFilePath}`);
     const fullOldPath = path.join(OLD_DOCS_DIR, oldFilePath);
     const content = await fs.readFile(fullOldPath, 'utf-8');
 
@@ -253,8 +238,8 @@ async function main() {
         try {
             oldData = CSON.parse(fmString);
         } catch (e) {
-            console.error(`Could not parse CSON for ${oldFilePath}. Error: ${e.message}`);
-            continue; // Skip this file
+            console.error(`  - Could not parse CSON for ${oldFilePath}. Error: ${e.message}`);
+            continue;
         }
     }
 
@@ -272,10 +257,9 @@ async function main() {
     const yamlFrontmatter = yaml.stringify(newData);
     const newContent = `---\n${yamlFrontmatter}---\n\n${bodyAbstract}${processedBody}`;
 
-    const normalizedPath = oldFilePath.replace(/\\/g, '/');
-    const collection = normalizedPath.split('/')[0];
-    const slug = path.basename(oldFilePath, path.extname(oldFilePath)).replace(/\.html$/, '');
-    const newFilePath = path.join(NEW_CONTENT_DIR, collection, `${slug}.md`);
+    // **FIXED LOGIC**: Construct the new file path using the full relative path
+    const newRelativePath = oldFilePath.replace(/\.(jade|html\.md|html)$/, '.md');
+    const newFilePath = path.join(NEW_CONTENT_DIR, newRelativePath);
     
     await fs.ensureDir(path.dirname(newFilePath));
     await fs.writeFile(newFilePath, newContent);
@@ -283,9 +267,9 @@ async function main() {
 
   const redirectsFilePath = path.join(PUBLIC_DIR, '_redirects');
   await fs.writeFile(redirectsFilePath, redirects.join('\n'));
-  console.log(`Generated ${redirects.length} redirects in ${redirectsFilePath}`);
+  console.log(`\nGenerated ${redirects.length} redirects in ${redirectsFilePath}`);
 
-  console.log('Migration completed successfully!');
+  console.log('\nMigration completed successfully!');
 }
 
 main().catch(console.error);

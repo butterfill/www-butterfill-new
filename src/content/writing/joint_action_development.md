@@ -8,6 +8,7 @@ volume: "62"
 number: "246"
 pages: 23-47
 doi: 10.1111/j.1467-9213.2011.00005.x
+pdfUrl: /pdf/joint_action_development.pdf
 ---
 
 ## Abstract

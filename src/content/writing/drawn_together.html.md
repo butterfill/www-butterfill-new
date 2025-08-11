@@ -1,0 +1,17 @@
+---
+title: "Drawn Together: When Motor Representations Ground Joint Actions"
+authors: Francesco della Gatta, Francesca Garbarini, Marco Rabuffetti, Luca
+  Viganò, Stephen A. Butterfill and Corrado Sinigaglia
+year: 2017
+isForthcoming: false
+journal: Cognition
+volume: "165"
+pages: 53--60
+doi: 10.1016/j.cognition.2017.04.008
+pdfUrl: /pdf/drawn_together.pdf
+---
+
+## Abstract
+
+What enables individuals to act together? Recent discoveries suggest that a variety of mechanisms are involved. But something fundamental is yet to be investigated. In joint action, agents represent a collective goal, or so it is often assumed. But how, if at all, are collective goals represented in joint action and how do such representations impact performance? To investigate this question we adapted a bimanual paradigm, the circle-line drawing paradigm, to contrast two agents acting in parallel with two agents performing a joint action. Participants were required to draw lines or circles while observing circles or lines being drawn. The findings indicate that interpersonal motor coupling may occur in joint but not parallel action. This suggests that participants in joint actions can represent collective goals motorically.
+

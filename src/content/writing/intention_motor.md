@@ -8,6 +8,7 @@ volume: "88"
 number: "1"
 pages: 119-145
 doi: 10.1111/j.1933-1592.2012.00604.x
+pdfUrl: /pdf/intention_motor.pdf
 ---
 
 ## Abstract
