@@ -1,6 +1,9 @@
 ---
 title: The Developing Mind
-authors: Unknown
+authors: Stephen A. Butterfill
+year: 2020
+isForthcoming: false
+doi: 10.4324/9780203758274
 ---
 
 

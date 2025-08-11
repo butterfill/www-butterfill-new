@@ -1,11 +1,12 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 // Schema for 'writing' (publications)
 const writingCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     authors: z.string(),
-    pubDate: z.date(),
+    pubDate: z.date().optional(),
     year: z.number(),
     isForthcoming: z.boolean().optional(),
     journal: z.string().optional(),
@@ -35,6 +36,7 @@ const talksCollection = defineCollection({
 
 // Schema for 'teaching' (courses)
 const teachingCollection = defineCollection({
+    loader: glob({ pattern: '*.html.md', base: './src/content/teaching' }),
     schema: z.object({
         title: z.string(),
         year: z.string(),

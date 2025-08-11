@@ -5,7 +5,7 @@ year: 2013
 isForthcoming: false
 booktitle: Oxford Studies in Epistemology
 volume: "4"
-pages: -11
+pages: "309-320"
 pdfUrl: /pdf/what_does_knowledge_explain.pdf
 ---
 

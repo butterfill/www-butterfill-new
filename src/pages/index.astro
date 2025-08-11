@@ -5,7 +5,12 @@ import { getCollection } from 'astro:content';
 
 // Get the 5 most recent publications
 const recentWriting = (await getCollection('writing')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  (a, b) => {
+    // Use pubDate if available, otherwise fall back to year
+    const aDate = a.data.pubDate ? a.data.pubDate.valueOf() : new Date(a.data.year, 0, 1).valueOf();
+    const bDate = b.data.pubDate ? b.data.pubDate.valueOf() : new Date(b.data.year, 0, 1).valueOf();
+    return bDate - aDate;
+  }
 ).slice(0, 5);
 ---
 <BaseLayout title="Stephen Butterfill | Home">
