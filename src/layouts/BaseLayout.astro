@@ -1,10 +1,29 @@
 ---
 // src/layouts/BaseLayout.astro
+import CommandPalette from '../components/CommandPalette.svelte';
+import { getCollection } from 'astro:content';
+import ThemeToggle from '../components/ThemeToggle.svelte';
+import '../styles/global.css'; 
+
+// Fetch ALL content at build time
+const writing = await getCollection('writing');
+const talks = await getCollection('talks');
+const teaching = await getCollection('teaching');
+
+// Format it into a simple structure for the command palette
+const allPages = [
+  ...writing.map(item => ({ title: item.data.title, url: `/writing/${item.slug}/` })),
+  ...talks.map(item => ({ title: item.data.title, url: `/talks/${item.slug}/` })),
+  ...teaching.map(item => ({ title: item.data.title, url: `/teaching/${item.slug}/` })),
+];
+
 interface Props {
   title: string;
+  // Allow pages to pass extra actions
+  contextualActions?: { label: string; action: () => void; }[];
 }
 
-const { title } = Astro.props;
+const { title, contextualActions = [] } = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -13,17 +32,57 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
-    <!-- We will add the dark mode script here in a later task -->
+    <script is:inline>
+      // This script is executed as-is, before the page is rendered.
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
   </head>
-  <body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
-    <header>
-      <!-- Header content will go here later -->
+  <body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen">
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-900/60">
+      <div class="container mx-auto max-w-6xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <a href="/" class="text-xl font-semibold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Stephen Butterfill
+            </a>
+          </div>
+          <nav class="flex items-center space-x-6">
+            <a href="/writing/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+              Writing
+            </a>
+            <a href="/talks/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+              Talks
+            </a>
+            <a href="/teaching/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+              Teaching
+            </a>
+            <ThemeToggle client:load />
+          </nav>
+        </div>
+      </div>
     </header>
-    <main>
+    <main class="flex-1">
       <slot /> <!-- Page content will be injected here -->
     </main>
-    <footer>
-      <!-- Footer content will go here later -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+      <div class="container mx-auto max-w-6xl px-4">
+        <p>&copy; {new Date().getFullYear()} Stephen Butterfill. All rights reserved.</p>
+      </div>
     </footer>
+    <CommandPalette allPages={allPages} contextualActions={contextualActions} client:load />
   </body>
 </html>

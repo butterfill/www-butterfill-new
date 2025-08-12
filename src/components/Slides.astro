@@ -1,0 +1,29 @@
+---
+// src/components/Slides.astro
+interface Props {
+  images: string[];
+}
+const { images } = Astro.props;
+---
+<div class="reveal">
+  <div class="slides">
+    {images.map(src => (
+      <section>
+        <img src={src} alt="Slide image" />
+      </section>
+    ))}
+  </div>
+</div>
+
+<!-- We need to import the CSS and initialize the library on the client -->
+<link rel="stylesheet" href="/node_modules/reveal.js/dist/reveal.css">
+<link rel="stylesheet" href="/node_modules/reveal.js/dist/theme/black.css">
+
+<script>
+  import Reveal from 'reveal.js';
+  // Initialize Reveal.js on the .reveal container we created above
+  let deck = new Reveal(document.querySelector('.reveal'), {
+    embedded: true, // Important for controlling it within our page
+  });
+  deck.initialize();
+</script>

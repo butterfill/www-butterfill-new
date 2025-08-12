@@ -1,0 +1,50 @@
+---
+// src/pages/talks/[...slug].astro
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Slides from '../../components/Slides.astro'; // Import the new component
+
+// This function runs at build time to find all talks
+// and tell Astro to create a page for each one.
+export async function getStaticPaths() {
+  const talkEntries = await getCollection('talks');
+  return talkEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+import CopyForChat from '../../components/CopyForChat.svelte';
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Format the content specifically for the clipboard
+// Use the raw markdown body instead of the rendered Content component
+const textForLLM = `
+Title: ${entry.data.title}
+Authors: ${entry.data.authors}
+Year: ${entry.data.pubDate ? new Date(entry.data.pubDate).getFullYear() : 'Unknown'}
+
+---
+
+${entry.body}
+`.trim();
+---
+<PageLayout title={entry.data.title}>
+  <div class="flex justify-end mb-4">
+    <CopyForChat contentToCopy={textForLLM} client:load />
+  </div>
+  
+  {/* ... (TODO: code for talk metadata) ... */}
+
+  <!-- Conditionally render the Slides component -->
+  {entry.data.slideImages && entry.data.slideImages.length > 0 && (
+    <div class="my-8">
+      <h2 class="text-2xl font-bold mb-4">Slides</h2>
+      <Slides images={entry.data.slideImages} />
+    </div>
+  )}
+
+  <Content />
+</PageLayout>

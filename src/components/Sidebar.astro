@@ -1,0 +1,40 @@
+---
+const navItems = [
+  { href: '#writing', label: 'Writing' },
+  { href: '#talks', label: 'Talks' },
+  { href: '#teaching', label: 'Teaching' },
+  { href: '#about', label: 'About' },
+];
+---
+<nav class="sticky top-8">
+  <ul id="sidebar-nav">
+    {navItems.map(item => (
+      <li>
+        <a href={item.href} class="block p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('main section[id]');
+    const navLinks = document.querySelectorAll('#sidebar-nav a');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.toggle('font-bold', link.getAttribute('href') === `#${entry.target.id}`);
+            link.classList.toggle('bg-slate-100', link.getAttribute('href') === `#${entry.target.id}`);
+            link.classList.toggle('dark:bg-slate-800', link.getAttribute('href') === `#${entry.target.id}`);
+          });
+        }
+      });
+    }, { rootMargin: "-50% 0px -50% 0px" }); // Triggers when a section is in the middle of the viewport
+
+    sections.forEach(section => observer.observe(section));
+  });
+</script>

@@ -13,10 +13,41 @@ export async function getStaticPaths() {
   }));
 }
 
+import CopyForChat from '../../components/CopyForChat.svelte';
+
 const { entry } = Astro.props;
 const { Content } = await entry.render(); // This gets the Markdown content
+
+// Format the content specifically for the clipboard
+// Use the raw markdown body instead of the rendered Content component
+const textForLLM = `
+Title: ${entry.data.title}
+Authors: ${entry.data.authors}
+Year: ${entry.data.year}
+
 ---
-<PageLayout title={entry.data.title}>
+
+${entry.body}
+`.trim();
+
+
+const pdfUrl = entry.data.pdfUrl;
+
+// Define actions specific to this page
+const pageActions = [];
+if (pdfUrl) {
+  pageActions.push({
+    label: 'Download PDF',
+    // The action is a string of JS code we'll execute in Svelte
+    onSelect: `() => window.open('${pdfUrl}', '_blank')`
+  });
+}
+
+---
+<PageLayout title={entry.data.title} contextualActions={pageActions}>
+  <div class="flex justify-end mb-4">
+    <CopyForChat contentToCopy={textForLLM} client:load />
+  </div>
   <div class="mb-4 text-sm text-slate-600 dark:text-slate-400">
     <p><strong>Authors:</strong> {entry.data.authors}</p>
     <p><strong>Published:</strong> {entry.data.year}</p>
