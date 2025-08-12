@@ -1,0 +1,322 @@
+---
+import EmptyLayout from '../layouts/EmptyLayout.astro';
+---
+<EmptyLayout title="q3-hashme Utility">
+
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      font-size: 16px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+    input {
+      padding: 12px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
+    input:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    #result {
+      font-weight: bold;
+      cursor: pointer;
+      padding: 12px;
+      border: 1px dashed #ccc;
+      border-radius: 4px;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      background-color: #f9f9f9;
+      transition: background-color 0.2s;
+      word-break: break-all;
+      margin-top: 5px;
+    }
+    #result:hover {
+      background-color: #f0f0f0;
+    }
+    #result:active {
+      background-color: #e0e0e0;
+    }
+    .result-container {
+      margin-top: 25px;
+    }
+    .result-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .green {
+      color: #2ecc71;
+    }
+    .red {
+      color: #e74c3c;
+    }
+    .note {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 25px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #4a90e2;
+    }
+    .note p {
+      margin: 0.5em 0;
+    }
+    
+    /* Media queries for responsive design */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      input {
+        padding: 10px;
+      }
+      .note {
+        padding: 10px;
+      }
+    }
+  </style>
+
+
+  <!-- Paste the old HTML form structure here -->
+  <h1>q3-hashme</h1>
+  
+  <form>
+    <div class="input-group">
+      <label for="pw1">Master Password:</label>
+      <input id="pw1" type="password" autocomplete="off" placeholder="Enter your master password" />
+    </div>
+    
+    <div class="input-group">
+      <label for="dom1">Domain:</label>
+      <input id="dom1" type="text" placeholder="e.g., example.com" />
+    </div>
+    
+    <div class="input-group">
+      <label for="pw2">Confirm Password:</label>
+      <input id="pw2" type="password" autocomplete="off" placeholder="Re-enter your master password" />
+    </div>
+    
+    <div class="input-group">
+      <label for="dom2">Confirm Domain:</label>
+      <input id="dom2" type="text" placeholder="Re-enter the domain" />
+    </div>
+  </form>
+  
+  <div class="result-container">
+    <div>
+      <span class="result-label">Generated Password:</span>
+      <div id="result">Enter details above</div>
+    </div>
+    <div style="margin-top: 15px;">
+      <span class="result-label">Inputs Match:</span>
+      <span id="match" style="font-weight: bold;">false</span>
+    </div>
+  </div>
+  
+  <div class="note">
+    <p>Click on the generated password to copy it to clipboard.</p>
+    <p>Note: This tool works entirely in your browser. Your master password is never sent to any server.</p>
+  </div>
+
+  <!-- Import the q3.js module -->
+  <script type="module">
+    // Import the go function from q3.js (from public directory)
+    import generatePassword from '/q3-browser.js';
+    
+    // Make the function available globally for the UI code
+    window.q3_generate_password = async function(masterPassword, domain) {
+      try {
+        return await generatePassword(domain, masterPassword);
+      } catch (error) {
+        console.error('Error generating password:', error);
+        return 'Error generating password';
+      }
+    };
+
+    // UI functionality - define and initialize immediately
+    function initUI() {
+      function match() {
+        var pw1 = document.getElementById('pw1').value;
+        var pw2 = document.getElementById('pw2').value;
+        var dom1 = document.getElementById('dom1').value;
+        var dom2 = document.getElementById('dom2').value;
+        return (pw1 === pw2) && (dom1 === dom2);
+      }
+      
+      function match_display() {
+        var matches = match();
+        document.getElementById('match').innerHTML = matches;
+        if (matches) {
+          document.getElementById('match').className = 'green';
+          document.getElementById('result').className = '';
+        } else {
+          document.getElementById('match').className = 'red';
+          document.getElementById('result').className = 'red';
+        }
+      }
+      
+      // Generate and display the password
+      async function result_display() {
+        var pw1 = document.getElementById('pw1').value;
+        var pw2 = document.getElementById('pw2').value;
+        var dom1 = document.getElementById('dom1').value;
+        var dom2 = document.getElementById('dom2').value;
+        
+        var condition = match();
+        condition = condition || (dom2 === '' && pw2 === '');
+        
+        if (condition && pw1 && dom1) {
+          try {
+            const generatedPassword = await window.q3_generate_password(pw1, dom1);
+            document.getElementById('result').innerHTML = generatedPassword;
+          } catch (error) {
+            document.getElementById('result').innerHTML = 'Error';
+            console.error(error);
+          }
+        } else if (!pw1 || !dom1) {
+          document.getElementById('result').innerHTML = 'Enter details above';
+        } else {
+          document.getElementById('result').innerHTML = '--- match inputs first! ---';
+        }
+      }
+      
+      async function update() {
+        match_display();
+        await result_display();
+      }
+      
+      // Copy password to clipboard
+      function copy_pw() {
+        var res = document.getElementById('result').innerHTML;
+        if (res && res !== 'Enter details above' && res !== '--- match inputs first! ---' && res !== 'Error') {
+          // Try to use the modern clipboard API
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(res)
+              .then(() => {
+                showCopiedFeedback();
+              })
+              .catch(err => {
+                fallbackCopyToClipboard(res);
+              });
+          } else {
+            fallbackCopyToClipboard(res);
+          }
+        }
+      }
+      
+      // Fallback method for copying to clipboard
+      function fallbackCopyToClipboard(text) {
+        // Create a temporary textarea element
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        
+        // Make it non-visible
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        textArea.style.left = '0';
+        textArea.style.top = '0';
+        
+        document.body.appendChild(textArea);
+        
+        // Handle iOS devices specifically
+        if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+          // Save current selection
+          const editable = textArea.contentEditable;
+          const readOnly = textArea.readOnly;
+          
+          textArea.contentEditable = true;
+          textArea.readOnly = false;
+          
+          // Create a range and select the text
+          const range = document.createRange();
+          range.selectNodeContents(textArea);
+          
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          
+          textArea.setSelectionRange(0, 999999);
+          
+          // Restore contentEditable and readOnly states
+          textArea.contentEditable = editable;
+          textArea.readOnly = readOnly;
+        } else {
+          textArea.select();
+        }
+        
+        try {
+          document.execCommand('copy');
+          showCopiedFeedback();
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+          alert('Could not copy password. Please long-press and copy manually.');
+        }
+        
+        document.body.removeChild(textArea);
+      }
+      
+      // Show visual feedback that the password was copied
+      function showCopiedFeedback() {
+        const originalText = document.getElementById('result').innerHTML;
+        const resultElement = document.getElementById('result');
+        
+        resultElement.innerHTML = 'Copied!';
+        resultElement.style.backgroundColor = '#d4edda';
+        resultElement.style.color = '#155724';
+        resultElement.style.borderColor = '#c3e6cb';
+        
+        setTimeout(() => {
+          resultElement.innerHTML = originalText;
+          resultElement.style.backgroundColor = '';
+          resultElement.style.color = '';
+          resultElement.style.borderColor = '';
+        }, 1500);
+      }
+      
+      // Configure event listeners
+      document.getElementById('pw1').addEventListener('input', update);
+      document.getElementById('pw2').addEventListener('input', update);
+      document.getElementById('dom1').addEventListener('input', update);
+      document.getElementById('dom2').addEventListener('input', update);
+      
+      // Configure click for password copying
+      document.getElementById('result').addEventListener('click', copy_pw);
+      
+      // Initial update
+      update();
+    }
+
+    // Initialize the UI now that everything is loaded
+    initUI();
+  </script>
+</EmptyLayout>
