@@ -38,8 +38,8 @@ const pageActions = [];
 if (pdfUrl) {
   pageActions.push({
     label: 'Download PDF',
-    // The action is a string of JS code we'll execute in Svelte
-    onSelect: `() => window.open('${pdfUrl}', '_blank')`
+    action: 'openUrl',
+    url: pdfUrl
   });
 }
 

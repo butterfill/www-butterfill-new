@@ -1,6 +1,7 @@
 ---
 // src/layouts/BaseLayout.astro
 import CommandPalette from '../components/CommandPalette.svelte';
+import SearchTrigger from '../components/SearchTrigger.svelte';
 import { getCollection } from 'astro:content';
 import ThemeToggle from '../components/ThemeToggle.svelte';
 import '../styles/global.css'; 
@@ -17,10 +18,16 @@ const allPages = [
   ...teaching.map(item => ({ title: item.data.title, url: `/teaching/${item.slug}/` })),
 ];
 
+interface ContextualAction {
+  label: string;
+  action: string;
+  url?: string;
+}
+
 interface Props {
   title: string;
   // Allow pages to pass extra actions
-  contextualActions?: { label: string; action: () => void; }[];
+  contextualActions?: ContextualAction[];
 }
 
 const { title, contextualActions = [] } = Astro.props;
@@ -60,18 +67,21 @@ const { title, contextualActions = [] } = Astro.props;
               Stephen Butterfill
             </a>
           </div>
-          <nav class="flex items-center space-x-6">
-            <a href="/writing/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-              Writing
-            </a>
-            <a href="/talks/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-              Talks
-            </a>
-            <a href="/teaching/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-              Teaching
-            </a>
-            <ThemeToggle client:load />
-          </nav>
+          <div class="flex items-center space-x-4">
+            <SearchTrigger client:load />
+            <nav class="flex items-center space-x-6">
+              <a href="/writing/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                Writing
+              </a>
+              <a href="/talks/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                Talks
+              </a>
+              <a href="/teaching/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                Teaching
+              </a>
+              <ThemeToggle client:load />
+            </nav>
+          </div>
         </div>
       </div>
     </header>
