@@ -40,11 +40,22 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
+docs-developers/
+  generate-llms-script.md
+  reveal-js-slides-for-talks.md
 public/
   _redirects
   favicon.svg
+  q3-browser.js
+scripts/
+  generate-llms.mjs
 src/
   components/
+    CommandPalette.svelte
+    CopyForChat.svelte
+    SearchTrigger.svelte
+    Sidebar.astro
+    Slides.astro
     ThemeToggle.svelte
   content/
     talks/
@@ -177,12 +188,40 @@ src/
     config.ts
   layouts/
     BaseLayout.astro
+    EmptyLayout.astro
     PageLayout.astro
   lib/
+    components/
+      ui/
+        command/
+          command-dialog.svelte
+          command-empty.svelte
+          command-group.svelte
+          command-input.svelte
+          command-item.svelte
+          command-link-item.svelte
+          command-list.svelte
+          command-separator.svelte
+          command-shortcut.svelte
+          command.svelte
+          index.ts
+        dialog/
+          dialog-close.svelte
+          dialog-content.svelte
+          dialog-description.svelte
+          dialog-footer.svelte
+          dialog-header.svelte
+          dialog-overlay.svelte
+          dialog-title.svelte
+          dialog-trigger.svelte
+          index.ts
     utils.ts
   pages/
+    talks/
+      [...slug].astro
     writing/
       [...slug].astro
+    hashme-q3.astro
     index.astro
   styles/
     global.css
@@ -193,11 +232,660 @@ migration-script.mjs
 package.json
 README.md
 svelte.config.js
+tailwind.config.mjs
 tsconfig.json
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="docs-developers/generate-llms-script.md">
+# LLM Text Generation Script Documentation
+
+## Overview
+
+The `generate-llms.mjs` script creates a consolidated text file (`public/llms.txt`) containing all academic content from the website. This file is designed to be consumed by Large Language Models (LLMs) to provide context about Stephen Butterfill's academic work.
+
+## How It Works
+
+### Purpose
+The script combines all publications and talks into a single, LLM-friendly text format that includes:
+- Publications from the `writing` collection
+- Talks from the `talks` collection
+- Metadata (title, authors, year, journal/event)
+- Full content body in markdown format
+
+### File Location
+- **Script**: `scripts/generate-llms.mjs`
+- **Output**: `public/llms.txt`
+
+### Integration with Build Process
+The script runs automatically during the build process:
+```json
+{
+  "scripts": {
+    "build": "node ./scripts/generate-llms.mjs && astro build"
+  }
+}
+```
+
+## Technical Implementation
+
+### Dependencies
+The script uses these Node.js modules:
+- `fs-extra`: For file system operations
+- `path`: For handling file paths
+- `yaml`: For parsing YAML frontmatter
+
+### Key Functions
+
+#### 1. `parseFrontmatter(content)`
+Extracts YAML frontmatter and markdown body from content files.
+
+```javascript
+function parseFrontmatter(content) {
+  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+  const match = content.match(frontmatterRegex);
+  
+  if (!match) {
+    return { data: {}, body: content };
+  }
+  
+  const [, frontmatterStr, body] = match;
+  const data = yaml.parse(frontmatterStr);
+  
+  return { data, body };
+}
+```
+
+#### 2. `readMarkdownFiles(dir)`
+Recursively reads all `.md` files from a directory and its subdirectories.
+
+- Handles nested folder structures (like `talks/2013/`, `talks/2014/`, etc.)
+- Parses frontmatter for each file
+- Adds a `type` field to distinguish between 'writing' and 'talk' content
+
+### Content Processing
+
+The script processes two content collections:
+
+#### Writing Collection (`src/content/writing/`)
+- **Frontmatter fields**: `title`, `authors`, `year`, `journal`, etc.
+- **Structure**: Flat directory with `.md` files
+- **Example**: `minimal_theory_of_mind.html.md`
+
+#### Talks Collection (`src/content/talks/`)
+- **Frontmatter fields**: `title`, `authors`, `pubDate`, `event`, etc.
+- **Structure**: Nested by year (`2012/`, `2013/`, etc.)
+- **Example**: `talks/2013/two_systems_two_theories.html.md`
+
+### Output Format
+
+Each item in the generated file follows this structure:
+
+```
+Title: [Title]
+Authors: [Authors]
+Year: [Year]
+[Journal: [Journal Name]] // For publications
+[Event: [Event Name]]     // For talks
+Type: [Publication|Talk]
+
+[Full markdown content]
+
+---
+```
+
+## How to Modify the Script
+
+### Adding New Content Types
+
+1. **Add a new collection directory** (e.g., `src/content/books/`)
+2. **Update the script** to read from the new directory:
+   ```javascript
+   const booksDir = path.join(process.cwd(), 'src/content/books');
+   const bookItems = await readMarkdownFiles(booksDir);
+   const allItems = [...writingItems, ...talkItems, ...bookItems];
+   ```
+3. **Handle new frontmatter fields** in the processing loop
+
+### Modifying Output Format
+
+To change how content appears in the output file, modify the loop in the main section:
+
+```javascript
+for (const item of allItems) {
+  // Customize the output format here
+  fullText += `Title: ${item.data.title || 'Untitled'}\n`;
+  // Add new fields or change formatting
+}
+```
+
+### Adding Filtering or Sorting
+
+To filter or sort content before processing:
+
+```javascript
+// Example: Only include items from 2020 onwards
+const filteredItems = allItems.filter(item => {
+  const year = item.type === 'talk' 
+    ? new Date(item.data.pubDate).getFullYear()
+    : item.data.year;
+  return year >= 2020;
+});
+
+// Example: Sort by year (newest first)
+const sortedItems = allItems.sort((a, b) => {
+  const yearA = a.type === 'talk' 
+    ? new Date(a.data.pubDate).getFullYear()
+    : a.data.year;
+  const yearB = b.type === 'talk' 
+    ? new Date(b.data.pubDate).getFullYear()
+    : b.data.year;
+  return yearB - yearA;
+});
+```
+
+## Running the Script
+
+### Standalone Execution
+```bash
+node ./scripts/generate-llms.mjs
+```
+
+### As Part of Build Process
+```bash
+npm run build
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"ERR_UNSUPPORTED_ESM_URL_SCHEME" Error**
+   - This occurs if you try to import Astro-specific modules (like `astro:content`)
+   - Solution: Use direct file system operations instead
+
+2. **Missing Content**
+   - Check that the directory structure matches what the script expects
+   - Ensure `.md` files have proper frontmatter format
+
+3. **YAML Parsing Errors**
+   - Verify frontmatter syntax in content files
+   - Check for special characters that need escaping
+
+### Debugging Tips
+
+1. **Add logging** to see what files are being processed:
+   ```javascript
+   console.log(`Processing: ${fullPath}`);
+   ```
+
+2. **Check file counts**:
+   ```javascript
+   console.log(`Found ${writingItems.length} writing items`);
+   console.log(`Found ${talkItems.length} talk items`);
+   ```
+
+3. **Validate output** by checking the generated file size and content
+
+## Future Enhancements
+
+Potential improvements for the script:
+- Add content validation (check for required frontmatter fields)
+- Include teaching materials from the `teaching` collection
+- Add metadata about file modification dates
+- Implement incremental updates (only process changed files)
+- Add support for different output formats (JSON, XML, etc.)
+</file>
+
+<file path="docs-developers/reveal-js-slides-for-talks.md">
+# Reveal.js Slides for Talks
+
+This document explains how the reveal.js slide presentation system is implemented for talk pages in the Astro static site.
+
+## Overview
+
+Talk pages can display interactive slide presentations using reveal.js. When a talk has `slideImages` defined in its frontmatter, the slides are automatically rendered as an interactive presentation that users can navigate through.
+
+## How It Works
+
+### 1. Content Structure
+
+Talk content files are located in `src/content/talks/` and use markdown with frontmatter. To enable slides, add a `slideImages` array to the frontmatter:
+
+```markdown
+---
+title: "My Talk Title"
+authors: "Author Name"
+pubDate: 2024-01-01T00:00:00.000Z
+slideImages:
+  - /img/talks/my-talk/slide-000.jpg
+  - /img/talks/my-talk/slide-001.jpg
+  - /img/talks/my-talk/slide-002.jpg
+---
+
+## Abstract
+Your talk content here...
+```
+
+### 2. Static Assets Setup
+
+Reveal.js assets must be copied to the `public/` directory so they can be served statically:
+
+```bash
+# From the project root
+mkdir -p public/reveal.js/dist
+cp -r node_modules/reveal.js/dist/* public/reveal.js/dist/
+```
+
+This copies:
+- `reveal.css` - Core reveal.js styles
+- `reveal.js` - Main reveal.js library
+- `theme/` directory - Various presentation themes
+
+### 3. Component Architecture
+
+#### Talk Page Template (`src/pages/talks/[...slug].astro`)
+
+The talk page template conditionally renders the Slides component when `slideImages` exist:
+
+```astro
+{entry.data.slideImages && entry.data.slideImages.length > 0 && (
+  <div class="my-8">
+    <h2 class="text-2xl font-bold mb-4">Slides</h2>
+    <Slides images={entry.data.slideImages} />
+  </div>
+)}
+```
+
+#### Slides Component (`src/components/Slides.astro`)
+
+The Slides component handles the reveal.js integration:
+
+**Key Features:**
+- **HTML Structure**: Creates the required `.reveal > .slides > section` hierarchy
+- **Asset Loading**: Links to reveal.js CSS and JavaScript files
+- **CSS Overrides**: Uses `!important` styles to override Tailwind CSS conflicts
+- **Initialization**: Robust JavaScript initialization with retry logic
+- **Responsive Images**: Slides contain images with proper sizing
+
+**Critical Implementation Details:**
+
+1. **Fixed Dimensions**: The reveal container has explicit dimensions to prevent layout issues
+2. **CSS Conflicts Resolution**: Uses `!important` to override Tailwind CSS that might hide slides
+3. **Retry Logic**: JavaScript initialization retries if reveal.js hasn't loaded yet
+4. **Embedded Mode**: Uses `embedded: true` to integrate within the page layout
+
+## Adding Slides to a New Talk
+
+### Step 1: Prepare Slide Images
+
+1. Create a directory in `public/img/talks/` for your talk:
+   ```
+   public/img/talks/my-new-talk/
+   ```
+
+2. Add your slide images (typically JPG or PNG):
+   ```
+   public/img/talks/my-new-talk/slide-000.jpg
+   public/img/talks/my-new-talk/slide-001.jpg
+   public/img/talks/my-new-talk/slide-002.jpg
+   ```
+
+### Step 2: Update Talk Frontmatter
+
+Add the `slideImages` array to your talk's markdown file:
+
+```markdown
+---
+title: "My New Talk"
+authors: "Your Name"
+pubDate: 2024-01-01T00:00:00.000Z
+slideImages:
+  - /img/talks/my-new-talk/slide-000.jpg
+  - /img/talks/my-new-talk/slide-001.jpg
+  - /img/talks/my-new-talk/slide-002.jpg
+---
+```
+
+### Step 3: Test
+
+1. Start the dev server: `npm run dev`
+2. Navigate to your talk page: `http://localhost:4321/talks/YYYY/your-talk-slug`
+3. Verify slides appear and are navigable with arrow keys
+
+## Troubleshooting
+
+### Slides Flash and Disappear
+
+This usually indicates CSS conflicts. Check:
+1. Reveal.js assets are properly copied to `public/reveal.js/dist/`
+2. CSS overrides in the Slides component are working
+3. Browser console for JavaScript errors
+
+### Slides Don't Initialize
+
+Check browser console for:
+- "Initializing Reveal.js..." message
+- "Reveal.js initialized successfully" message
+- Any JavaScript errors
+
+Common issues:
+- Reveal.js files not found (404 errors)
+- JavaScript loading order problems
+- CSS conflicts preventing display
+
+### Images Don't Load
+
+Verify:
+1. Image paths in frontmatter are correct (start with `/`)
+2. Images exist in the `public/` directory
+3. Image file names match exactly (case-sensitive)
+
+## Technical Notes
+
+### Why Copy Assets to Public?
+
+Astro serves the `public/` directory as static assets. Node modules aren't accessible to the browser, so reveal.js files must be copied to `public/` during setup.
+
+### CSS Conflicts with Tailwind
+
+Tailwind CSS can interfere with reveal.js styles. The Slides component uses:
+- `!important` declarations to override Tailwind
+- Explicit positioning and display properties
+- Fixed dimensions to prevent layout collapse
+
+### Embedded vs Fullscreen Mode
+
+The implementation uses `embedded: true` to integrate slides within the page layout rather than taking over the entire viewport. This allows slides to coexist with other page content.
+
+## Dependencies
+
+- `reveal.js` npm package (installed in package.json)
+- Static asset copying (manual step during setup)
+- Astro's static site generation
+- Compatible with Tailwind CSS (with overrides)
+</file>
+
+<file path="public/favicon.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128">
+    <path d="M50.4 78.5a75.1 75.1 0 0 0-28.5 6.9l24.2-65.7c.7-2 1.9-3.2 3.4-3.2h29c1.5 0 2.7 1.2 3.4 3.2l24.2 65.7s-11.6-7-28.5-7L67 45.5c-.4-1.7-1.6-2.8-2.9-2.8-1.3 0-2.5 1.1-2.9 2.7L50.4 78.5Zm-1.1 28.2Zm-4.2-20.2c-2 6.6-.6 15.8 4.2 20.2a17.5 17.5 0 0 1 .2-.7 5.5 5.5 0 0 1 5.7-4.5c2.8.1 4.3 1.5 4.7 4.7.2 1.1.2 2.3.2 3.5v.4c0 2.7.7 5.2 2.2 7.4a13 13 0 0 0 5.7 4.9v-.3l-.2-.3c-1.8-5.6-.5-9.5 4.4-12.8l1.5-1a73 73 0 0 0 3.2-2.2 16 16 0 0 0 6.8-11.4c.3-2 .1-4-.6-6l-.8.6-1.6 1a37 37 0 0 1-22.4 2.7c-5-.7-9.7-2-13.2-6.2Z" />
+    <style>
+        path { fill: #000; }
+        @media (prefers-color-scheme: dark) {
+            path { fill: #FFF; }
+        }
+    </style>
+</svg>
+</file>
+
+<file path="public/q3-browser.js">
+/**
+ * JavaScript implementation of q3.py functionality as an ES module
+ * 
+ * This must match the Python implementation in q3.py (which is the key source)
+ * You can test the match by running `test_q3.js`
+ *
+ * 
+ */
+
+// A modern, secure replacement for the hex_sha512 function
+async function secure_sha512_hex(str) {
+  const textEncoder = new TextEncoder();
+  const data = textEncoder.encode(str);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-512', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  // Convert bytes to a hex string
+  const hexHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hexHash;
+}
+
+// Helper function to check if password meets requirements
+function pwMeetsRequirements(pw) {
+  const hasUpper = /[A-Z]/.test(pw);
+  const hasLower = /[a-z]/.test(pw);
+  const hasDigit = /[0-9]/.test(pw);
+  const hasSymbol = /[!@#$%^&*()\-_=+\[\]{}|;:,.<>?\/]/.test(pw);
+  // Check the password does not contain commonly banned characters
+  const bannedChars = new Set(['\'', '"', '\\', '`', '~', '?', '@']);
+  for (let i = 0; i < pw.length; i++) {
+    if (bannedChars.has(pw[i])) {
+      return false;
+    }
+  }
+  return hasUpper && hasLower && hasDigit && hasSymbol;
+}
+
+// Helper function to get password from hash
+function _getPassword(hexDigest) {
+  const b64 = python_b64encode(hexDigest);
+  const res = b64.slice(5, 5+12) + '!'; 
+  return res;
+}
+
+
+// Main function to generate password from domain and master password
+async function go(domain, pw) {
+  let cumulativeInput = `${pw}!@#` + domain;
+
+  // First password generation
+  let hexDigest = await secure_sha512_hex(cumulativeInput);
+  let res = _getPassword(hexDigest);
+
+  // Second password generation
+  cumulativeInput += res;
+  hexDigest = await secure_sha512_hex(cumulativeInput);
+  res = _getPassword(hexDigest);
+
+  // Continue generating passwords until one meets the requirements.
+  while (!pwMeetsRequirements(res)) {
+    cumulativeInput += res;
+    hexDigest = await secure_sha512_hex(cumulativeInput);
+    res = _getPassword(hexDigest);
+  }
+
+  return res;
+}
+
+
+// ----------------
+// helper functions
+// ----------------
+
+/**
+ * function equivalent to base64.b64encode in Python
+ */
+function python_b64encode(str) {
+    return base64ArrayBuffer(str2ab(str));
+}
+
+/**
+ * convert string to array buffer
+ * modified from:
+ * http://stackoverflow.com/questions/6965107/converting-between-strings-and-arraybuffers
+ * note that we're using Uint8Array where the author uses Uint16Array
+ */
+function str2ab(str) {
+  var buf = new ArrayBuffer(str.length); // 1 byte for each char
+  var bufView = new Uint8Array(buf);
+  for (var i=0, strLen=str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+/**
+ * convert arrayBuffer to base64
+ * http://stackoverflow.com/questions/7370943/retrieving-binary-file-content-using-javascript-base64-encode-it-and-reverse-de?rq=1
+ * https://gist.github.com/958841
+ */
+function base64ArrayBuffer(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+
+  return base64
+}
+
+
+
+
+// Export the go function as default
+export default go;
+</file>
+
+<file path="src/components/CopyForChat.svelte">
+<script>
+  export let contentToCopy = '';
+  let buttonText = 'Copy for Chat';
+
+  async function copyToClipboard() {
+    try {
+      await navigator.clipboard.writeText(contentToCopy);
+      buttonText = 'Copied!';
+      setTimeout(() => { buttonText = 'Copy for Chat'; }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      buttonText = 'Failed to copy';
+    }
+  }
+</script>
+
+<button on:click={copyToClipboard} class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded hover:bg-slate-300 dark:hover:bg-slate-600">
+  {buttonText}
+</button>
+</file>
+
+<file path="src/components/SearchTrigger.svelte">
+<script lang="ts">
+  import { onMount } from 'svelte';
+  
+  // This component acts as a trigger for the command palette
+  // It dispatches a custom event that the CommandPalette component listens for
+  let searchTriggerRef: HTMLButtonElement;
+  
+  function openCommandPalette() {
+    // Dispatch a custom event that the CommandPalette component will listen for
+    window.dispatchEvent(new CustomEvent('open-command-palette'));
+  }
+  
+  // Listen for the keyboard shortcut to focus this element briefly (for visual feedback)
+  onMount(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        // Add a brief focus effect when the keyboard shortcut is used
+        searchTriggerRef?.focus();
+        setTimeout(() => searchTriggerRef?.blur(), 100);
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  });
+</script>
+
+<button
+  bind:this={searchTriggerRef}
+  on:click={openCommandPalette}
+  class="flex items-center space-x-2 px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+  </svg>
+  <span>Search...</span>
+  <kbd class="hidden sm:inline-block px-1.5 py-0.5 text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded">
+    ⌘K
+  </kbd>
+</button>
+</file>
+
+<file path="src/components/Sidebar.astro">
+---
+const navItems = [
+  { href: '#writing', label: 'Writing' },
+  { href: '#talks', label: 'Talks' },
+  { href: '#teaching', label: 'Teaching' },
+  { href: '#about', label: 'About' },
+];
+---
+<nav class="sticky top-8">
+  <ul id="sidebar-nav">
+    {navItems.map(item => (
+      <li>
+        <a href={item.href} class="block p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('main section[id]');
+    const navLinks = document.querySelectorAll('#sidebar-nav a');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.toggle('font-bold', link.getAttribute('href') === `#${entry.target.id}`);
+            link.classList.toggle('bg-slate-100', link.getAttribute('href') === `#${entry.target.id}`);
+            link.classList.toggle('dark:bg-slate-800', link.getAttribute('href') === `#${entry.target.id}`);
+          });
+        }
+      });
+    }, { rootMargin: "-50% 0px -50% 0px" }); // Triggers when a section is in the middle of the viewport
+
+    sections.forEach(section => observer.observe(section));
+  });
+</script>
+</file>
 
 <file path="src/components/ThemeToggle.svelte">
 <script>
@@ -248,18 +936,6 @@ This section contains the contents of the repository's files.
     {/if}
   </button>
 {/if}
-</file>
-
-<file path="public/favicon.svg">
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128">
-    <path d="M50.4 78.5a75.1 75.1 0 0 0-28.5 6.9l24.2-65.7c.7-2 1.9-3.2 3.4-3.2h29c1.5 0 2.7 1.2 3.4 3.2l24.2 65.7s-11.6-7-28.5-7L67 45.5c-.4-1.7-1.6-2.8-2.9-2.8-1.3 0-2.5 1.1-2.9 2.7L50.4 78.5Zm-1.1 28.2Zm-4.2-20.2c-2 6.6-.6 15.8 4.2 20.2a17.5 17.5 0 0 1 .2-.7 5.5 5.5 0 0 1 5.7-4.5c2.8.1 4.3 1.5 4.7 4.7.2 1.1.2 2.3.2 3.5v.4c0 2.7.7 5.2 2.2 7.4a13 13 0 0 0 5.7 4.9v-.3l-.2-.3c-1.8-5.6-.5-9.5 4.4-12.8l1.5-1a73 73 0 0 0 3.2-2.2 16 16 0 0 0 6.8-11.4c.3-2 .1-4-.6-6l-.8.6-1.6 1a37 37 0 0 1-22.4 2.7c-5-.7-9.7-2-13.2-6.2Z" />
-    <style>
-        path { fill: #000; }
-        @media (prefers-color-scheme: dark) {
-            path { fill: #FFF; }
-        }
-    </style>
-</svg>
 </file>
 
 <file path="src/content/talks/2012/cuny_2011.html.md">
@@ -2543,25 +3219,348 @@ doi: 10.1037/a0016923
 The lack of consensus on how to characterize humans' capacity for belief reasoning has been brought into sharp focus by recent research. Children fail critical tests of belief reasoning before 3 to 4 years of age (H. Wellman, D. Cross, & J. Watson, 2001; H. Wimmer & J. Perner, 1983), yet infants apparently pass false-belief tasks at 13 or 15 months (K. H. Onishi & R. Baillargeon, 2005; L. Surian, S. Caldi, & D. Sperber, 2007). Nonhuman animals also fail critical tests of belief reasoning but can show very complex social behavior (e.g., J. Call & M. Tomasello, 2005). Fluent social interaction in adult humans implies efficient processing of beliefs, yet direct tests suggest that belief reasoning is cognitively demanding, even for adults (e.g., I. A. Apperly, D. Samson, & G. W. Humphreys, 2009). The authors interpret these findings by drawing an analogy with the domain of number cognition, where similarly contrasting results have been observed. They propose that the success of infants and nonhuman animals on some belief reasoning tasks may be best explained by a cognitively efficient but inflexible capacity for tracking belief-like states. In humans, this capacity persists in parallel with a later-developing, more flexible but more cognitively demanding theory-of-mind abilities.
 </file>
 
-<file path="src/layouts/PageLayout.astro">
+<file path="src/layouts/EmptyLayout.astro">
 ---
-// src/layouts/PageLayout.astro
-import BaseLayout from './BaseLayout.astro';
+// src/layouts/EmptyLayout.astro
+// this is used for hashme-q3 etc (which do not have any styles, toobar etc)
+
+
 interface Props {
   title: string;
 }
+
 const { title } = Astro.props;
 ---
-<BaseLayout title={title}>
-  <div class="container mx-auto max-w-4xl px-4 py-8">
-    <article class="prose prose-slate dark:prose-invert max-w-none">
-      <h1 class="text-3xl font-bold tracking-tight text-slate-800 dark:text-slate-200 mb-6">{title}</h1>
-      <div class="text-slate-500 dark:text-slate-400 leading-relaxed">
-        <slot /> <!-- The Markdown body content will go here -->
-      </div>
-    </article>
-  </div>
-</BaseLayout>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot /> <!-- Page content will be injected here -->
+  </body>
+</html>
+</file>
+
+<file path="src/lib/components/ui/command/command-dialog.svelte">
+<script lang="ts">
+	import type { Command as CommandPrimitive, Dialog as DialogPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
+	import Command from "./command.svelte";
+	import * as Dialog from "$lib/components/ui/dialog/index.js";
+	import type { WithoutChildrenOrChild } from "$lib/utils.js";
+
+	let {
+		open = $bindable(false),
+		ref = $bindable(null),
+		value = $bindable(""),
+		title = "Command Palette",
+		description = "Search for a command to run",
+		portalProps,
+		children,
+		...restProps
+	}: WithoutChildrenOrChild<DialogPrimitive.RootProps> &
+		WithoutChildrenOrChild<CommandPrimitive.RootProps> & {
+			portalProps?: DialogPrimitive.PortalProps;
+			children: Snippet;
+			title?: string;
+			description?: string;
+		} = $props();
+</script>
+
+<Dialog.Root bind:open {...restProps}>
+	<Dialog.Header class="sr-only">
+		<Dialog.Title>{title}</Dialog.Title>
+		<Dialog.Description>{description}</Dialog.Description>
+	</Dialog.Header>
+	<Dialog.Content class="overflow-hidden p-0" {portalProps}>
+		<Command
+			class="**:data-[slot=command-input-wrapper]:h-12 [&_[data-command-group]:not([hidden])_~[data-command-group]]:pt-0 [&_[data-command-group]]:px-2 [&_[data-command-input-wrapper]_svg]:h-5 [&_[data-command-input-wrapper]_svg]:w-5 [&_[data-command-input]]:h-12 [&_[data-command-item]]:px-2 [&_[data-command-item]]:py-3 [&_[data-command-item]_svg]:h-5 [&_[data-command-item]_svg]:w-5"
+			{...restProps}
+			bind:value
+			bind:ref
+			{children}
+		/>
+	</Dialog.Content>
+</Dialog.Root>
+</file>
+
+<file path="src/lib/components/ui/command/command-link-item.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: CommandPrimitive.LinkItemProps = $props();
+</script>
+
+<CommandPrimitive.LinkItem
+	bind:ref
+	data-slot="command-item"
+	class={cn(
+		"aria-selected:bg-accent aria-selected:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground outline-hidden relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+		className
+	)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/command/command-list.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: CommandPrimitive.ListProps = $props();
+</script>
+
+<CommandPrimitive.List
+	bind:ref
+	data-slot="command-list"
+	class={cn("max-h-[300px] scroll-py-1 overflow-y-auto overflow-x-hidden", className)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/command/command-separator.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: CommandPrimitive.SeparatorProps = $props();
+</script>
+
+<CommandPrimitive.Separator
+	bind:ref
+	data-slot="command-separator"
+	class={cn("bg-border -mx-1 h-px", className)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/command/command-shortcut.svelte">
+<script lang="ts">
+	import { cn, type WithElementRef } from "$lib/utils.js";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLSpanElement>> = $props();
+</script>
+
+<span
+	bind:this={ref}
+	data-slot="command-shortcut"
+	class={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</span>
+</file>
+
+<file path="src/lib/components/ui/command/index.ts">
+import { Command as CommandPrimitive } from "bits-ui";
+
+import Root from "./command.svelte";
+import Dialog from "./command-dialog.svelte";
+import Empty from "./command-empty.svelte";
+import Group from "./command-group.svelte";
+import Item from "./command-item.svelte";
+import Input from "./command-input.svelte";
+import List from "./command-list.svelte";
+import Separator from "./command-separator.svelte";
+import Shortcut from "./command-shortcut.svelte";
+import LinkItem from "./command-link-item.svelte";
+
+const Loading = CommandPrimitive.Loading;
+
+export {
+	Root,
+	Dialog,
+	Empty,
+	Group,
+	Item,
+	LinkItem,
+	Input,
+	List,
+	Separator,
+	Shortcut,
+	Loading,
+	//
+	Root as Command,
+	Dialog as CommandDialog,
+	Empty as CommandEmpty,
+	Group as CommandGroup,
+	Item as CommandItem,
+	LinkItem as CommandLinkItem,
+	Input as CommandInput,
+	List as CommandList,
+	Separator as CommandSeparator,
+	Shortcut as CommandShortcut,
+	Loading as CommandLoading,
+};
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-close.svelte">
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+
+	let { ref = $bindable(null), ...restProps }: DialogPrimitive.CloseProps = $props();
+</script>
+
+<DialogPrimitive.Close bind:ref data-slot="dialog-close" {...restProps} />
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-description.svelte">
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DialogPrimitive.DescriptionProps = $props();
+</script>
+
+<DialogPrimitive.Description
+	bind:ref
+	data-slot="dialog-description"
+	class={cn("text-muted-foreground text-sm", className)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-footer.svelte">
+<script lang="ts">
+	import { cn, type WithElementRef } from "$lib/utils.js";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-slot="dialog-footer"
+	class={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-header.svelte">
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn, type WithElementRef } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-slot="dialog-header"
+	class={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-title.svelte">
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DialogPrimitive.TitleProps = $props();
+</script>
+
+<DialogPrimitive.Title
+	bind:ref
+	data-slot="dialog-title"
+	class={cn("text-lg font-semibold leading-none", className)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-trigger.svelte">
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+
+	let { ref = $bindable(null), ...restProps }: DialogPrimitive.TriggerProps = $props();
+</script>
+
+<DialogPrimitive.Trigger bind:ref data-slot="dialog-trigger" {...restProps} />
+</file>
+
+<file path="src/lib/components/ui/dialog/index.ts">
+import { Dialog as DialogPrimitive } from "bits-ui";
+
+import Title from "./dialog-title.svelte";
+import Footer from "./dialog-footer.svelte";
+import Header from "./dialog-header.svelte";
+import Overlay from "./dialog-overlay.svelte";
+import Content from "./dialog-content.svelte";
+import Description from "./dialog-description.svelte";
+import Trigger from "./dialog-trigger.svelte";
+import Close from "./dialog-close.svelte";
+
+const Root = DialogPrimitive.Root;
+const Portal = DialogPrimitive.Portal;
+
+export {
+	Root,
+	Title,
+	Portal,
+	Footer,
+	Header,
+	Trigger,
+	Overlay,
+	Content,
+	Description,
+	Close,
+	//
+	Root as Dialog,
+	Title as DialogTitle,
+	Portal as DialogPortal,
+	Footer as DialogFooter,
+	Header as DialogHeader,
+	Trigger as DialogTrigger,
+	Overlay as DialogOverlay,
+	Content as DialogContent,
+	Description as DialogDescription,
+	Close as DialogClose,
+};
 </file>
 
 <file path="src/lib/utils.ts">
@@ -2580,40 +3579,382 @@ export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 </file>
 
-<file path="src/pages/writing/[...slug].astro">
+<file path="src/pages/talks/[...slug].astro">
 ---
-// src/pages/writing/[...slug].astro
+// src/pages/talks/[...slug].astro
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
+import Slides from '../../components/Slides.astro'; // Import the new component
 
-// This function runs at build time to find all publications
+// This function runs at build time to find all talks
 // and tell Astro to create a page for each one.
 export async function getStaticPaths() {
-  const writingEntries = await getCollection('writing');
-  return writingEntries.map(entry => ({
+  const talkEntries = await getCollection('talks');
+  return talkEntries.map(entry => ({
     params: { slug: entry.slug },
     props: { entry },
   }));
 }
 
+import CopyForChat from '../../components/CopyForChat.svelte';
+
 const { entry } = Astro.props;
-const { Content } = await entry.render(); // This gets the Markdown content
+const { Content } = await entry.render();
+
+// Format the content specifically for the clipboard
+// Use the raw markdown body instead of the rendered Content component
+const textForLLM = `
+Title: ${entry.data.title}
+Authors: ${entry.data.authors}
+Year: ${entry.data.pubDate ? new Date(entry.data.pubDate).getFullYear() : 'Unknown'}
+
+---
+
+${entry.body}
+`.trim();
 ---
 <PageLayout title={entry.data.title}>
-  <div class="mb-4 text-sm text-slate-600 dark:text-slate-400">
-    <p><strong>Authors:</strong> {entry.data.authors}</p>
-    <p><strong>Published:</strong> {entry.data.year}</p>
-    {entry.data.journal && <p><strong>Journal:</strong> {entry.data.journal}</p>}
-    {entry.data.doi && <p><a href={`http://dx.doi.org/${entry.data.doi}`} target="_blank">DOI: {entry.data.doi}</a></p>}
+  <div class="flex justify-end mb-4">
+    <CopyForChat contentToCopy={textForLLM} client:load />
   </div>
-  <Content /> <!-- This renders the main body of the Markdown file -->
+  
+  {/* ... (TODO: code for talk metadata) ... */}
+
+  <!-- Conditionally render the Slides component -->
+  {entry.data.slideImages && entry.data.slideImages.length > 0 && (
+    <div class="my-8">
+      <h2 class="text-2xl font-bold mb-4">Slides</h2>
+      <Slides images={entry.data.slideImages} />
+    </div>
+  )}
+
+  <Content />
 </PageLayout>
 </file>
 
-<file path="src/styles/global.css">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+<file path="src/pages/hashme-q3.astro">
+---
+import EmptyLayout from '../layouts/EmptyLayout.astro';
+---
+<EmptyLayout title="q3-hashme Utility">
+
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      font-size: 16px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+    input {
+      padding: 12px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
+    input:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    #result {
+      font-weight: bold;
+      cursor: pointer;
+      padding: 12px;
+      border: 1px dashed #ccc;
+      border-radius: 4px;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      background-color: #f9f9f9;
+      transition: background-color 0.2s;
+      word-break: break-all;
+      margin-top: 5px;
+    }
+    #result:hover {
+      background-color: #f0f0f0;
+    }
+    #result:active {
+      background-color: #e0e0e0;
+    }
+    .result-container {
+      margin-top: 25px;
+    }
+    .result-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .green {
+      color: #2ecc71;
+    }
+    .red {
+      color: #e74c3c;
+    }
+    .note {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 25px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #4a90e2;
+    }
+    .note p {
+      margin: 0.5em 0;
+    }
+    
+    /* Media queries for responsive design */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      input {
+        padding: 10px;
+      }
+      .note {
+        padding: 10px;
+      }
+    }
+  </style>
+
+
+  <!-- Paste the old HTML form structure here -->
+  <h1>q3-hashme</h1>
+  
+  <form>
+    <div class="input-group">
+      <label for="pw1">Master Password:</label>
+      <input id="pw1" type="password" autocomplete="off" placeholder="Enter your master password" />
+    </div>
+    
+    <div class="input-group">
+      <label for="dom1">Domain:</label>
+      <input id="dom1" type="text" placeholder="e.g., example.com" />
+    </div>
+    
+    <div class="input-group">
+      <label for="pw2">Confirm Password:</label>
+      <input id="pw2" type="password" autocomplete="off" placeholder="Re-enter your master password" />
+    </div>
+    
+    <div class="input-group">
+      <label for="dom2">Confirm Domain:</label>
+      <input id="dom2" type="text" placeholder="Re-enter the domain" />
+    </div>
+  </form>
+  
+  <div class="result-container">
+    <div>
+      <span class="result-label">Generated Password:</span>
+      <div id="result">Enter details above</div>
+    </div>
+    <div style="margin-top: 15px;">
+      <span class="result-label">Inputs Match:</span>
+      <span id="match" style="font-weight: bold;">false</span>
+    </div>
+  </div>
+  
+  <div class="note">
+    <p>Click on the generated password to copy it to clipboard.</p>
+    <p>Note: This tool works entirely in your browser. Your master password is never sent to any server.</p>
+  </div>
+
+  <!-- Import the q3.js module -->
+  <script type="module">
+    // Import the go function from q3.js (from public directory)
+    import generatePassword from '/q3-browser.js';
+    
+    // Make the function available globally for the UI code
+    window.q3_generate_password = async function(masterPassword, domain) {
+      try {
+        return await generatePassword(domain, masterPassword);
+      } catch (error) {
+        console.error('Error generating password:', error);
+        return 'Error generating password';
+      }
+    };
+
+    // UI functionality - define and initialize immediately
+    function initUI() {
+      function match() {
+        var pw1 = document.getElementById('pw1').value;
+        var pw2 = document.getElementById('pw2').value;
+        var dom1 = document.getElementById('dom1').value;
+        var dom2 = document.getElementById('dom2').value;
+        return (pw1 === pw2) && (dom1 === dom2);
+      }
+      
+      function match_display() {
+        var matches = match();
+        document.getElementById('match').innerHTML = matches;
+        if (matches) {
+          document.getElementById('match').className = 'green';
+          document.getElementById('result').className = '';
+        } else {
+          document.getElementById('match').className = 'red';
+          document.getElementById('result').className = 'red';
+        }
+      }
+      
+      // Generate and display the password
+      async function result_display() {
+        var pw1 = document.getElementById('pw1').value;
+        var pw2 = document.getElementById('pw2').value;
+        var dom1 = document.getElementById('dom1').value;
+        var dom2 = document.getElementById('dom2').value;
+        
+        var condition = match();
+        condition = condition || (dom2 === '' && pw2 === '');
+        
+        if (condition && pw1 && dom1) {
+          try {
+            const generatedPassword = await window.q3_generate_password(pw1, dom1);
+            document.getElementById('result').innerHTML = generatedPassword;
+          } catch (error) {
+            document.getElementById('result').innerHTML = 'Error';
+            console.error(error);
+          }
+        } else if (!pw1 || !dom1) {
+          document.getElementById('result').innerHTML = 'Enter details above';
+        } else {
+          document.getElementById('result').innerHTML = '--- match inputs first! ---';
+        }
+      }
+      
+      async function update() {
+        match_display();
+        await result_display();
+      }
+      
+      // Copy password to clipboard
+      function copy_pw() {
+        var res = document.getElementById('result').innerHTML;
+        if (res && res !== 'Enter details above' && res !== '--- match inputs first! ---' && res !== 'Error') {
+          // Try to use the modern clipboard API
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(res)
+              .then(() => {
+                showCopiedFeedback();
+              })
+              .catch(err => {
+                fallbackCopyToClipboard(res);
+              });
+          } else {
+            fallbackCopyToClipboard(res);
+          }
+        }
+      }
+      
+      // Fallback method for copying to clipboard
+      function fallbackCopyToClipboard(text) {
+        // Create a temporary textarea element
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        
+        // Make it non-visible
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        textArea.style.left = '0';
+        textArea.style.top = '0';
+        
+        document.body.appendChild(textArea);
+        
+        // Handle iOS devices specifically
+        if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+          // Save current selection
+          const editable = textArea.contentEditable;
+          const readOnly = textArea.readOnly;
+          
+          textArea.contentEditable = true;
+          textArea.readOnly = false;
+          
+          // Create a range and select the text
+          const range = document.createRange();
+          range.selectNodeContents(textArea);
+          
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          
+          textArea.setSelectionRange(0, 999999);
+          
+          // Restore contentEditable and readOnly states
+          textArea.contentEditable = editable;
+          textArea.readOnly = readOnly;
+        } else {
+          textArea.select();
+        }
+        
+        try {
+          document.execCommand('copy');
+          showCopiedFeedback();
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+          alert('Could not copy password. Please long-press and copy manually.');
+        }
+        
+        document.body.removeChild(textArea);
+      }
+      
+      // Show visual feedback that the password was copied
+      function showCopiedFeedback() {
+        const originalText = document.getElementById('result').innerHTML;
+        const resultElement = document.getElementById('result');
+        
+        resultElement.innerHTML = 'Copied!';
+        resultElement.style.backgroundColor = '#d4edda';
+        resultElement.style.color = '#155724';
+        resultElement.style.borderColor = '#c3e6cb';
+        
+        setTimeout(() => {
+          resultElement.innerHTML = originalText;
+          resultElement.style.backgroundColor = '';
+          resultElement.style.color = '';
+          resultElement.style.borderColor = '';
+        }, 1500);
+      }
+      
+      // Configure event listeners
+      document.getElementById('pw1').addEventListener('input', update);
+      document.getElementById('pw2').addEventListener('input', update);
+      document.getElementById('dom1').addEventListener('input', update);
+      document.getElementById('dom2').addEventListener('input', update);
+      
+      // Configure click for password copying
+      document.getElementById('result').addEventListener('click', copy_pw);
+      
+      // Initial update
+      update();
+    }
+
+    // Initialize the UI now that everything is loaded
+    initUI();
+  </script>
+</EmptyLayout>
 </file>
 
 <file path=".gitignore">
@@ -2713,6 +4054,18 @@ import { vitePreprocess } from '@astrojs/svelte';
 
 export default {
 	preprocess: vitePreprocess(),
+}
+</file>
+
+<file path="tailwind.config.mjs">
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: 'class',
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 }
 </file>
 
@@ -2834,6 +4187,265 @@ export default {
 /writing/two_systems.html.html    /writing/two_systems.html/    301
 /writing/two_systems_goal_ascription.html.html    /writing/two_systems_goal_ascription.html/    301
 /writing/what_does_knowledge_explain.html.html    /writing/what_does_knowledge_explain.html/    301
+</file>
+
+<file path="scripts/generate-llms.mjs">
+import fs from 'fs-extra';
+import path from 'path';
+import yaml from 'yaml';
+
+// Function to parse frontmatter and content from markdown files
+function parseFrontmatter(content) {
+  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+  const match = content.match(frontmatterRegex);
+  
+  if (!match) {
+    return { data: {}, body: content };
+  }
+  
+  const [, frontmatterStr, body] = match;
+  const data = yaml.parse(frontmatterStr);
+  
+  return { data, body };
+}
+
+// Function to recursively read all markdown files from a directory
+async function readMarkdownFiles(dir) {
+  const items = [];
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      // Recursively read subdirectories
+      const subItems = await readMarkdownFiles(fullPath);
+      items.push(...subItems);
+    } else if (entry.name.endsWith('.md')) {
+      const content = await fs.readFile(fullPath, 'utf-8');
+      const { data, body } = parseFrontmatter(content);
+      items.push({ data, body, type: path.basename(dir) === 'writing' ? 'writing' : 'talk' });
+    }
+  }
+  
+  return items;
+}
+
+// Read all writing content files
+const writingDir = path.join(process.cwd(), 'src/content/writing');
+const writingItems = await readMarkdownFiles(writingDir);
+
+// Read all talks content files
+const talksDir = path.join(process.cwd(), 'src/content/talks');
+const talkItems = await readMarkdownFiles(talksDir);
+
+// Combine all items
+const allItems = [...writingItems, ...talkItems];
+
+let fullText = "Site: Stephen Butterfill's Personal Academic Website\nAuthor: Stephen Butterfill\n\n---\n\n";
+
+for (const item of allItems) {
+  // Use the raw markdown body
+  const cleanText = item.body;
+
+  fullText += `Title: ${item.data.title || 'Untitled'}\n`;
+  fullText += `Authors: ${item.data.authors || 'Unknown'}\n`;
+  
+  // Handle different date/year formats for writing vs talks
+  if (item.type === 'talk' && item.data.pubDate) {
+    const year = new Date(item.data.pubDate).getFullYear();
+    fullText += `Year: ${year}\n`;
+    if (item.data.event) {
+      fullText += `Event: ${item.data.event}\n`;
+    }
+  } else if (item.data.year) {
+    fullText += `Year: ${item.data.year}\n`;
+    if (item.data.journal) {
+      fullText += `Journal: ${item.data.journal}\n`;
+    }
+  } else {
+    fullText += `Year: Unknown\n`;
+  }
+  
+  fullText += `Type: ${item.type === 'talk' ? 'Talk' : 'Publication'}\n\n`;
+  fullText += `${cleanText}\n\n---\n\n`;
+}
+
+await fs.writeFile('public/llms.txt', fullText);
+console.log('Successfully generated llms.txt');
+</file>
+
+<file path="src/components/CommandPalette.svelte">
+<script lang="ts">
+  import { onMount } from 'svelte';
+  // REMOVED: import { goto } from '$app/navigation'; // This was incorrect.
+
+  import * as Command from '$lib/components/ui/command';
+
+  interface ContextualAction {
+    label: string;
+    action: string;
+    url?: string;
+  }
+
+  // Props passed from Astro
+  export let allPages: { url: string; title: string }[] = [];
+  export let contextualActions: ContextualAction[] = [];
+
+  // Internal state for the component
+  let open = false;
+  let inputValue = '';
+
+  // Reactive statement to filter pages based on user input
+  $: filteredPages = inputValue === ''
+    ? allPages
+    : allPages.filter(page =>
+        page.title.toLowerCase().includes(inputValue.toLowerCase())
+      );
+
+  // Keyboard shortcut listener (Cmd/Ctrl + K) and custom event listener
+  onMount(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        open = !open;
+      }
+    };
+
+    const openFromTrigger = () => {
+      open = true;
+    };
+
+    document.addEventListener('keydown', down);
+    window.addEventListener('open-command-palette', openFromTrigger);
+    
+    return () => {
+      document.removeEventListener('keydown', down);
+      window.removeEventListener('open-command-palette', openFromTrigger);
+    };
+  });
+
+  // Function to handle selecting a page
+  function handlePageSelect(url: string) {
+    // CORRECTED: Use the standard browser API for navigation.
+    window.location.href = url;
+    open = false;
+  }
+
+  // Function to execute a contextual action
+  function handleActionSelect(action: ContextualAction) {
+    switch (action.action) {
+      case 'openUrl':
+        if (action.url) {
+          window.open(action.url, '_blank');
+        }
+        break;
+      // Add more action types here as needed
+      default:
+        console.warn('Unknown action type:', action.action);
+    }
+    open = false;
+  }
+</script>
+
+<Command.Dialog bind:open>
+  <Command.Input placeholder="Type a command or search..." bind:value={inputValue} />
+  <Command.List>
+    <Command.Empty>No results found.</Command.Empty>
+
+    <!-- Contextual Actions Group -->
+    {#if contextualActions.length > 0}
+      <Command.Group heading="Page Actions">
+        {#each contextualActions as action}
+          <Command.Item onSelect={() => handleActionSelect(action)}>
+            <span>{action.label}</span>
+          </Command.Item>
+        {/each}
+      </Command.Group>
+    {/if}
+
+    <!-- Pages Group -->
+    <Command.Group heading="Navigate">
+      {#each filteredPages.slice(0, 10) as page (page.url)}
+        <Command.Item onSelect={() => handlePageSelect(page.url)}>
+          <span>{page.title}</span>
+        </Command.Item>
+      {/each}
+    </Command.Group>
+  </Command.List>
+</Command.Dialog>
+</file>
+
+<file path="src/components/Slides.astro">
+---
+// src/components/Slides.astro
+interface Props {
+  images: string[];
+}
+const { images } = Astro.props;
+---
+<div class="reveal" style="width: 100%; height: 600px;">
+  <div class="slides">
+    {images.map(src => (
+      <section>
+        <img src={src} alt="Slide image" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+      </section>
+    ))}
+  </div>
+</div>
+
+<!-- We need to import the CSS and initialize the library on the client -->
+<link rel="stylesheet" href="/reveal.js/dist/reveal.css">
+<link rel="stylesheet" href="/reveal.js/dist/theme/black.css">
+
+<style>
+  /* Override any conflicting styles */
+  .reveal {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: 600px !important;
+  }
+  .reveal .slides {
+    display: block !important;
+  }
+  .reveal .slides section {
+    display: none !important;
+  }
+  .reveal .slides section.present {
+    display: block !important;
+  }
+</style>
+
+<script src="/reveal.js/dist/reveal.js" is:inline></script>
+<script is:inline>
+  // Wait for DOM to be ready and ensure reveal.js loads
+  function initializeReveal() {
+    if (window.Reveal) {
+      console.log('Initializing Reveal.js...');
+      let deck = new window.Reveal(document.querySelector('.reveal'), {
+        embedded: true,
+        width: '100%',
+        height: 600,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: 'slide'
+      });
+      deck.initialize().then(() => {
+        console.log('Reveal.js initialized successfully');
+      });
+    } else {
+      console.log('Reveal.js not loaded, retrying...');
+      setTimeout(initializeReveal, 100);
+    }
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeReveal);
+  } else {
+    initializeReveal();
+  }
+</script>
 </file>
 
 <file path="src/content/writing/developing_mind.html.md">
@@ -6659,16 +8271,408 @@ export const collections = {
 };
 </file>
 
-<file path="src/layouts/BaseLayout.astro">
+<file path="src/lib/components/ui/command/command-empty.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: CommandPrimitive.EmptyProps = $props();
+</script>
+
+<CommandPrimitive.Empty
+	bind:ref
+	data-slot="command-empty"
+	class={cn("py-6 text-center text-sm text-gray-600 dark:text-gray-400", className)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/command/command-group.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive, useId } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		heading,
+		value,
+		...restProps
+	}: CommandPrimitive.GroupProps & {
+		heading?: string;
+	} = $props();
+</script>
+
+<CommandPrimitive.Group
+	bind:ref
+	data-slot="command-group"
+	class={cn("text-gray-900 dark:text-gray-100 overflow-hidden p-1", className)}
+	value={value ?? heading ?? `----${useId()}`}
+	{...restProps}
+>
+	{#if heading}
+		<CommandPrimitive.GroupHeading
+			class="text-gray-600 dark:text-gray-400 px-2 py-1.5 text-xs font-medium"
+		>
+			{heading}
+		</CommandPrimitive.GroupHeading>
+	{/if}
+	<CommandPrimitive.GroupItems {children} />
+</CommandPrimitive.Group>
+</file>
+
+<file path="src/lib/components/ui/command/command-input.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import SearchIcon from "@lucide/svelte/icons/search";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		value = $bindable(""),
+		...restProps
+	}: CommandPrimitive.InputProps = $props();
+</script>
+
+<div class="flex h-9 items-center gap-2 border-b border-gray-200 dark:border-gray-700 px-3" data-slot="command-input-wrapper">
+	<SearchIcon class="size-4 shrink-0 text-gray-500 dark:text-gray-400" />
+	<CommandPrimitive.Input
+		data-slot="command-input"
+		class={cn(
+			"placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none flex h-10 w-full rounded-md bg-transparent py-3 text-sm text-gray-900 dark:text-gray-100 disabled:cursor-not-allowed disabled:opacity-50",
+			className
+		)}
+		bind:ref
+		{...restProps}
+		bind:value
+	/>
+	<!-- Note: focus:outline-none removes the blue focus border for this input.
+	     This is intentional for the command palette input as the visual focus 
+	     is provided by the dialog container styling instead. Do not re-add 
+	     the outline as it creates a misplaced blue border. -->
+</div>
+</file>
+
+<file path="src/lib/components/ui/command/command-item.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: CommandPrimitive.ItemProps = $props();
+</script>
+
+<CommandPrimitive.Item
+	bind:ref
+	data-slot="command-item"
+	class={cn(
+		"aria-selected:bg-blue-100 dark:aria-selected:bg-blue-900 aria-selected:text-blue-900 dark:aria-selected:text-blue-100 hover:bg-gray-100 dark:hover:bg-gray-800 [&_svg:not([class*='text-'])]:text-gray-500 dark:[&_svg:not([class*='text-'])]:text-gray-400 outline-hidden relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+		className
+	)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/command/command.svelte">
+<script lang="ts">
+	import { Command as CommandPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		value = $bindable(""),
+		class: className,
+		...restProps
+	}: CommandPrimitive.RootProps = $props();
+</script>
+
+<CommandPrimitive.Root
+	bind:value
+	bind:ref
+	data-slot="command"
+	class={cn(
+		"bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex h-full w-full flex-col overflow-hidden rounded-md",
+		className
+	)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-content.svelte">
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import XIcon from "@lucide/svelte/icons/x";
+	import type { Snippet } from "svelte";
+	import * as Dialog from "./index.js";
+	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		portalProps,
+		children,
+		showCloseButton = true,
+		...restProps
+	}: WithoutChildrenOrChild<DialogPrimitive.ContentProps> & {
+		portalProps?: DialogPrimitive.PortalProps;
+		children: Snippet;
+		showCloseButton?: boolean;
+	} = $props();
+</script>
+
+<Dialog.Portal {...portalProps}>
+	<Dialog.Overlay />
+	<DialogPrimitive.Content
+		bind:ref
+		data-slot="dialog-content"
+		class={cn(
+			"bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed left-[50%] top-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-lg duration-200 sm:max-w-lg",
+			className
+		)}
+		{...restProps}
+	>
+		{@render children?.()}
+		{#if showCloseButton}
+			<DialogPrimitive.Close
+				class="ring-offset-background focus:ring-ring rounded-xs focus:outline-hidden absolute right-4 top-4 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+			>
+				<XIcon />
+				<span class="sr-only">Close</span>
+			</DialogPrimitive.Close>
+		{/if}
+	</DialogPrimitive.Content>
+</Dialog.Portal>
+</file>
+
+<file path="src/lib/components/ui/dialog/dialog-overlay.svelte">
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DialogPrimitive.OverlayProps = $props();
+</script>
+
+<DialogPrimitive.Overlay
+	bind:ref
+	data-slot="dialog-overlay"
+	class={cn(
+		"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80",
+		className
+	)}
+	{...restProps}
+/>
+</file>
+
+<file path="src/styles/global.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</file>
+
+<file path="tsconfig.json">
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    // Add these two properties:
+    "baseUrl": ".",
+    "paths": {
+      "$lib": ["src/lib"],
+      "$lib/*": ["src/lib/*"]
+    }
+  }
+}
+</file>
+
+<file path="src/layouts/PageLayout.astro">
 ---
-// src/layouts/BaseLayout.astro
-import ThemeToggle from '../components/ThemeToggle.svelte';
+// src/layouts/PageLayout.astro
+import BaseLayout from './BaseLayout.astro';
+
+interface ContextualAction {
+  label: string;
+  action: string;
+  url?: string;
+}
 
 interface Props {
   title: string;
+  contextualActions?: ContextualAction[];
+}
+const { title, contextualActions } = Astro.props;
+---
+<BaseLayout title={title} contextualActions={contextualActions}>
+  <div class="container mx-auto max-w-4xl px-4 py-8">
+    <article class="prose prose-slate dark:prose-invert max-w-none">
+      <h1 class="text-3xl font-bold tracking-tight text-slate-800 dark:text-slate-200 mb-6">{title}</h1>
+      <div class="text-slate-500 dark:text-slate-400 leading-relaxed">
+        <slot /> <!-- The Markdown body content will go here -->
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+</file>
+
+<file path="src/pages/writing/[...slug].astro">
+---
+// src/pages/writing/[...slug].astro
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+
+// This function runs at build time to find all publications
+// and tell Astro to create a page for each one.
+export async function getStaticPaths() {
+  const writingEntries = await getCollection('writing');
+  return writingEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
 }
 
-const { title } = Astro.props;
+import CopyForChat from '../../components/CopyForChat.svelte';
+
+const { entry } = Astro.props;
+const { Content } = await entry.render(); // This gets the Markdown content
+
+// Format the content specifically for the clipboard
+// Use the raw markdown body instead of the rendered Content component
+const textForLLM = `
+Title: ${entry.data.title}
+Authors: ${entry.data.authors}
+Year: ${entry.data.year}
+
+---
+
+${entry.body}
+`.trim();
+
+
+const pdfUrl = entry.data.pdfUrl;
+
+// Define actions specific to this page
+const pageActions = [];
+if (pdfUrl) {
+  pageActions.push({
+    label: 'Download PDF',
+    action: 'openUrl',
+    url: pdfUrl
+  });
+}
+
+---
+<PageLayout title={entry.data.title} contextualActions={pageActions}>
+  <div class="flex justify-end mb-4">
+    <CopyForChat contentToCopy={textForLLM} client:load />
+  </div>
+  <div class="mb-4 text-sm text-slate-600 dark:text-slate-400">
+    <p><strong>Authors:</strong> {entry.data.authors}</p>
+    <p><strong>Published:</strong> {entry.data.year}</p>
+    {entry.data.journal && <p><strong>Journal:</strong> {entry.data.journal}</p>}
+    {entry.data.doi && <p><a href={`http://dx.doi.org/${entry.data.doi}`} target="_blank">DOI: {entry.data.doi}</a></p>}
+  </div>
+  <Content /> <!-- This renders the main body of the Markdown file -->
+</PageLayout>
+</file>
+
+<file path="astro.config.mjs">
+// @ts-check
+import { defineConfig } from 'astro/config';
+import svelte from '@astrojs/svelte';
+import tailwind from '@astrojs/tailwind'; // 1. Import the integration
+
+// https://astro.build/config
+export default defineConfig({
+  // 2. Add the integration to the array
+  integrations: [svelte(), tailwind()],
+});
+</file>
+
+<file path="package.json">
+{
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node ./scripts/generate-llms.mjs && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^7.1.0",
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.12.9",
+    "reveal.js": "^5.2.1",
+    "svelte": "^5.38.0",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@internationalized/date": "^3.8.2",
+    "@lucide/svelte": "^0.515.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "bits-ui": "^2.9.2",
+    "clsx": "^2.1.1",
+    "cson-parser": "^4.0.9",
+    "fs-extra": "^11.3.1",
+    "pug": "^3.0.3",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^2.1.0",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.3.6",
+    "yaml": "^2.8.1"
+  }
+}
+</file>
+
+<file path="src/layouts/BaseLayout.astro">
+---
+// src/layouts/BaseLayout.astro
+import CommandPalette from '../components/CommandPalette.svelte';
+import SearchTrigger from '../components/SearchTrigger.svelte';
+import { getCollection } from 'astro:content';
+import ThemeToggle from '../components/ThemeToggle.svelte';
+import '../styles/global.css'; 
+
+// Fetch ALL content at build time
+const writing = await getCollection('writing');
+const talks = await getCollection('talks');
+const teaching = await getCollection('teaching');
+
+// Format it into a simple structure for the command palette
+const allPages = [
+  ...writing.map(item => ({ title: item.data.title, url: `/writing/${item.slug}/` })),
+  ...talks.map(item => ({ title: item.data.title, url: `/talks/${item.slug}/` })),
+  ...teaching.map(item => ({ title: item.data.title, url: `/teaching/${item.slug}/` })),
+];
+
+interface ContextualAction {
+  label: string;
+  action: string;
+  url?: string;
+}
+
+interface Props {
+  title: string;
+  // Allow pages to pass extra actions
+  contextualActions?: ContextualAction[];
+}
+
+const { title, contextualActions = [] } = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -6705,18 +8709,21 @@ const { title } = Astro.props;
               Stephen Butterfill
             </a>
           </div>
-          <nav class="flex items-center space-x-6">
-            <a href="/writing/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-              Writing
-            </a>
-            <a href="/talks/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-              Talks
-            </a>
-            <a href="/teaching/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
-              Teaching
-            </a>
-            <ThemeToggle client:load />
-          </nav>
+          <div class="flex items-center space-x-4">
+            <SearchTrigger client:load />
+            <nav class="flex items-center space-x-6">
+              <a href="/writing/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                Writing
+              </a>
+              <a href="/talks/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                Talks
+              </a>
+              <a href="/teaching/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                Teaching
+              </a>
+              <ThemeToggle client:load />
+            </nav>
+          </div>
         </div>
       </div>
     </header>
@@ -6728,86 +8735,19 @@ const { title } = Astro.props;
         <p>&copy; {new Date().getFullYear()} Stephen Butterfill. All rights reserved.</p>
       </div>
     </footer>
+    <CommandPalette allPages={allPages} contextualActions={contextualActions} client:load />
   </body>
 </html>
-</file>
-
-<file path="astro.config.mjs">
-// @ts-check
-import { defineConfig } from 'astro/config';
-
-import svelte from '@astrojs/svelte';
-
-// import tailwindcss from '@tailwindcss/vite';
-
-// https://astro.build/config
-export default defineConfig({
-  integrations: [svelte()],
-
-  // vite: {
-  //   plugins: [tailwindcss()]
-  // }
-});
-</file>
-
-<file path="package.json">
-{
-  "name": "",
-  "type": "module",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/svelte": "^7.1.0",
-    "@astrojs/tailwind": "^6.0.2",
-    "astro": "^5.12.9",
-    "svelte": "^5.38.0",
-    "typescript": "^5.9.2"
-  },
-  "devDependencies": {
-    "@lucide/svelte": "^0.539.0",
-    "@tailwindcss/vite": "^4.1.11",
-    "clsx": "^2.1.1",
-    "cson-parser": "^4.0.9",
-    "fs-extra": "^11.3.1",
-    "pug": "^3.0.3",
-    "tailwind-merge": "^3.3.1",
-    "tailwind-variants": "^2.1.0",
-    "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.7",
-    "tw-animate-css": "^1.3.6",
-    "yaml": "^2.8.1"
-  }
-}
-</file>
-
-<file path="tsconfig.json">
-{
-  "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
-  "compilerOptions": {
-    // Add these two properties:
-    "baseUrl": ".",
-    "paths": {
-      "$lib": ["src/lib"],
-      "$lib/*": ["src/lib/*"]
-    }
-  }
-}
 </file>
 
 <file path="src/pages/index.astro">
 ---
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
 import { getCollection } from 'astro:content';
 
-// Get the 5 most recent publications
+// Get all publications
 const allWriting = (await getCollection('writing')).sort(
   (a, b) => {
     const aDate = new Date(a.data.year, 0, 1).valueOf();
@@ -6818,51 +8758,70 @@ const allWriting = (await getCollection('writing')).sort(
 ---
 <BaseLayout title="Stephen Butterfill | Home">
   <div class="container mx-auto max-w-6xl px-4 py-8">
-    <div class="space-y-8">
-      <!-- Hero Section -->
-      <section class="text-center space-y-4">
-        <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200">Stephen Butterfill</h1>
-        <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-          Philosopher specializing in joint action, mindreading, and cognitive development
-        </p>
-      </section>
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1">
+        <Sidebar />
+      </aside>
+      
+      <!-- Main Content -->
+      <main class="lg:col-span-3 space-y-8">
+        <!-- Hero Section -->
+        <section id="about" class="text-center space-y-4">
+          <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200">Stephen Butterfill</h1>
+          <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+            Philosopher specializing in joint action, mindreading, and cognitive development
+          </p>
+        </section>
 
-      <!-- Recent Writing Section -->
-      <section class="space-y-6">
-        <h2 class="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800 pb-2">
-          Recent Writing
-        </h2>
-        <div class="grid gap-4">
-          {allWriting.slice(0, 5).map(item => (
-            <article class="group border border-slate-200 dark:border-slate-800 rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
-              <a href={`/writing/${item.slug}/`} class="block space-y-2">
-                <h3 class="font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {item.data.title}
-                </h3>
-                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                  <span>{item.data.year}</span>
-                  {item.data.journal && (
-                    <>
-                      <span>•</span>
-                      <span>{item.data.journal}</span>
-                    </>
-                  )}
-                </div>
-              </a>
-            </article>
-          ))}
-        </div>
-        <div class="text-center">
-          <a 
-            href="/writing/" 
-            class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
-          >
-            View all writing →
-          </a>
-        </div>
-      </section>
+        <!-- Writing Section -->
+        <section id="writing" class="space-y-6">
+          <h2 class="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800 pb-2">
+            Writing
+          </h2>
+          <div class="grid gap-4">
+            {allWriting.map(item => (
+              <article class="group border border-slate-200 dark:border-slate-800 rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+                <a href={`/writing/${item.slug}/`} class="block space-y-2">
+                  <h3 class="font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {item.data.title}
+                  </h3>
+                  <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <span>{item.data.year}</span>
+                    {item.data.journal && (
+                      <>
+                        <span>•</span>
+                        <span>{item.data.journal}</span>
+                      </>
+                    )}
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <!-- Talks Section -->
+        <section id="talks" class="space-y-6">
+          <h2 class="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800 pb-2">
+            Talks
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400">
+            Coming soon...
+          </p>
+        </section>
+
+        <!-- Teaching Section -->
+        <section id="teaching" class="space-y-6">
+          <h2 class="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800 pb-2">
+            Teaching
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400">
+            Coming soon...
+          </p>
+        </section>
+      </main>
     </div>
-    <!-- We will add the sidebar and other sections here later -->
   </div>
 </BaseLayout>
 </file>

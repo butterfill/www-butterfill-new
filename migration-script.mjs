@@ -1,3 +1,4 @@
+// scripts/generate-llms.mjs (Corrected Version)
 import fs from 'fs-extra';
 import path from 'path';
 import CSON from 'cson-parser';
@@ -14,58 +15,33 @@ const PUBLIC_DIR = 'public';
 
 // --- CORE FUNCTIONS ---
 
-/**
- * Finds all relevant source files from the old project directory.
- * @returns {Promise<string[]>} A promise that resolves to an array of relative file paths.
- */
 async function findSourceFiles() {
   if (!await fs.pathExists(OLD_DOCS_DIR)) {
     console.error(`Error: Source directory not found at ${path.resolve(OLD_DOCS_DIR)}`);
     console.error('Please make sure the www-butterfill-old directory is in the same parent folder as www-butterfill-new.');
     process.exit(1);
   }
-
   const allFiles = await fs.readdir(OLD_DOCS_DIR, { recursive: true });
-
   return allFiles.filter(file => {
     const fullPath = path.join(OLD_DOCS_DIR, file);
-    if (!fs.statSync(fullPath).isFile()) {
-      return false;
-    }
-
+    if (!fs.statSync(fullPath).isFile()) return false;
     const normalizedPath = file.replace(/\\/g, '/');
     const collection = normalizedPath.split('/')[0];
-
     return ['writing', 'talks', 'teaching'].includes(collection) &&
            (file.endsWith('.html') || file.endsWith('.html.md') || file.endsWith('.jade'));
   });
 }
 
-/**
- * Extracts the CSON/YAML frontmatter and the body from a file's content.
- * @param {string} content The content of the file.
- * @returns {{frontmatter: string|null, body: string}}
- */
 function extractFrontmatter(content) {
   const match = content.match(/^---\s*c?s?o?n?\s*\r?\n([\s\S]*?)\r?\n---/);
   if (match) {
-    return {
-      frontmatter: match[1],
-      body: content.slice(match[0].length),
-    };
+    return { frontmatter: match[1], body: content.slice(match[0].length) };
   }
   return { frontmatter: null, body: content };
 }
 
-/**
- * Transforms the old CSON frontmatter object to the new schema.
- * @param {object} oldData The parsed CSON frontmatter.
- * @param {string} oldFilePath The relative path of the old file.
- * @returns {{newData: object, bodyAbstract: string}}
- */
 function transformFrontmatter(oldData, oldFilePath) {
     if (!oldData) return { newData: {}, bodyAbstract: '' };
-
     const newData = {};
     const normalizedPath = oldFilePath.replace(/\\/g, '/');
 
@@ -114,12 +90,6 @@ function transformFrontmatter(oldData, oldFilePath) {
     return { newData, bodyAbstract };
 }
 
-/**
- * Processes the body of a file, converting Jade to HTML if necessary.
- * @param {string} body The body content of the file.
- * @param {string} oldFilePath The relative path of the old file.
- * @returns {string} The processed body content.
- */
 function processBody(body, oldFilePath) {
   if (oldFilePath.endsWith('.jade')) {
     try {
@@ -132,14 +102,8 @@ function processBody(body, oldFilePath) {
   return body.trim();
 }
 
-/**
- * Handles copying assets (PDFs, images) and updating frontmatter with new paths.
- * @param {object} newData - The frontmatter object to update.
- * @param {object} oldData - The original frontmatter data.
- * @param {string} oldFilePath - The relative path of the old file.
- */
 async function handleAssets(newData, oldData, oldFilePath) {
-  const basename = path.basename(oldFilePath, path.extname(oldFilePath)).replace(/\.html$/, '');
+  const basename = path.basename(oldFilePath).replace(/\.html(\.md|\.jade)?|\.jade$/, '');
   const normalizedPath = oldFilePath.replace(/\\/g, '/');
 
   if (oldData.pdf && normalizedPath.startsWith('writing/')) {
@@ -193,19 +157,25 @@ async function handleAssets(newData, oldData, oldFilePath) {
  * @returns {string|null} A redirect rule string or null if not applicable.
  */
 function generateRedirectRule(oldFilePath) {
-  const normalizedPath = oldFilePath.replace(/\\/g, '/');
-  const oldUrl = `/${normalizedPath}`.replace(/\.jade$/, '.html');
-  
-  // **FIXED LOGIC**: Create the new URL by replacing the extension, not by using basename
-  const newRelativePath = normalizedPath.replace(/\.(jade|html\.md|html)$/, '');
-  const newUrl = `/${newRelativePath}/`;
+    const normalizedPath = oldFilePath.replace(/\\/g, '/');
+    
+    // Correctly generate the old "clean" URL
+    const oldUrlBase = normalizedPath.replace(/\.html(\.md|\.jade)?|\.jade$|\.html$/, '');
+    const oldUrl = `/${oldUrlBase}.html`; // The old server likely served .html files
+    
+    // Generate the new clean URL
+    const newUrl = `/${oldUrlBase}/`;
 
-  return `${oldUrl}    ${newUrl}    301`;
+    // Create a second redirect for the truly clean URL if it's different
+    const oldCleanUrl = `/${oldUrlBase}/`;
+    if (oldCleanUrl !== newUrl) {
+        return `${oldUrl}    ${newUrl}    301\n${oldCleanUrl}    ${newUrl}    301`;
+    }
+    
+    return `${oldUrl}    ${newUrl}    301`;
 }
 
-/**
- * Main migration function.
- */
+
 async function main() {
   console.log('Starting migration...');
 
@@ -217,7 +187,7 @@ async function main() {
   await fs.emptyDir(path.join(PUBLIC_DIR, 'img'));
   console.log('Old content cleared.');
 
-  const redirects = [];
+  const redirects = new Set(); // Use a Set to avoid duplicate redirect rules
   const sourceFiles = await findSourceFiles();
   console.log(`Found ${sourceFiles.length} source files to migrate.`);
 
@@ -251,14 +221,14 @@ async function main() {
 
     const redirectRule = generateRedirectRule(oldFilePath);
     if (redirectRule) {
-        redirects.push(redirectRule);
+        redirectRule.split('\n').forEach(rule => redirects.add(rule));
     }
 
     const yamlFrontmatter = yaml.stringify(newData);
     const newContent = `---\n${yamlFrontmatter}---\n\n${bodyAbstract}${processedBody}`;
 
-    // **FIXED LOGIC**: Construct the new file path using the full relative path
-    const newRelativePath = oldFilePath.replace(/\.(jade|html\.md|html)$/, '.md');
+    // **FIXED LOGIC**: Construct the new file path correctly
+    const newRelativePath = oldFilePath.replace(/\.html(\.md|\.jade)?|\.jade$|\.html$/, '.md');
     const newFilePath = path.join(NEW_CONTENT_DIR, newRelativePath);
     
     await fs.ensureDir(path.dirname(newFilePath));
@@ -266,8 +236,8 @@ async function main() {
   }
 
   const redirectsFilePath = path.join(PUBLIC_DIR, '_redirects');
-  await fs.writeFile(redirectsFilePath, redirects.join('\n'));
-  console.log(`\nGenerated ${redirects.length} redirects in ${redirectsFilePath}`);
+  await fs.writeFile(redirectsFilePath, Array.from(redirects).join('\n'));
+  console.log(`\nGenerated ${redirects.size} redirects in ${redirectsFilePath}`);
 
   console.log('\nMigration completed successfully!');
 }

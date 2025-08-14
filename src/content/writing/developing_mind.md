@@ -1,9 +1,16 @@
 ---
 title: The Developing Mind
-authors: Stephen A. Butterfill
+authors: Unknown
 year: 2020
 isForthcoming: false
-doi: 10.4324/9780203758274
+bibtex: |
+    @book{butterfill:2020_developing,
+      address = {London},
+      author = {Butterfill, Stephen A.},
+      year = {2020},
+      publisher = {Routledge},
+      title = {The {Developing} {Mind}: A {Philosophical} {Introduction}},
+    }
 ---
 
 

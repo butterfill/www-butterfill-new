@@ -5,8 +5,22 @@ year: 2013
 isForthcoming: false
 booktitle: Oxford Studies in Epistemology
 volume: "4"
-pages: "309-320"
+pages: "309--320"
 pdfUrl: /pdf/what_does_knowledge_explain.pdf
+bibtex: |
+  @inbook{Butterfill:2012fk,
+    address = {Oxford},
+    author = {Butterfill, Stephen A.},
+    booktitle = {Oxford studies in epistemology},
+    editor = {Gendler, Tamar Szab{\' o} and Hawthorn, John},
+    year = {2013},
+    pages = {309--320},
+    publisher = {Oxford University Press},
+    title = {What does knowledge explain? {Commentary} on jennifer nagel},
+    volume = {4},
+  }
+
+
 ---
 
 ## Abstract

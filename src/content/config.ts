@@ -36,7 +36,7 @@ const talksCollection = defineCollection({
 
 // Schema for 'teaching' (courses)
 const teachingCollection = defineCollection({
-    loader: glob({ pattern: '*.html.md', base: './src/content/teaching' }),
+    loader: glob({ pattern: '*.md', base: './src/content/teaching' }),
     schema: z.object({
         title: z.string(),
         year: z.string(),
