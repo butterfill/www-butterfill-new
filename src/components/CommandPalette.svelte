@@ -70,7 +70,7 @@
   }
 </script>
 
-<Command.Dialog bind:open>
+<Command.Dialog bind:open shouldFilter={false}>
   <Command.Input placeholder="Type a command or search..." bind:value={inputValue} />
   <Command.List>
     <Command.Empty>No results found.</Command.Empty>
