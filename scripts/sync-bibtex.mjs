@@ -226,6 +226,9 @@ async function main() {
 
     if (matchedFile) {
       matchedFiles.push(matchedFile);
+      if (!matchedFile.pdfUrl) {
+        filesWithoutPdf.push(matchedFile);
+      }
       await updateFile(matchedFile, entry);
       processedBibtexEntries.add(entry);
     }
@@ -260,3 +263,7 @@ async function main() {
 
   console.log(chalk.bold('\n--- Sync complete ---'));
 }
+
+
+
+main();
