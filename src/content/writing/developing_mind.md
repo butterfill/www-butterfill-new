@@ -1,6 +1,6 @@
 --- 
 title: "The Developing Mind: A Philosophical Introduction"
-authors: "Unknown"
+authors: "Stephen A. Butterfill"
 year: 2020
 isForthcoming: false
 bibtex: "@book{butterfill:2020_developing,\n    address = {London},\n    author = {Butterfill, Stephen A.},\n    date-added = {2021-03-10 21:10:17 +0000},\n    isbn = {978-1-135-01661-6},\n    language = {en},\n    publisher = {{Routledge}},\n    shorttitle = {The {{Developing Mind}}},\n    title = {The {{Developing Mind}}: {{A Philosophical Introduction}}},\n    year = {2020}\n}\n\n"

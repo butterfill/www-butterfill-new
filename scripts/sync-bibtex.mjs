@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 
+/**
+ * This script auto-creates articles in src/content/writing from `phd_biblio.bib`
+ * 
+ * It synchronizes the BibTeX entries from a local file with the content files in the writing directory.
+ * It updates the frontmatter of each content file with the relevant BibTeX entry information.
+ * 
+ * Other functions:
+ *   - 
+ */
+
 import fs from 'fs/promises';
 import path from 'path';
 import prompts from 'prompts';
@@ -10,6 +20,7 @@ import { filterBibtex } from './bib-filter.js';
 
 const BIBTEX_PATH = path.resolve(process.env.HOME, 'endnote/phd_biblio.bib');
 const CONTENT_DIR = path.resolve(process.cwd(), 'src/content/writing');
+const PDF_DIR = path.resolve(process.cwd(), 'public/pdf');
 
 /**
  * Normalizes a title for comparison by removing punctuation and converting to lowercase.
@@ -36,6 +47,75 @@ const extractCitationKey = (bibtexString) => {
     return null;
   }
 };
+
+/**
+ * Checks if a PDF file exists for a given citation key and offers to update the pdfUrl.
+ * @param {Object} file The content file object.
+ */
+async function checkAndOfferPdfUpdate(file) {
+  // Skip if file already has a pdfUrl
+  if (file.pdfUrl) {
+    return;
+  }
+
+  // Extract citation key from bibtex
+  const citationKey = extractCitationKey(file.bibtex);
+  if (!citationKey) {
+    return;
+  }
+
+  // Create PDF filename by removing colons from citation key
+  const pdfFilename = `${citationKey.replace(/:/g, '')}.pdf`;
+  const pdfPath = path.join(PDF_DIR, pdfFilename);
+
+  try {
+    // Check if PDF file exists
+    await fs.access(pdfPath);
+    
+    // PDF exists, offer to update the file with pdfUrl
+    console.log(chalk.blue(`\nFound PDF for file: ${file.filename}`));
+    console.log(chalk.blue(`PDF file: ${pdfFilename}`));
+    console.log(chalk.blue(`Will add pdfUrl: /pdf/${pdfFilename}`));
+
+    const response = await prompts({
+      type: 'select',
+      name: 'action',
+      message: 'Add pdfUrl to this file?',
+      choices: [
+        { title: 'Yes', value: 'yes' },
+        { title: 'Skip', value: 'skip' },
+        { title: 'Quit', value: 'quit' },
+      ],
+    });
+
+    if (response.action === 'yes') {
+      // Update the file with pdfUrl
+      const newFrontmatter = { ...file, pdfUrl: `/pdf/${pdfFilename}` };
+      delete newFrontmatter.filePath;
+      delete newFrontmatter.filename;
+      delete newFrontmatter.body;
+
+      const newContent = `--- 
+${Object.entries(newFrontmatter)
+  .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+  .join('\n')}
+---
+
+${file.body}
+`;
+
+      await fs.writeFile(file.filePath, newContent);
+      console.log(chalk.blue('pdfUrl added.'));
+    } else if (response.action === 'quit') {
+      process.exit(0);
+    } else {
+      console.log(chalk.yellow('Skipped.'));
+    }
+  } catch (error) {
+    // PDF file doesn't exist, which is fine
+    // We could log this if needed, but for now we'll just silently continue
+  }
+}
 
 /**
  * Reads and parses the BibTeX file.
@@ -242,6 +322,7 @@ async function main() {
   const processedBibtexEntries = new Set();
   const filesWithoutPdf = [];
 
+  // Process existing files - update bibtex if needed and check for PDFs
   for (const entry of bibtexEntries) {
     const normalizedEntryTitle = normalizeTitle(entry.entryTags.title);
     const matchedFile = contentFiles.find(
@@ -258,8 +339,23 @@ async function main() {
     }
   }
 
-  const unmatchedFiles = contentFiles.filter(
-    (file) => !matchedFiles.some((matched) => matched.filePath === file.filePath)
+  // Check for PDF files for existing content files that don't have pdfUrl
+  console.log(chalk.bold('\n--- Checking for PDF files ---'));
+  for (const file of contentFiles) {
+    // Only check files that don't already have a pdfUrl
+    if (!file.pdfUrl) {
+      await checkAndOfferPdfUpdate(file);
+    }
+  }
+
+  // Old: compute files that weren't matched to bibtex entries
+  // const filesWithNoBibtexKey = contentFiles.filter(
+  //   (file) => !matchedFiles.some((matched) => matched.filePath === file.filePath)
+  // );
+
+  // New: files that do not have a 'bibtex' key in their frontmatter
+  const filesWithNoBibtexKey = contentFiles.filter((file) =>
+    !Object.prototype.hasOwnProperty.call(file, 'bibtex')
   );
 
   // Filter BibTeX entries to only include those that don't already have corresponding files
@@ -286,14 +382,16 @@ async function main() {
 
   console.log(chalk.bold('\n--- Reports ---'));
 
-  if (unmatchedFiles.length > 0) {
+  if (filesWithNoBibtexKey.length > 0) {
     console.log(chalk.yellow('\nFiles without a matching BibTeX entry:'));
-    console.table(unmatchedFiles.map((f) => ({ Title: f.title, File: f.filename })));
+    console.table(filesWithNoBibtexKey.map((f) => ({ Title: f.title, File: f.filename })));
   }
 
-  if (filesWithoutPdf.length > 0) {
+  // Re-check files without PDF after the PDF update process
+  const filesStillWithoutPdf = contentFiles.filter(file => !file.pdfUrl);
+  if (filesStillWithoutPdf.length > 0) {
     console.log(chalk.yellow('\nFiles missing pdfUrl:'));
-    console.table(filesWithoutPdf.map((f) => ({ Title: f.title, File: f.filename })));
+    console.table(filesStillWithoutPdf.map((f) => ({ Title: f.title, File: f.filename })));
   }
 
   if (unmatchedBibtex.length > 0) {

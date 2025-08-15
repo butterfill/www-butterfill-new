@@ -14,6 +14,7 @@ export async function getStaticPaths() {
 }
 
 import CopyForChat from '../../components/CopyForChat.svelte';
+import CiteButton from '../../components/CiteButton.svelte';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render(); // This gets the Markdown content
@@ -32,9 +33,53 @@ ${entry.body}
 
 
 const pdfUrl = entry.data.pdfUrl;
+const bibtexData = entry.data.bibtex;
 
 // Define actions specific to this page
 const pageActions = [];
+
+// Add citation actions if bibtex is available
+if (bibtexData) {
+  pageActions.push(
+    {
+      label: 'Copy BibTeX Citation',
+      action: 'copyCitation',
+      format: 'bibtex',
+      bibtex: bibtexData
+    },
+    {
+      label: 'Copy RIS Citation',
+      action: 'copyCitation',
+      format: 'ris',
+      bibtex: bibtexData
+    },
+    {
+      label: 'Copy Plain Text Citation',
+      action: 'copyCitation',
+      format: 'plaintext',
+      bibtex: bibtexData
+    },
+    {
+      label: 'Download BibTeX Citation',
+      action: 'downloadCitation',
+      format: 'bibtex',
+      bibtex: bibtexData
+    },
+    {
+      label: 'Download RIS Citation',
+      action: 'downloadCitation',
+      format: 'ris',
+      bibtex: bibtexData
+    },
+    {
+      label: 'Download Plain Text Citation',
+      action: 'downloadCitation',
+      format: 'plaintext',
+      bibtex: bibtexData
+    }
+  );
+}
+
 if (pdfUrl) {
   pageActions.push({
     label: 'Download PDF',
@@ -47,6 +92,10 @@ if (pdfUrl) {
 <PageLayout title={entry.data.title} contextualActions={pageActions}>
   <div class="flex justify-end mb-4 space-x-2">
     <CopyForChat contentToCopy={textForLLM} client:load />
+    {bibtexData && (
+      <span> </span>
+      <CiteButton bibtex={bibtexData} client:load />
+    )}
     {pdfUrl && (
       <a 
         href={pdfUrl} 

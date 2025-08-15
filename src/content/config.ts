@@ -16,6 +16,7 @@ const writingCollection = defineCollection({
     pages: z.string().optional(),
     doi: z.string().optional(),
     pdfUrl: z.string().optional(), // Will only be present if a PDF exists
+    bibtex: z.string().optional(), // BibTeX citation data
   }),
 });
 
