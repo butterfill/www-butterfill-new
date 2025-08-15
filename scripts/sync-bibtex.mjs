@@ -21,6 +21,23 @@ const normalizeTitle = (title) => {
 };
 
 /**
+ * Extracts the citation key from a BibTeX entry string.
+ * @param {string} bibtexString The BibTeX string.
+ * @returns {string|null} The citation key or null if not found.
+ */
+const extractCitationKey = (bibtexString) => {
+  if (!bibtexString) return null;
+  
+  // Parse the BibTeX string to get the entry
+  try {
+    const parsed = bibtexParse.toJSON(bibtexString);
+    return parsed.length > 0 ? parsed[0].citationKey : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+/**
  * Reads and parses the BibTeX file.
  * @returns {Promise<Array<Object>>} A promise that resolves to an array of BibTeX entries.
  */
@@ -97,8 +114,7 @@ ${Object.entries(frontmatter)
 ${abstract || ''}
 `;
 
-  console.log(chalk.green(`
-Creating new file: ${newFilePath}`));
+  console.log(chalk.green(`\nCreating new file: ${newFilePath}`));
   console.log(content);
 
   const response = await prompts({
@@ -180,8 +196,7 @@ ${file.body}
 `;
 
   if (matter(await fs.readFile(file.filePath, 'utf8')).content !== newContent) {
-    console.log(chalk.blue(`
-Updating file: ${file.filePath}`));
+    console.log(chalk.blue(`\nUpdating file: ${file.filePath}`));
     console.log(newContent);
 
     const response = await prompts({
@@ -214,6 +229,15 @@ async function main() {
   const bibtexEntries = await getBibtexEntries();
   const contentFiles = await getContentFiles();
 
+  // Extract citation keys from existing files
+  const existingCitationKeys = new Set();
+  contentFiles.forEach(file => {
+    const key = extractCitationKey(file.bibtex);
+    if (key) {
+      existingCitationKeys.add(key);
+    }
+  });
+
   const matchedFiles = [];
   const processedBibtexEntries = new Set();
   const filesWithoutPdf = [];
@@ -238,9 +262,27 @@ async function main() {
     (file) => !matchedFiles.some((matched) => matched.filePath === file.filePath)
   );
 
-  const unmatchedBibtex = bibtexEntries.filter(
-    (entry) => !processedBibtexEntries.has(entry)
-  );
+  // Filter BibTeX entries to only include those that don't already have corresponding files
+  // This prevents trying to create files for entries that already exist with slightly different titles
+  const unmatchedBibtex = bibtexEntries.filter((entry) => {
+    // Skip entries that have already been processed (matched with existing files)
+    if (processedBibtexEntries.has(entry)) {
+      return false;
+    }
+    
+    // Skip entries that already have files with matching citation keys
+    if (existingCitationKeys.has(entry.citationKey)) {
+      return false;
+    }
+    
+    // Additionally check if there's a file with a similar title that might have been missed
+    const normalizedEntryTitle = normalizeTitle(entry.entryTags.title);
+    const hasExistingFile = contentFiles.some(
+      (file) => normalizeTitle(file.title) === normalizedEntryTitle
+    );
+    
+    return !hasExistingFile;
+  });
 
   console.log(chalk.bold('\n--- Reports ---'));
 

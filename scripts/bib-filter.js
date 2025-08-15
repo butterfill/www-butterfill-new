@@ -5,7 +5,9 @@ const bibtexParse = require('@orcid/bibtex-parse-js');
 
 /**
  * Filters a BibTeX string to include only entries where the author field
- * contains the given keyword (case-insensitive).
+ * contains the given keyword (case-insensitive). Also excludes entries of
+ * type @conference and @phdthesis, and excludes entries whose year field
+ * contains 'submitted', 'progress' or 'preparation' (case-insensitive).
  *
  * @param {string} bibtexContent The content of the BibTeX file.
  * @param {string} keyword The keyword to search for in the author field.
@@ -16,6 +18,18 @@ function filterBibtex(bibtexContent, keyword = 'butterfill') {
   const lowerCaseKeyword = keyword.toLowerCase();
 
   const filteredJson = json.filter(entry => {
+    // skip by entry type
+    const type = (entry.entryType || '').toLowerCase();
+    if (type === 'conference' || type === 'phdthesis') return false;
+
+    // skip by year content
+    if (entry.entryTags && entry.entryTags.year) {
+      const yearField = String(entry.entryTags.year).toLowerCase();
+      const blocked = ['submitted', 'progress', 'preparation'];
+      if (blocked.some(term => yearField.includes(term))) return false;
+    }
+
+    // require author to contain keyword
     if (entry.entryTags && entry.entryTags.author) {
       return entry.entryTags.author.toLowerCase().includes(lowerCaseKeyword);
     }

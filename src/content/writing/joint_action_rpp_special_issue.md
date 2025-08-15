@@ -8,6 +8,7 @@ volume: "2"
 number: "2"
 pages: 137-146
 doi: 10.1007/s13164-011-0062-3
+bibtex: "@article{butterfill:2011_editorial,\n    author = {Butterfill, Stephen A. and Sebanz, Natalie},\n    date-added = {2012-10-16 17:18:47 +0100},\n    doi = {10.1007/s13164-011-0062-3},\n    issn = {1878-5158, 1878-5166},\n    journal = {Review of Philosophy and Psychology},\n    pages = {137--146},\n    shorttitle = {Editorial},\n    title = {Editorial: Joint Action: What Is Shared?},\n    url = {http://www.springerlink.com/content/58327l70547v142l/},\n    urldate = {2011-10-31},\n    volume = {2},\n    year = {2011},\n    bdsk-url-1 = {http://www.springerlink.com/content/58327l70547v142l/},\n    bdsk-url-2 = {http://dx.doi.org/10.1007/s13164-011-0062-3}\n}\n\n"
 ---
 
 ## Abstract
