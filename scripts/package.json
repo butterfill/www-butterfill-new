@@ -1,0 +1,23 @@
+{
+  "name": "bib-filter",
+  "version": "1.0.0",
+  "description": "A CLI and library to filter BibTeX files by author.",
+  "main": "bib-filter.js",
+  "bin": {
+    "bib-filter": "./bib-filter.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bibtex",
+    "filter",
+    "cli"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@orcid/bibtex-parse-js": "^0.0.25",
+    "yargs": "^17.7.2"
+  }
+}
