@@ -9,6 +9,7 @@
     label: string;
     action: string;
     url?: string;
+    text?: string;
     bibtex?: string;
     format?: 'bibtex' | 'ris' | 'plaintext';
   }
@@ -26,6 +27,13 @@
     ? allPages
     : allPages.filter(page =>
         page.title.toLowerCase().includes(inputValue.toLowerCase())
+      );
+
+  // Reactive statement to filter contextual actions based on user input
+  $: filteredContextualActions = inputValue === ''
+    ? contextualActions
+    : contextualActions.filter(action =>
+        action.label.toLowerCase().includes(inputValue.toLowerCase())
       );
 
   // Keyboard shortcut listener (Cmd/Ctrl + K) and custom event listener
@@ -63,6 +71,16 @@
       case 'openUrl':
         if (action.url) {
           window.open(action.url, '_blank');
+        }
+        break;
+      case 'copyToClipboard':
+        if (action.text) {
+          try {
+            await navigator.clipboard.writeText(action.text);
+            console.log('Copied to clipboard');
+          } catch (err) {
+            console.error('Failed to copy: ', err);
+          }
         }
         break;
       case 'copyCitation':
@@ -105,11 +123,16 @@
     <Command.Empty>No results found.</Command.Empty>
 
     <!-- Contextual Actions Group -->
-    {#if contextualActions.length > 0}
+    {#if filteredContextualActions.length > 0}
       <Command.Group heading="Page Actions">
-        {#each contextualActions as action}
+        {#each filteredContextualActions as action}
           <Command.Item onSelect={() => handleActionSelect(action)}>
-            {#if action.action === 'copyCitation'}
+            {#if action.action === 'copyToClipboard'}
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+              </svg>
+            {:else if action.action === 'copyCitation'}
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                 <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />

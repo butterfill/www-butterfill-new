@@ -101,6 +101,22 @@ $: filteredProjects = inputValue === ''
 
 Contextual actions are page-specific commands (like "Copy URL", "Edit Page", etc.).
 
+### Citation Actions (Implemented)
+
+The command menu includes comprehensive citation functionality for articles with BibTeX data:
+
+**Copy Actions:**
+- Copy BibTeX Citation
+- Copy RIS Citation  
+- Copy Plain Text Citation
+
+**Download Actions:**
+- Download BibTeX Citation (.bib)
+- Download RIS Citation (.ris)
+- Download Plain Text Citation (.txt)
+
+These actions are automatically added to articles that have a `bibtex` field in their frontmatter and use shared utilities from `src/lib/citation-utils.ts`.
+
 ### 1. Define Action Types
 
 ```javascript
@@ -115,6 +131,13 @@ const contextualActions = [
     label: "Edit on GitHub", 
     action: "openUrl",
     url: `https://github.com/your-repo/edit/main/src/content/writing/${slug}.md`
+  },
+  // Citation actions example (automatically added for articles with bibtex)
+  {
+    label: 'Copy BibTeX Citation',
+    action: 'copyCitation',
+    format: 'bibtex',
+    bibtex: bibtexData
   }
 ];
 ```
@@ -124,7 +147,7 @@ const contextualActions = [
 Update the `handleActionSelect` function in `CommandPalette.svelte`:
 
 ```javascript
-function handleActionSelect(action: ContextualAction) {
+async function handleActionSelect(action: ContextualAction) {
   switch (action.action) {
     case 'openUrl':
       if (action.url) {
@@ -137,12 +160,71 @@ function handleActionSelect(action: ContextualAction) {
         // Optionally show a toast notification
       }
       break;
+    case 'copyCitation': // Citation functionality
+      if (action.bibtex && action.format) {
+        try {
+          const content = getCitationContent(action.bibtex, action.format);
+          await navigator.clipboard.writeText(content);
+          console.log(`Copied ${action.format} citation to clipboard`);
+        } catch (err) {
+          console.error('Failed to copy citation: ', err);
+        }
+      }
+      break;
+    case 'downloadCitation': // Citation download
+      if (action.bibtex && action.format) {
+        try {
+          const content = getCitationContent(action.bibtex, action.format);
+          const parsed = parseBibtex(action.bibtex);
+          const filename = generateFilename(parsed);
+          const extensions = { bibtex: 'bib', ris: 'ris', plaintext: 'txt' };
+          const extension = extensions[action.format] || 'txt';
+          downloadFile(content, `${filename}.${extension}`, 'text/plain');
+          console.log(`Downloaded ${action.format} citation`);
+        } catch (err) {
+          console.error('Failed to download citation: ', err);
+        }
+      }
+      break;
     default:
       console.warn('Unknown action type:', action.action);
   }
   open = false;
 }
 ```
+
+### 3. ⚠️ Critical: Contextual Action Filtering
+
+**Problem:** When adding contextual actions, the built-in Command component filtering may not work correctly for custom actions.
+
+**Symptom:** Navigation actions filter properly when typing, but contextual actions remain visible regardless of search input.
+
+**Solution:** You must add explicit filtering logic for contextual actions in `CommandPalette.svelte`:
+
+```javascript
+// Add this reactive statement alongside the existing filteredPages logic
+$: filteredContextualActions = inputValue === ''
+  ? contextualActions
+  : contextualActions.filter(action =>
+      action.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+```
+
+Then use `filteredContextualActions` instead of `contextualActions` in the template:
+
+```svelte
+{#if filteredContextualActions.length > 0}
+  <Command.Group heading="Page Actions">
+    {#each filteredContextualActions as action}
+      <Command.Item onSelect={() => handleActionSelect(action)}>
+        <!-- action content -->
+      </Command.Item>
+    {/each}
+  </Command.Group>
+{/if}
+```
+
+**Why this happens:** The Command component's built-in `shouldFilter` mechanism doesn't automatically apply to dynamically generated contextual actions that are passed as props.
 
 ## Extending Filtering Logic
 
@@ -240,6 +322,18 @@ The bits-ui Command component provides built-in keyboard navigation:
 3. **Use unique keys** - Always provide keys in `{#each}` loops for proper updates
 4. **Handle missing data** - Check for optional fields before using them
 5. **Test with empty states** - Ensure the "No results found" message appears correctly
+6. **⚠️ CRITICAL: Contextual action filtering** - Always add explicit filtering for contextual actions (see "Adding Contextual Actions" section above). The built-in filtering doesn't work for dynamically passed actions.
+7. **Extend ContextualAction interface** - When adding new action properties, update the TypeScript interface:
+   ```typescript
+   interface ContextualAction {
+     label: string;
+     action: string;
+     url?: string;
+     bibtex?: string;           // For citation actions
+     format?: 'bibtex' | 'ris' | 'plaintext';  // Citation format
+     // Add new optional properties as needed
+   }
+   ```
 
 ## Debugging Tips
 

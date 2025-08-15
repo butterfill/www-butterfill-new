@@ -38,6 +38,22 @@ const bibtexData = entry.data.bibtex;
 // Define actions specific to this page
 const pageActions = [];
 
+// Add PDF download as first item if available
+if (pdfUrl) {
+  pageActions.push({
+    label: 'Download PDF',
+    action: 'openUrl',
+    url: pdfUrl
+  });
+}
+
+// Add Copy for Chat as second item
+pageActions.push({
+  label: 'Copy for Chat',
+  action: 'copyToClipboard',
+  text: textForLLM
+});
+
 // Add citation actions if bibtex is available
 if (bibtexData) {
   pageActions.push(
@@ -78,14 +94,6 @@ if (bibtexData) {
       bibtex: bibtexData
     }
   );
-}
-
-if (pdfUrl) {
-  pageActions.push({
-    label: 'Download PDF',
-    action: 'openUrl',
-    url: pdfUrl
-  });
 }
 
 ---
