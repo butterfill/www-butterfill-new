@@ -215,7 +215,7 @@ async function main() {
   const contentFiles = await getContentFiles();
 
   const matchedFiles = [];
-  const unmatchedBibtex = [];
+  const processedBibtexEntries = new Set();
   const filesWithoutPdf = [];
 
   for (const entry of bibtexEntries) {
@@ -227,8 +227,7 @@ async function main() {
     if (matchedFile) {
       matchedFiles.push(matchedFile);
       await updateFile(matchedFile, entry);
-    } else {
-      unmatchedBibtex.push(entry);
+      processedBibtexEntries.add(entry);
     }
   }
 
@@ -236,11 +235,9 @@ async function main() {
     (file) => !matchedFiles.some((matched) => matched.filePath === file.filePath)
   );
 
-  for (const file of contentFiles) {
-      if(!file.pdfUrl) {
-          filesWithoutPdf.push(file);
-      }
-  }
+  const unmatchedBibtex = bibtexEntries.filter(
+    (entry) => !processedBibtexEntries.has(entry)
+  );
 
   console.log(chalk.bold('\n--- Reports ---'));
 
@@ -263,5 +260,3 @@ async function main() {
 
   console.log(chalk.bold('\n--- Sync complete ---'));
 }
-
-main();
