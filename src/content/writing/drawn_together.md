@@ -8,7 +8,7 @@ volume: "165"
 pages: "53--60"
 doi: "10.1016/j.cognition.2017.04.008"
 pdfUrl: "/pdf/drawn_together.pdf"
-bibtex: "@article{dellagatta:2017_drawn,\n    author = {{della Gatta}, Francesco and Garbarini, Francesca and Rabuffetti, Marco and Vigan{\\`o}, Luca and Butterfill, Stephen A. and Sinigaglia, Corrado},\n    date-added = {2017-05-13 08:42:29 +0000},\n    doi = {10.1016/j.cognition.2017.04.008},\n    journal = {Cognition},\n    pages = {53--60},\n    timestamp = {2017-05-13T08:42:05Z},\n    title = {Drawn Together: {{When}} Motor Representations Ground Joint Actions},\n    volume = {165},\n    year = {2017},\n    bdsk-url-1 = {https://doi.org/10.1016/j.cognition.2017.04.008}\n}\n\n"
+bibtex: "@article{dellagatta:2017_drawn,\n    author = {{della Gatta}, Francesco and Garbarini, Francesca and Rabuffetti, Marco and Vigan{\\`o}, Luca and Butterfill, Stephen A. and Sinigaglia, Corrado},\n    date-added = {2017-05-13 08:42:29 +0000},\n    doi = {10.1016/j.cognition.2017.04.008},\n    journal = {Cognition},\n    pages = {53--60},\n    timestamp = {2017-05-13T08:42:05Z},\n    title = {Drawn Together: {{When}} Motor Representations Ground Joint Actions},\n    volume = {165},\n    year = {2017}\n}"
 ---
 
 

@@ -13,32 +13,118 @@ export interface ParsedCitation {
   publisher: string;
 }
 
+// Helper function to extract field value with proper brace balancing
+function extractBibtexField(bibtexString: string, fieldName: string): string {
+  const regex = new RegExp(`${fieldName}\\s*=\\s*([{"])`, 'i');
+  const match = bibtexString.match(regex);
+  
+  if (!match) return '';
+  
+  const delimiter = match[1];
+  const startIndex = match.index! + match[0].length - 1;
+  
+  if (delimiter === '"') {
+    // Handle quoted strings - find closing quote not preceded by backslash
+    let i = startIndex + 1;
+    while (i < bibtexString.length) {
+      if (bibtexString[i] === '"' && bibtexString[i - 1] !== '\\') {
+        return bibtexString.substring(startIndex + 1, i);
+      }
+      i++;
+    }
+  } else {
+    // Handle braced strings - count braces to find matching closing brace
+    let braceCount = 1;
+    let i = startIndex + 1;
+    
+    while (i < bibtexString.length && braceCount > 0) {
+      if (bibtexString[i] === '{') {
+        braceCount++;
+      } else if (bibtexString[i] === '}') {
+        braceCount--;
+      }
+      i++;
+    }
+    
+    if (braceCount === 0) {
+      return bibtexString.substring(startIndex + 1, i - 1);
+    }
+  }
+  
+  return '';
+}
+
+// Helper function to clean BibTeX field content
+function cleanBibtexField(value: string): string {
+  if (!value) return '';
+  
+  // Remove protective braces around words (e.g., {della Gatta} -> della Gatta)
+  // But preserve intentional formatting braces (e.g., {{When}} -> When)
+  let cleaned = value;
+  
+  // Handle double braces first ({{word}} -> word)
+  cleaned = cleaned.replace(/\{\{([^}]+)\}\}/g, '$1');
+  
+  // Remove single protective braces around individual words
+  cleaned = cleaned.replace(/\{([^{}]+)\}/g, '$1');
+  
+  // Handle LaTeX accents and special characters
+  cleaned = cleaned.replace(/\\`\{?([aeiouAEIOU])\}?/g, (match, letter) => {
+    const accents: { [key: string]: string } = {
+      'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù',
+      'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù'
+    };
+    return accents[letter] || letter;
+  });
+  
+  // Handle other common LaTeX accents
+  cleaned = cleaned.replace(/\\'\{?([aeiouAEIOU])\}?/g, (match, letter) => {
+    const accents: { [key: string]: string } = {
+      'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú',
+      'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú'
+    };
+    return accents[letter] || letter;
+  });
+  
+  cleaned = cleaned.replace(/\\\^\{?([aeiouAEIOU])\}?/g, (match, letter) => {
+    const accents: { [key: string]: string } = {
+      'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û',
+      'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û'
+    };
+    return accents[letter] || letter;
+  });
+  
+  // Clean up extra whitespace
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+  
+  return cleaned;
+}
+
 // Parse BibTeX to extract citation information
 export function parseBibtex(bibtexString: string): ParsedCitation {
   try {
-    // Simple regex-based parsing for basic BibTeX fields
-    const titleMatch = bibtexString.match(/title\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const authorMatch = bibtexString.match(/author\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const yearMatch = bibtexString.match(/year\s*=\s*[{"]?(\d{4})[\}"]?/i);
-    const journalMatch = bibtexString.match(/journal\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const booktitleMatch = bibtexString.match(/booktitle\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const volumeMatch = bibtexString.match(/volume\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const numberMatch = bibtexString.match(/number\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const pagesMatch = bibtexString.match(/pages\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const doiMatch = bibtexString.match(/doi\s*=\s*[{"]([^}"]*)[\}"]/i);
-    const publisherMatch = bibtexString.match(/publisher\s*=\s*[{"]([^}"]*)[\}"]/i);
+    const title = cleanBibtexField(extractBibtexField(bibtexString, 'title'));
+    const author = cleanBibtexField(extractBibtexField(bibtexString, 'author'));
+    const year = extractBibtexField(bibtexString, 'year').replace(/[{}]/g, '');
+    const journal = cleanBibtexField(extractBibtexField(bibtexString, 'journal'));
+    const booktitle = cleanBibtexField(extractBibtexField(bibtexString, 'booktitle'));
+    const volume = extractBibtexField(bibtexString, 'volume').replace(/[{}]/g, '');
+    const number = extractBibtexField(bibtexString, 'number').replace(/[{}]/g, '');
+    const pages = extractBibtexField(bibtexString, 'pages').replace(/[{}]/g, '');
+    const doi = extractBibtexField(bibtexString, 'doi').replace(/[{}]/g, '');
+    const publisher = cleanBibtexField(extractBibtexField(bibtexString, 'publisher'));
     
     return {
-      title: titleMatch ? titleMatch[1] : '',
-      author: authorMatch ? authorMatch[1] : '',
-      year: yearMatch ? yearMatch[1] : '',
-      journal: journalMatch ? journalMatch[1] : '',
-      booktitle: booktitleMatch ? booktitleMatch[1] : '',
-      volume: volumeMatch ? volumeMatch[1] : '',
-      number: numberMatch ? numberMatch[1] : '',
-      pages: pagesMatch ? pagesMatch[1] : '',
-      doi: doiMatch ? doiMatch[1] : '',
-      publisher: publisherMatch ? publisherMatch[1] : ''
+      title,
+      author,
+      year,
+      journal,
+      booktitle,
+      volume,
+      number,
+      pages,
+      doi,
+      publisher
     };
   } catch (error) {
     console.error('Error parsing BibTeX:', error);
