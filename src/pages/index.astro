@@ -2,6 +2,7 @@
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Sidebar from '../components/Sidebar.astro';
+import CiteButton from '../components/CiteButton.svelte';
 import { getCollection } from 'astro:content';
 
 // Get all publications
@@ -76,22 +77,27 @@ const allTeaching = (await getCollection('teaching')).sort(
                       )}
                     </div>
                   </a>
-                  {item.data.pdfUrl && (
-                    <a 
-                      href={item.data.pdfUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      class="flex items-center justify-center ml-4 flex-shrink-0 w-auto h-8 rounded-full bg-slate-100 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-blue-900/50 transition-colors px-2"
-                      title="View PDF"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
-                      </svg>
-                      <span class="text-xs font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">
-                        PDF
-                      </span>
-                    </a>
-                  )}
+                  <div class="flex gap-1 ml-4 flex-shrink-0">
+                    {item.data.bibtex && (
+                      <CiteButton bibtex={item.data.bibtex} client:load />
+                    )}
+                    {item.data.pdfUrl && (
+                      <a 
+                        href={item.data.pdfUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center w-auto h-8 rounded-full bg-slate-100 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-blue-900/50 transition-colors px-2"
+                        title="View PDF"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-xs font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">
+                          PDF
+                        </span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               </article>
             ))}
