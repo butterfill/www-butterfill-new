@@ -1,12 +1,14 @@
----
-title: Tracking and Representing Others’ Mental States
-authors: Stephen A. Butterfill
+--- 
+title: "Tracking and Representing Others’ Mental States"
+authors: "Stephen A. Butterfill"
 year: 2017
 isForthcoming: false
-booktitle: Routledge Companion to the Philosophy of Animal Minds
-pages: 269–279
-pdfUrl: /pdf/tracking_representing_mental_states.pdf
+booktitle: "Routledge Companion to the Philosophy of Animal Minds"
+pages: "269–279"
+pdfUrl: "/pdf/tracking_representing_mental_states.pdf"
+bibtex: "@incollection{butterfill:2016_animal_mindreading,\n    address = {London},\n    author = {Butterfill, Stephen A.},\n    booktitle = {Routledge Companion to the Philosophy of Animal Minds},\n    date-added = {2016-09-22 12:33:17 +0000},\n    editor = {Andrews, Kristin and Beck, Jacob},\n    pages = {269--279},\n    publisher = {Routledge},\n    title = {Tracking and Representing Others' Mental States},\n    year = {2017}\n}\n\n"
 ---
+
 
 ## Abstract
 
@@ -22,4 +24,5 @@ lemurs (Sandel, MacLean and Hare 2011), monkeys (Burkart and Heschl 2007; Hattor
 Kuroshima and Fujita 2009) and chimpanzees (Melis, Call and Tomasello 2006; Karg et al.
 2015) reliably vary their actions in ways that are appropriate given facts about another’s
 mental states. What underpins such abilities to track others’ mental states?
+
 

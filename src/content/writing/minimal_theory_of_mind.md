@@ -1,14 +1,16 @@
----
-title: How to Construct a Minimal Theory of Mind
-authors: Stephen A. Butterfill and Ian A. Apperly
+--- 
+title: "How to Construct a Minimal Theory of Mind"
+authors: "Stephen A. Butterfill and Ian A. Apperly"
 year: 2013
 isForthcoming: false
-journal: Mind and Language
+journal: "Mind and Language"
 volume: "28"
 number: "5"
-pages: 606-637
-pdfUrl: /pdf/minimal_theory_of_mind.pdf
+pages: "606-637"
+pdfUrl: "/pdf/minimal_theory_of_mind.pdf"
+bibtex: "@article{butterfill_minimal,\n    author = {Butterfill, Stephen A. and Apperly, Ian A.},\n    date-added = {2011-05-26 16:24:59 +0100},\n    journal = {Mind and Language},\n    number = {5},\n    pages = {606--637},\n    title = {How to Construct a Minimal Theory of Mind},\n    volume = {28},\n    year = {2013}\n}\n\n"
 ---
+
 
 ## Abstract
 
