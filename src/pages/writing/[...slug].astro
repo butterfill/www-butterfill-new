@@ -16,6 +16,8 @@ export async function getStaticPaths() {
 import CopyForChat from '../../components/CopyForChat.svelte';
 import CiteButton from '../../components/CiteButton.svelte';
 import CitationDisplay from '../../components/CitationDisplay.svelte';
+import TableOfContents from '../../components/TableOfContents.svelte';
+import FootnoteManager from '../../components/FootnoteManager.svelte';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render(); // This gets the Markdown content
@@ -129,5 +131,13 @@ if (bibtexData) {
     doi={entry.data.doi}
     client:load 
   />
-  <Content /> <!-- This renders the main body of the Markdown file -->
+  
+  <!-- Main content with footnote manager -->
+  <div style="position: relative;">
+    <Content /> <!-- This renders the main body of the Markdown file -->
+    <FootnoteManager client:load />
+  </div>
+  
+  <!-- Table of Contents Modal -->
+  <TableOfContents client:load />
 </PageLayout>
