@@ -51,8 +51,10 @@
       fontFamily = savedFontFamily;
     }
     
-    // Apply initial settings
-    applyFontSettings();
+    // Apply initial settings with a small delay to ensure DOM is ready
+    setTimeout(() => {
+      applyFontSettings();
+    }, 100);
   });
 
   function toggleModal() {
@@ -84,31 +86,33 @@
     const fulltext = document.querySelector('.fulltext');
     if (fulltext) {
       fulltext.style.fontSize = fontSizes[fontSize].value;
-      fulltext.style.fontFamily = fontFamilies[fontFamily].value;
     }
 
-    // Also apply to side footnotes
-    const sideFootnotes = document.querySelector('.side-footnotes');
-    if (sideFootnotes) {
-      sideFootnotes.style.fontSize = fontSizes[fontSize].value;
-      sideFootnotes.style.fontFamily = fontFamilies[fontFamily].value;
-    }
+    // Use a data-attribute for font family for more robust CSS targeting
+    document.body.setAttribute('data-font-family', fontFamily);
+
+    // Trigger footnote repositioning after font changes
+    const event = new CustomEvent('fontSettingsChanged');
+    window.dispatchEvent(event);
   }
 
   function handleKeydown(event) {
+    // Ignore shortcuts if any modifier keys are pressed
+    if (event.metaKey || event.altKey || event.ctrlKey) {
+      return;
+    }
+
     // Handle Escape key
     if (event.key === 'Escape' && showModal) {
       showModal = false;
       return;
     }
 
-    // Handle shortcuts (only when modal is not open or when Ctrl/Cmd is pressed)
-    if (!showModal || event.ctrlKey || event.metaKey) {
-      const shortcut = shortcuts[event.code];
-      if (shortcut) {
-        event.preventDefault();
-        shortcut();
-      }
+    // Handle shortcuts
+    const shortcut = shortcuts[event.code];
+    if (shortcut) {
+      event.preventDefault();
+      shortcut();
     }
   }
 
@@ -129,9 +133,9 @@
   title="Font Settings (F)"
 >
   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-    <!-- Font/Text icon -->
-    <path d="M4 4h12v2H4V4zm0 4h12v2H4V8zm0 4h8v2H4v-2z"/>
-    <path d="M16 12h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
+    <!-- Aa icon -->
+    <text x="2" y="14" font-family="serif" font-size="12" font-weight="bold">A</text>
+    <text x="11" y="16" font-family="serif" font-size="8">a</text>
   </svg>
 </button>
 

@@ -6,6 +6,7 @@ This document explains the implementation of fulltext articles with advanced fea
 
 The fulltext article system provides:
 - Responsive footnote positioning (side footnotes on wide screens, bottom footnotes on narrow screens)
+- Dynamic font size and style settings that persist across sessions.
 - Universal table of contents modal with keyboard shortcuts
 - Interactive footnote highlighting
 - Clean typography matching academic standards
@@ -21,14 +22,15 @@ PageLayout.astro
 └── .fulltext container (position: relative)
     ├── Article content (max-width: 600px)
     ├── FootnoteManager (handles side footnotes)
-    └── TableOfContents (modal trigger)
+    ├── TableOfContents (modal trigger)
+    └── FontSettings (modal trigger)
 ```
 
 **CRITICAL**: The `.fulltext` container must have `position: relative` for footnote positioning to work correctly.
 
 ### 2. FootnoteManager Component (`src/components/FootnoteManager.svelte`)
 
-Handles responsive footnote positioning and interactive highlighting.
+Handles responsive footnote positioning and interactive highlighting. It automatically re-calculates footnote positions when the window is resized or when font settings are changed.
 
 #### Positioning Logic (FRAGILE - Handle with Care)
 
@@ -40,52 +42,36 @@ Handles responsive footnote positioning and interactive highlighting.
 }
 ```
 
-**Why this works:**
-- `.fulltext` has `max-width: 600px`
-- Side footnotes positioned `600px + 50px` from the left edge of `.fulltext`
-- Creates exactly 50px gap between main text and footnotes
+**Vertical Positioning:**
+Calculated in JavaScript using `getBoundingClientRect()` relative to the article container. This is robust against page scroll.
+
+**Overlap Prevention:**
+The script calculates the actual height of each footnote (using the current font settings) and ensures that each new footnote is positioned below the previous one, preventing vertical overlap.
 
 **DANGER ZONES:**
 1. **Never change `.fulltext` max-width without updating footnote positioning**
 2. **Never use `position: fixed` for footnotes** - breaks scrolling behavior
-3. **Never use viewport-based calculations** - creates inconsistent positioning
+3. **Never use `offsetTop` or `window.scrollY`** - creates misalignments
 
-#### Vertical Positioning
+### 3. FontSettings Component (`src/components/FontSettings.svelte`)
 
-```javascript
-// Get position relative to article container
-const articleRect = article.getBoundingClientRect();
-const refRect = ref.getBoundingClientRect();
-const topPosition = refRect.top - articleRect.top;
-```
+Provides a modal to control the font size and family (serif/sans-serif) for the article text.
 
-**Why this works:**
-- Uses `getBoundingClientRect()` for accurate positioning
-- Calculates relative to article container, not viewport
-- Works correctly on page reload at any scroll position
+#### Persistence
+- Font settings are saved to `localStorage` and applied on page load.
+- Font size is applied as an inline style to the `.fulltext` element.
+- Font family is applied by setting a `data-font-family` attribute on the `<body>` element, which is then used by CSS rules in `global.css`.
 
-**DANGER ZONES:**
-1. **Never use `offsetTop` calculations** - breaks on page reload when scrolled
-2. **Never add `window.scrollY`** - creates double-scroll offset
-3. **Never use viewport coordinates** - breaks relative positioning
+#### Keyboard Shortcuts
+- All shortcuts are **unmodified keys** (do not use `Cmd`, `Ctrl`, or `Alt`).
+- `F` - Toggle font settings modal
+- `S/M/L/X` - Adjust font size
+- `R/N` - Switch between Serif and Sans-serif fonts
+- `Esc` - Close modal
 
-#### Screen Size Breakpoints
-
-```javascript
-isWideScreen = window.innerWidth >= 1200;
-```
-
-- **< 1200px**: Bottom footnotes only
-- **≥ 1200px**: Side footnotes with bottom footnotes hidden
-
-### 3. TableOfContents Component (`src/components/TableOfContents.svelte`)
+### 4. TableOfContents Component (`src/components/TableOfContents.svelte`)
 
 Universal modal-based navigation with keyboard shortcuts.
-
-#### Design Principles
-- **Universal**: Same experience on all devices
-- **Non-intrusive**: Doesn't affect existing layout
-- **Keyboard-first**: Full keyboard navigation
 
 #### Keyboard Shortcuts
 - `T` - Toggle modal
@@ -94,22 +80,18 @@ Universal modal-based navigation with keyboard shortcuts.
 
 ## CSS Architecture
 
-### Typography Consistency
-
-All footnotes use the same typography as main text:
-
+### Font Styling
+The base font styles are defined in `global.css` for the `.fulltext` element. The `FontSettings` component overrides these. The font family is controlled by CSS rules targeting the `data-font-family` attribute on the body:
 ```css
-.fulltext .footnotes ol,
-.side-footnotes {
+body[data-font-family='serif'] .fulltext {
   font-family: Georgia, Charter, "Times New Roman", serif;
-  font-size: 1em; /* Same as main text */
-  font-style: italic;
-  line-height: 1.65; /* Same as main text */
+}
+body[data-font-family='sans'] .fulltext {
+  font-family: ui-sans-serif, system-ui, /* ... */, sans-serif;
 }
 ```
 
 ### Responsive Footnote Hiding
-
 ```css
 @media (min-width: 1200px) {
   .fulltext .footnotes.side-footnotes-active {
@@ -120,92 +102,48 @@ All footnotes use the same typography as main text:
 
 ## Interactive Features
 
-### Footnote Highlighting
-
-**Click footnote mark → Highlight footnote:**
-- Side footnotes: Immediate highlight (no scroll needed)
-- Bottom footnotes: Scroll to footnote + highlight
-
-**Click footnote → Highlight footnote mark:**
-- Scroll footnote mark to center of viewport
-- 300ms delay before highlighting (ensures smooth scroll completion)
-- Works for both side and bottom footnotes
-
 ### Event Handling
+- The `FontSettings` component dispatches a `fontSettingsChanged` custom event on the `window` object whenever a setting is changed.
+- The `FootnoteManager` component listens for this event and triggers a full recalculation of footnote positions to adapt to the new text size and flow.
 
-```javascript
-// Handle side footnote clicks
-document.addEventListener('click', (event) => {
-  const sideFootnote = event.target.closest('.side-footnote');
-  if (sideFootnote) {
-    const footnoteId = sideFootnote.getAttribute('data-footnote-id');
-    highlightFootnoteRef(footnoteId);
-  }
-});
-```
-
-## Common Pitfalls & Solutions
-
-### 1. Footnote Positioning Issues
-
-**Problem**: Footnotes appear in wrong location
-**Cause**: Usually horizontal positioning calculation is wrong
-**Solution**: Verify `.fulltext` max-width matches CSS calculation
-
-**Problem**: Footnotes don't scroll with content
-**Cause**: Using `position: fixed` instead of `position: absolute`
-**Solution**: Always use `position: absolute` for side footnotes
-
-**Problem**: Footnotes misaligned on page reload when scrolled
-**Cause**: Using `offsetTop` or adding `window.scrollY`
-**Solution**: Use `getBoundingClientRect()` relative calculations only
-
-### 2. Layout Conflicts
-
-**Problem**: TOC interferes with existing layout
-**Cause**: Using grid or sidebar positioning
-**Solution**: Use modal-only approach with floating button
-
-**Problem**: Changes affect elements outside `.fulltext`
-**Cause**: CSS selectors too broad or layout changes too aggressive
-**Solution**: Scope all changes to `.fulltext` and descendants
-
-### 3. Responsive Behavior
-
-**Problem**: Features break on mobile
-**Cause**: Assuming desktop-only usage
-**Solution**: Always implement mobile-first with progressive enhancement
+### Footnote Highlighting
+- **Click footnote mark → Highlight footnote:**
+  - Side footnotes: Immediate highlight.
+  - Bottom footnotes: Scroll to footnote + highlight.
+- **Click footnote → Highlight footnote mark:**
+  - Scrolls footnote mark to center of viewport.
+  - Highlights after a 300ms delay to ensure smooth scroll completion.
 
 ## Testing Checklist
 
 Before making changes, test:
 
 1. **Footnote positioning**:
-   - [ ] Side footnotes appear 50px right of main text (wide screens)
-   - [ ] Footnotes align vertically with their marks
-   - [ ] Footnotes scroll with content
-   - [ ] Positioning correct on page reload when scrolled
+   - [ ] Side footnotes appear 50px right of main text (wide screens).
+   - [ ] Footnotes align vertically with their marks.
+   - [ ] **Footnotes do not overlap after increasing font size.**
+   - [ ] Positioning correct on page reload when scrolled.
 
-2. **Interactive highlighting**:
-   - [ ] Click footnote mark → highlights footnote
-   - [ ] Click footnote → scrolls to and highlights mark
-   - [ ] Works for both side and bottom footnotes
+2. **Font Settings**:
+   - [ ] Font size and family changes apply correctly.
+   - [ ] **Settings persist correctly after a page reload.**
+   - [ ] **Changing font size/style triggers footnote relayout.**
+   - [ ] Keyboard shortcuts work without modifier keys.
 
-3. **Responsive behavior**:
-   - [ ] Side footnotes on wide screens (≥1200px)
-   - [ ] Bottom footnotes on narrow screens (<1200px)
-   - [ ] TOC modal works on all screen sizes
+3. **Interactive highlighting**:
+   - [ ] Click footnote mark → highlights footnote.
+   - [ ] Click footnote → scrolls to and highlights mark.
 
-4. **Layout preservation**:
-   - [ ] No changes to elements above/below `.fulltext`
-   - [ ] Existing article layout unchanged
-   - [ ] No horizontal scrollbars introduced
+4. **Responsive behavior**:
+   - [ ] Side footnotes on wide screens (≥1200px), bottom on narrow (<1200px).
+   - [ ] Modals (TOC, Font Settings) work on all screen sizes.
 
 ## File Structure
 
 ```
 src/
 ├── components/
+│   ├── FontSettings.svelte         # Font controls
 │   ├── FootnoteManager.svelte    # Side footnote positioning & highlighting
 │   └── TableOfContents.svelte    # Modal TOC with keyboard shortcuts
 ├── layouts/
@@ -215,31 +153,3 @@ src/
 └── styles/
     └── global.css                # Footnote & TOC styling
 ```
-
-## Future Considerations
-
-### Adding New Features
-- Always test footnote positioning after layout changes
-- Ensure new features don't break existing responsive behavior
-- Maintain keyboard accessibility for all interactions
-
-### Performance
-- Footnote positioning recalculates on window resize
-- TOC extraction happens once on component mount
-- Intersection Observer used for active section tracking
-
-### Accessibility
-- All interactive elements have proper ARIA labels
-- Keyboard navigation fully supported
-- Focus management in modal interactions
-
-## Emergency Fixes
-
-If footnotes break completely:
-
-1. **Check `.fulltext` positioning**: Must be `position: relative`
-2. **Verify CSS calculations**: `left: calc(600px + 50px)` for side footnotes
-3. **Confirm JavaScript positioning**: Use `getBoundingClientRect()` only
-4. **Test screen size detection**: `window.innerWidth >= 1200`
-
-The most common issue is horizontal positioning - always verify the gap calculation matches the actual `.fulltext` width.

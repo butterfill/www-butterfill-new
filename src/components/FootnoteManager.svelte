@@ -7,6 +7,7 @@
   onMount(() => {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
+    window.addEventListener('fontSettingsChanged', setupSideFootnotes);
     
     if (isWideScreen) {
       setupSideFootnotes();
@@ -16,6 +17,7 @@
 
     return () => {
       window.removeEventListener('resize', checkScreenSize);
+      window.removeEventListener('fontSettingsChanged', setupSideFootnotes);
     };
   });
 
@@ -47,6 +49,11 @@
       footnoteContent.set(id, content);
     });
 
+    const currentStyle = window.getComputedStyle(article);
+    const currentFontSize = currentStyle.fontSize;
+    const currentFontFamily = currentStyle.fontFamily;
+    const currentLineHeight = currentStyle.lineHeight;
+
     // Calculate positions for side footnotes
     const newSideFootnotes = [];
     let lastBottom = 0;
@@ -59,11 +66,11 @@
       const articleRect = article.getBoundingClientRect();
       const refRect = ref.getBoundingClientRect();
       
-      // Calculate the position relative to the article top
-      const topPosition = refRect.top - articleRect.top;
+      // Calculate the position relative to the article top, nudging it up slightly
+      const topPosition = (refRect.top - articleRect.top) - 8;
       
-      // Ensure footnotes don't overlap
-      const adjustedTop = Math.max(topPosition, lastBottom + 10);
+      // Ensure footnotes don't overlap, using a smaller gap
+      const adjustedTop = Math.max(topPosition, lastBottom + 4);
       
       newSideFootnotes.push({
         id: footnoteId,
@@ -73,22 +80,28 @@
       });
 
       // Calculate actual footnote height by creating a temporary element
+      // that perfectly mimics a real side footnote.
       const tempFootnote = document.createElement('div');
+      tempFootnote.className = 'side-footnote'; // Use class to get some styles (e.g. back-ref hiding)
       tempFootnote.style.cssText = `
         position: absolute;
         visibility: hidden;
+        /* Set geometry explicitly to prevent miscalculation */
         width: 280px;
         padding: 0.75rem;
-        font-family: Georgia, Charter, "Times New Roman", serif;
-        font-size: 1em;
+        /* Apply dynamic font styles for accurate height calculation */
+        font-family: ${currentFontFamily};
+        font-size: ${currentFontSize};
+        line-height: ${currentLineHeight};
         font-style: italic;
-        line-height: 1.65;
       `;
-      tempFootnote.innerHTML = `<span>${footnoteId}.</span>${footnoteContent.get(footnoteId)}`;
-      document.body.appendChild(tempFootnote);
+      // Use the same innerHTML structure as the real footnotes
+      tempFootnote.innerHTML = `<span class="side-footnote-number">${footnoteId}.</span>${footnoteContent.get(footnoteId)}`;
       
+      // Append to the article to ensure styles are computed correctly
+      article.appendChild(tempFootnote);
       const actualHeight = tempFootnote.offsetHeight;
-      document.body.removeChild(tempFootnote);
+      article.removeChild(tempFootnote);
       
       lastBottom = adjustedTop + actualHeight;
     });

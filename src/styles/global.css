@@ -427,6 +427,17 @@
   color: white;
 }
 
+/* Font family settings */
+body[data-font-family='serif'] .fulltext,
+body[data-font-family='serif'] .side-footnotes {
+  font-family: Georgia, Charter, "Times New Roman", serif;
+}
+
+body[data-font-family='sans'] .fulltext,
+body[data-font-family='sans'] .side-footnotes {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
 /* Side footnotes */
 .side-footnotes {
   position: absolute;
