@@ -18,6 +18,7 @@ import CiteButton from '../../components/CiteButton.svelte';
 import CitationDisplay from '../../components/CitationDisplay.svelte';
 import TableOfContents from '../../components/TableOfContents.svelte';
 import FootnoteManager from '../../components/FootnoteManager.svelte';
+import FontSettings from '../../components/FontSettings.svelte';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render(); // This gets the Markdown content
@@ -137,6 +138,9 @@ if (bibtexData) {
     <Content /> <!-- This renders the main body of the Markdown file -->
     <FootnoteManager client:load />
   </div>
+  
+  <!-- Font Settings Modal -->
+  <FontSettings client:load />
   
   <!-- Table of Contents Modal -->
   <TableOfContents client:load />

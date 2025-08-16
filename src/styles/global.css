@@ -201,15 +201,15 @@
   display: none;
 }
 
-/* Table of Contents Modal Button */
-.toc-modal-trigger {
+/* Floating Action Buttons */
+.toc-modal-trigger,
+.font-settings-trigger {
   position: fixed;
-  bottom: 1rem;
   right: 1rem;
   z-index: 50;
-  background: rgb(59, 130, 246); /* blue-500 */
-  color: white;
-  border: none;
+  background: white;
+  color: rgb(107, 114, 128); /* gray-500 */
+  border: 1px solid rgb(209, 213, 219); /* gray-300 */
   border-radius: 50%;
   width: 3.5rem;
   height: 3.5rem;
@@ -223,14 +223,41 @@
   font-weight: 600;
 }
 
-.toc-modal-trigger:hover {
-  background: rgb(37, 99, 235); /* blue-600 */
+.toc-modal-trigger {
+  bottom: 1rem;
+}
+
+.font-settings-trigger {
+  bottom: 5.5rem; /* Above TOC button */
+}
+
+.toc-modal-trigger:hover,
+.font-settings-trigger:hover {
+  background: rgb(59, 130, 246); /* blue-500 */
+  color: white;
+  border-color: rgb(59, 130, 246); /* blue-500 */
   transform: scale(1.05);
 }
 
-.toc-modal-trigger:focus {
+.toc-modal-trigger:focus,
+.font-settings-trigger:focus {
   outline: 2px solid rgb(59, 130, 246);
   outline-offset: 2px;
+}
+
+/* Dark mode for floating buttons */
+.dark .toc-modal-trigger,
+.dark .font-settings-trigger {
+  background: rgb(30, 41, 59); /* slate-800 */
+  color: rgb(148, 163, 184); /* slate-400 */
+  border-color: rgb(71, 85, 105); /* slate-600 */
+}
+
+.dark .toc-modal-trigger:hover,
+.dark .font-settings-trigger:hover {
+  background: rgb(59, 130, 246); /* blue-500 */
+  color: white;
+  border-color: rgb(59, 130, 246); /* blue-500 */
 }
 
 /* Table of Contents Modal */
@@ -451,6 +478,205 @@
 }
 
 .dark .toc-modal-content kbd {
+  background: rgb(55, 65, 81); /* gray-700 */
+  border-color: rgb(75, 85, 99); /* gray-600 */
+  color: rgb(209, 213, 219); /* gray-300 */
+}
+
+/* Font Settings Modal */
+.font-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgb(0 0 0 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.font-modal-content {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 28rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+.dark .font-modal-content {
+  background: rgb(30, 41, 59); /* slate-800 */
+}
+
+.font-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgb(226, 232, 240); /* slate-200 */
+}
+
+.dark .font-modal-header {
+  border-bottom-color: rgb(71, 85, 105); /* slate-600 */
+}
+
+.font-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(51, 65, 85); /* slate-700 */
+}
+
+.dark .font-modal-title {
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+.font-modal-close {
+  background: none;
+  border: none;
+  color: rgb(107, 114, 128); /* gray-500 */
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.font-modal-close:hover {
+  color: rgb(59, 130, 246); /* blue-500 */
+  background: rgb(239, 246, 255); /* blue-50 */
+}
+
+.dark .font-modal-close {
+  color: rgb(156, 163, 175); /* gray-400 */
+}
+
+.dark .font-modal-close:hover {
+  color: rgb(96, 165, 250); /* blue-400 */
+  background: rgb(30, 58, 138); /* blue-900 */
+}
+
+.font-section {
+  margin-bottom: 1.5rem;
+}
+
+.font-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(51, 65, 85); /* slate-700 */
+  margin-bottom: 0.75rem;
+}
+
+.dark .font-section-title {
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+.font-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.font-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid rgb(226, 232, 240); /* slate-200 */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.font-option:hover {
+  background: rgb(239, 246, 255); /* blue-50 */
+  border-color: rgb(191, 219, 254); /* blue-200 */
+}
+
+.font-option.active {
+  background: rgb(59, 130, 246); /* blue-500 */
+  border-color: rgb(59, 130, 246); /* blue-500 */
+  color: white;
+}
+
+.dark .font-option {
+  background: rgb(51, 65, 85); /* slate-700 */
+  border-color: rgb(71, 85, 105); /* slate-600 */
+  color: rgb(226, 232, 240); /* slate-200 */
+}
+
+.dark .font-option:hover {
+  background: rgb(30, 58, 138); /* blue-900 */
+  border-color: rgb(59, 130, 246); /* blue-500 */
+}
+
+.dark .font-option.active {
+  background: rgb(59, 130, 246); /* blue-500 */
+  border-color: rgb(59, 130, 246); /* blue-500 */
+  color: white;
+}
+
+.font-option-label {
+  font-weight: 500;
+}
+
+.font-option-shortcut {
+  font-size: 0.75rem;
+  color: rgb(107, 114, 128); /* gray-500 */
+  background: rgb(243, 244, 246); /* gray-100 */
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.dark .font-option-shortcut {
+  color: rgb(156, 163, 175); /* gray-400 */
+  background: rgb(55, 65, 81); /* gray-700 */
+}
+
+.font-option:hover .font-option-shortcut {
+  background: rgb(219, 234, 254); /* blue-100 */
+  color: rgb(59, 130, 246); /* blue-500 */
+}
+
+.dark .font-option:hover .font-option-shortcut {
+  background: rgb(30, 58, 138); /* blue-900 */
+  color: rgb(96, 165, 250); /* blue-400 */
+}
+
+.font-option.active .font-option-shortcut {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.font-modal-help {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(226, 232, 240); /* slate-200 */
+  font-size: 0.75rem;
+  color: rgb(107, 114, 128); /* gray-500 */
+}
+
+.dark .font-modal-help {
+  border-top-color: rgb(71, 85, 105); /* slate-600 */
+  color: rgb(156, 163, 175); /* gray-400 */
+}
+
+.font-modal-content kbd {
+  background: rgb(243, 244, 246); /* gray-100 */
+  border: 1px solid rgb(209, 213, 219); /* gray-300 */
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.dark .font-modal-content kbd {
   background: rgb(55, 65, 81); /* gray-700 */
   border-color: rgb(75, 85, 99); /* gray-600 */
   color: rgb(209, 213, 219); /* gray-300 */
