@@ -72,9 +72,25 @@
         ref: ref
       });
 
-      // Estimate footnote height (rough calculation)
-      const estimatedHeight = Math.max(80, footnoteContent.get(footnoteId).length * 0.5);
-      lastBottom = adjustedTop + estimatedHeight;
+      // Calculate actual footnote height by creating a temporary element
+      const tempFootnote = document.createElement('div');
+      tempFootnote.style.cssText = `
+        position: absolute;
+        visibility: hidden;
+        width: 280px;
+        padding: 0.75rem;
+        font-family: Georgia, Charter, "Times New Roman", serif;
+        font-size: 1em;
+        font-style: italic;
+        line-height: 1.65;
+      `;
+      tempFootnote.innerHTML = `<span>${footnoteId}.</span>${footnoteContent.get(footnoteId)}`;
+      document.body.appendChild(tempFootnote);
+      
+      const actualHeight = tempFootnote.offsetHeight;
+      document.body.removeChild(tempFootnote);
+      
+      lastBottom = adjustedTop + actualHeight;
     });
 
     sideFootnotes = newSideFootnotes;
