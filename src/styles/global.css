@@ -115,6 +115,16 @@
   color: rgb(51, 65, 85); /* slate-700 */
 }
 
+/* Hanging indent for references */
+.fulltext .hanging-indent {
+  padding-left: 2em;
+  text-indent: -2em;
+}
+
+.fulltext .hanging-indent .csl-entry {
+  margin-bottom: 1em;
+}
+
 .dark .fulltext .footnotes::before {
   color: rgb(226, 232, 240); /* slate-200 */
 }

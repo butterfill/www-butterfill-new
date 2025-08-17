@@ -85,7 +85,13 @@
   function applyFontSettings() {
     const fulltext = document.querySelector('.fulltext');
     if (fulltext) {
-      fulltext.style.fontSize = fontSizes[fontSize].value;
+      const fontSizeValue = fontSizes[fontSize].value;
+      fulltext.style.fontSize = fontSizeValue;
+      
+      // Calculate width to maintain approximately 80 characters per line
+      // 36em is based on manual checks
+      const targetWidth = '36em';
+      fulltext.style.maxWidth = targetWidth;
     }
 
     // Use a data-attribute for font family for more robust CSS targeting
