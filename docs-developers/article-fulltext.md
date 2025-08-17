@@ -35,10 +35,12 @@ Handles responsive footnote positioning and interactive highlighting. It automat
 #### Positioning Logic (FRAGILE - Handle with Care)
 
 **Horizontal Positioning:**
+Calculated dynamically in JavaScript based on the actual rendered width of the `.fulltext` element plus 50px gap. This ensures footnotes position correctly regardless of font size changes that affect the text width (now set to 36em).
+
 ```css
 .side-footnotes {
   position: absolute;
-  left: calc(600px + 50px); /* fulltext max-width + gap */
+  left: calc(600px + 50px); /* CSS fallback - overridden by JavaScript */
 }
 ```
 
@@ -52,9 +54,10 @@ The script calculates the actual height of each footnote (including padding) and
 
 
 **DANGER ZONES:**
-1. **Never change `.fulltext` max-width without updating footnote positioning**
+1. **Footnote positioning is now dynamic** - handled by JavaScript in FootnoteManager.svelte
 2. **Never use `position: fixed` for footnotes** - breaks scrolling behavior
 3. **Never use `offsetTop` or `window.scrollY`** - creates misalignments
+4. **CSS fallback positioning** - The CSS `left: calc(600px + 50px)` is only a fallback for when JavaScript hasn't loaded
 
 ### 3. FontSettings Component (`src/components/FontSettings.svelte`)
 

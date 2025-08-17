@@ -31,11 +31,22 @@
     }
   }
 
+  function calculateFootnotePosition() {
+    const fulltext = document.querySelector('.fulltext');
+    if (!fulltext) return 650; // fallback to old positioning
+    
+    const rect = fulltext.getBoundingClientRect();
+    return rect.width + 50; // actual width + 50px gap
+  }
+
   function setupSideFootnotes() {
     const article = document.querySelector('.fulltext');
     const footnotesSection = document.querySelector('.fulltext .footnotes');
     
     if (!article || !footnotesSection) return;
+
+    // Calculate dynamic footnote position
+    const footnoteLeftPosition = calculateFootnotePosition();
 
     // Find all footnote references in the text
     const footnoteRefs = article.querySelectorAll('.footnote-ref');
@@ -116,6 +127,7 @@
         id: footnoteId,
         content: footnoteContent.get(footnoteId),
         top: adjustedTop,
+        left: footnoteLeftPosition,
         ref: ref
       });
 
@@ -232,11 +244,11 @@
 </script>
 
 {#if isWideScreen && sideFootnotes.length > 0}
-  <div class="side-footnotes">
+  <div class="side-footnotes" >
     {#each sideFootnotes as footnote}
       <div 
         class="side-footnote" 
-        style="top: {footnote.top}px"
+        style="top: {footnote.top}px; left: {footnote.left}px"
         data-footnote-id={footnote.id}
       >
         <span class="side-footnote-number">{footnote.id}.</span>

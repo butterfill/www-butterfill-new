@@ -451,8 +451,8 @@ body[data-font-family='sans'] .side-footnotes {
 /* Side footnotes */
 .side-footnotes {
   position: absolute;
-  top: 0;
-  left: calc(600px + 50px); /* fulltext max-width + gap */
+  top: 0;  
+  /* left: calc(600px + 50px);  */ /* fulltext max-width + gap */ /* removed because we are positioning the footnotes dynamically as the font size changes */
   width: 280px;
   font-family: Georgia, Charter, "Times New Roman", serif; /* Same as main text */
   font-size: 1em; /* Same size as main text */
