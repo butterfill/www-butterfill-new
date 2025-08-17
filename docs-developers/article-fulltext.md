@@ -46,7 +46,10 @@ Handles responsive footnote positioning and interactive highlighting. It automat
 Calculated in JavaScript using `getBoundingClientRect()` relative to the article container. This is robust against page scroll.
 
 **Overlap Prevention:**
-The script calculates the actual height of each footnote (using the current font settings) and ensures that each new footnote is positioned below the previous one, preventing vertical overlap.
+The script calculates the actual height of each footnote (including padding) and ensures that each new footnote is positioned below the previous one. The vertical spacing between footnotes is designed to match the `1.5em` `margin-bottom` of paragraphs in the main text.
+
+**CRITICAL CALCULATION:** To achieve the correct visual spacing, the script subtracts the footnote's vertical padding from the target paragraph spacing to determine the required margin *between* the footnote bounding boxes. This logic is in `FootnoteManager.svelte` and is sensitive to both CSS padding values and the dynamic font size. Any changes to footnote padding in `global.css` must be tested against this JavaScript logic.
+
 
 **DANGER ZONES:**
 1. **Never change `.fulltext` max-width without updating footnote positioning**

@@ -58,20 +58,60 @@
     const newSideFootnotes = [];
     let lastBottom = 0;
 
+    // Calculate paragraph spacing in pixels (1.5em) to match main text paragraph spacing
+    const paragraphSpacing = 0;// parseFloat(currentFontSize) * 1.5;
+
     footnoteRefs.forEach(ref => {
       const footnoteId = ref.getAttribute('href')?.replace('#fn', '');
       if (!footnoteId || !footnoteContent.has(footnoteId)) return;
 
-      // Get the position relative to the article container
+      // 1. Create a temporary footnote element to measure its properties accurately.
+      const tempFootnote = document.createElement('div');
+      tempFootnote.className = 'side-footnote';
+      // NOTE THAT CHANGING THE MAIN FONT SIZE DOES NOT CHANGE THE FOOTNOTE FONT SIZE
+      // tempFootnote.style.cssText = `
+      //   position: absolute;
+      //   visibility: hidden;
+      //   width: 280px;
+      //   padding: 0.75rem;
+      //   font-family: ${currentFontFamily};
+      //   font-size: ${currentFontSize};
+      //   line-height: ${currentLineHeight};
+      //   font-style: italic;
+      // `;
+      tempFootnote.style.cssText = `
+        position: absolute;
+        visibility: hidden;
+        width: 280px;
+        padding: 0.75rem;
+        font-family: ${currentFontFamily};
+        font-size: 16px;
+        line-height: 26.4px;
+        font-style: italic;
+      `;
+      tempFootnote.innerHTML = `<span class="side-footnote-number">${footnoteId}.</span>${footnoteContent.get(footnoteId)}`;
+      article.appendChild(tempFootnote);
+
+      // 2. Measure its height and padding.
+      const actualHeight = tempFootnote.offsetHeight;
+      const tempStyle = window.getComputedStyle(tempFootnote);
+      const paddingTop = parseFloat(tempStyle.paddingTop);
+      const paddingBottom = parseFloat(tempStyle.paddingBottom);
+      article.removeChild(tempFootnote);
+
+      // 3. Calculate the ideal top position based on the reference mark in the text.
       const articleRect = article.getBoundingClientRect();
       const refRect = ref.getBoundingClientRect();
-      
-      // Calculate the position relative to the article top, nudging it up slightly
-      const topPosition = (refRect.top - articleRect.top) - 8;
-      
-      // Ensure footnotes don't overlap, using a smaller gap
-      const adjustedTop = Math.max(topPosition, lastBottom + 4);
-      
+      const topPosition = (refRect.top - articleRect.top) - 16; // Nudge up slightly
+
+      // 4. Calculate the corrected gap. This is the key fix.
+      // We want the visual gap to be 1.5em, so we subtract the padding of the footnotes.
+      const correctedGap = Math.max(0, paragraphSpacing - (paddingTop + paddingBottom));
+
+      // 5. Determine the final top position, preventing overlap using the corrected gap.
+      const adjustedTop = Math.max(topPosition, lastBottom + correctedGap);
+
+      // 6. Add the calculated footnote to our list and update lastBottom for the next iteration.
       newSideFootnotes.push({
         id: footnoteId,
         content: footnoteContent.get(footnoteId),
@@ -79,30 +119,6 @@
         ref: ref
       });
 
-      // Calculate actual footnote height by creating a temporary element
-      // that perfectly mimics a real side footnote.
-      const tempFootnote = document.createElement('div');
-      tempFootnote.className = 'side-footnote'; // Use class to get some styles (e.g. back-ref hiding)
-      tempFootnote.style.cssText = `
-        position: absolute;
-        visibility: hidden;
-        /* Set geometry explicitly to prevent miscalculation */
-        width: 280px;
-        padding: 0.75rem;
-        /* Apply dynamic font styles for accurate height calculation */
-        font-family: ${currentFontFamily};
-        font-size: ${currentFontSize};
-        line-height: ${currentLineHeight};
-        font-style: italic;
-      `;
-      // Use the same innerHTML structure as the real footnotes
-      tempFootnote.innerHTML = `<span class="side-footnote-number">${footnoteId}.</span>${footnoteContent.get(footnoteId)}`;
-      
-      // Append to the article to ensure styles are computed correctly
-      article.appendChild(tempFootnote);
-      const actualHeight = tempFootnote.offsetHeight;
-      article.removeChild(tempFootnote);
-      
       lastBottom = adjustedTop + actualHeight;
     });
 
