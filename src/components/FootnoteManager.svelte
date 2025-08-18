@@ -3,7 +3,7 @@
 
   let sideFootnotes = [];
   let isWideScreen = false;
-
+  
   onMount(() => {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
@@ -41,8 +41,15 @@
 
   function setupSideFootnotes() {
     const article = document.querySelector('.fulltext');
+    
     const footnotesSection = document.querySelector('.fulltext .footnotes');
     
+    // The footnotes are positions relative to .footnote-manager-container
+    // This element is created in the `writing/[...slug].astro` file
+    const footnoteManagerContainer = document.querySelector('.footnote-manager-container');
+    const footnoteManagerContainerRect = footnoteManagerContainer.getBoundingClientRect();
+    const footnoteManagerContainerTop = footnoteManagerContainerRect.top + window.scrollY;
+
     if (!article || !footnotesSection) return;
 
     // Calculate dynamic footnote position
@@ -70,6 +77,7 @@
     let lastBottom = 0;
 
     // Calculate paragraph spacing in pixels (1.5em) to match main text paragraph spacing
+    // UPDATE: because the footnote boxes have padding, we need to adjust the gap calculation
     const paragraphSpacing = 0;// parseFloat(currentFontSize) * 1.5;
 
     footnoteRefs.forEach(ref => {
@@ -111,9 +119,12 @@
       article.removeChild(tempFootnote);
 
       // 3. Calculate the ideal top position based on the reference mark in the text.
-      const articleRect = article.getBoundingClientRect();
+      // const articleRect = article.getBoundingClientRect();
+      // const refRect = ref.getBoundingClientRect();
+      // const topPosition = (refRect.top - articleRect.top) - 16; // Nudge up slightly
       const refRect = ref.getBoundingClientRect();
-      const topPosition = (refRect.top - articleRect.top) - 16; // Nudge up slightly
+      // Calculate the absolute top position relative to the document
+      const topPosition = (refRect.top + window.scrollY) - footnoteManagerContainerTop - 16; // Nudge up slightly
 
       // 4. Calculate the corrected gap. This is the key fix.
       // We want the visual gap to be 1.5em, so we subtract the padding of the footnotes.
@@ -140,6 +151,7 @@
     if (footnotesSection && sideFootnotes.length > 0) {
       footnotesSection.classList.add('side-footnotes-active');
     }
+
   }
 
   function clearSideFootnotes() {
@@ -244,7 +256,7 @@
 </script>
 
 {#if isWideScreen && sideFootnotes.length > 0}
-  <div class="side-footnotes" >
+  <div class="side-footnotes">
     {#each sideFootnotes as footnote}
       <div 
         class="side-footnote" 

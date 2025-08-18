@@ -17,6 +17,7 @@ const writingCollection = defineCollection({
     doi: z.string().optional(),
     pdfUrl: z.string().optional(), // Will only be present if a PDF exists
     bibtex: z.string().optional(), // BibTeX citation data
+    featured: z.boolean().optional(), // For highlighting featured publications
   }),
 });
 
@@ -32,6 +33,7 @@ const talksCollection = defineCollection({
     handoutUrl: z.string().optional(),
     slidesUrl: z.string().optional(),
     slideImages: z.array(z.string()).optional(), // For Reveal.js slide decks
+    featured: z.boolean().optional(),
   }),
 });
 
@@ -47,6 +49,7 @@ const teachingCollection = defineCollection({
         abstract: z.string(),
         // Defines an object where keys are strings (e.g., '01') and values are strings (lecture titles)
         lectures: z.record(z.string()),
+        featured: z.boolean().optional(),
     }),
 });
 

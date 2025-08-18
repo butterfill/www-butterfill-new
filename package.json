@@ -6,9 +6,11 @@
     "dev": "astro dev",
     "build": "node ./scripts/generate-llms.mjs && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "surge": "surge dist --domain butterfill-com-test.surge.sh"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.4",
     "@astrojs/svelte": "^7.1.0",
     "@astrojs/tailwind": "^6.0.2",
     "@orcid/bibtex-parse-js": "^0.0.25",

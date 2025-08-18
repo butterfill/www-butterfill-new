@@ -6,6 +6,7 @@ pubDate: 2014-11-07T00:00:00.000Z
 event: Minimal Mindreading
 address: University of Magdeburg, Germany
 handoutUrl: /pdf/talks/minimal_models_magdeburg.handout.pdf
+featured: true
 ---
 
 ## Abstract

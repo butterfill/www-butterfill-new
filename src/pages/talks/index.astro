@@ -1,0 +1,95 @@
+---
+// src/pages/talks/index.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get all talks
+const allTalks = (await getCollection('talks')).sort(
+  (a, b) => {
+    const aDate = new Date(a.data.pubDate).valueOf();
+    const bDate = new Date(b.data.pubDate).valueOf();
+    return bDate - aDate;
+  }
+);
+---
+
+<BaseLayout title="Stephen A. Butterfill | Talks">
+  <div class="container mx-auto max-w-6xl px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Main Content -->
+      <main class="lg:col-span-4 space-y-8">
+        <!-- Talks Section -->
+        <section id="talks" class="space-y-6">
+          <h2 class="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800 pb-2">
+            Talks
+          </h2>
+          <div class="grid gap-4">
+            {allTalks.map(item => (
+              <article class="group border border-slate-200 dark:border-slate-800 rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+                <div class="flex justify-between items-start">
+                  <a href={`/talks/${item.slug}/`} class="block space-y-2 flex-grow">
+                    <h3 class="font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {item.data.title}
+                    </h3>
+                    <div class="text-sm text-slate-600 dark:text-slate-400">
+                      {item.data.authors}
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                      <span>{new Date(item.data.pubDate).getFullYear()}</span>
+                      {item.data.event && (
+                        <>
+                          <span>•</span>
+                          <span>{item.data.event}</span>
+                        </>
+                      )}
+                      {item.data.address && (
+                        <>
+                          <span>•</span>
+                          <span>{item.data.address}</span>
+                        </>
+                      )}
+                    </div>
+                  </a>
+                  <div class="flex gap-1 ml-4 flex-shrink-0">
+                    {item.data.handoutUrl && (
+                      <a 
+                        href={item.data.handoutUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center w-auto h-8 rounded-full bg-slate-100 hover:bg-purple-100 dark:bg-slate-700 dark:hover:bg-purple-900/50 transition-colors px-2"
+                        title="View Handout"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-xs font-medium text-slate-600 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400">
+                          PDF
+                        </span>
+                      </a>
+                    )}
+                    {item.data.slidesUrl && (
+                      <a 
+                        href={item.data.slidesUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center w-auto h-8 rounded-full bg-slate-100 hover:bg-green-100 dark:bg-slate-700 dark:hover:bg-green-900/50 transition-colors px-2"
+                        title="View Slides"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 hover:text-green-600 dark:text-slate-400 dark:hover:text-green-400 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M7 4a2 2 0 012-2h6a2 2 0 012 2v2h4a2 2 0 012 2v6a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4V4z" />
+                        </svg>
+                        <span class="text-xs font-medium text-slate-600 hover:text-green-600 dark:text-slate-400 dark:hover:text-green-400">
+                          Slides
+                        </span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</BaseLayout>

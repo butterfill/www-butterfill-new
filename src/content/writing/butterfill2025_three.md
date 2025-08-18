@@ -13,6 +13,13 @@ featured: true
 ---
 
 <div class="fulltext">
+
+
+<h1 id="sec:abstract">Abstract</h1>
+<div class="abstract">
+When deciding on a strategy for explicating shared intention, we all face two fundamental questions. First, can an intention or any other mental state have more than one subject? A positive answer to this allows the plural subject strategy: shared intention is a matter of there being one mental state with two or more subjects. Mental states are shared in the same sense that siblings share a parent; no simpler view exists. A negative answer blocks the plural subject strategy. This motivates asking the second fundamental question. Are there aggregate subjects and, if so, can they have intentions? The aggregate strategy depends on a positive answer to this question: the idea is that shared intention is a matter of there being aggregate subjects of mental states, that is subjects of mental states with proper parts that include subjects of mental states. By contrast, a negative answer to this question limits us to the reductive strategy: shared intention is a structure of ordinary, individual subjects’ emotions, intentions and other mental states. I contribute a limited review of the three strategies. I also defend a novel thesis. Whereas these strategies are often presented as conflicting attempts to characterise a single set of phenomena, my thesis is that for each strategy there are phenomena which can be correctly characterised only by following that strategy. Instead of attempting to one true strategy, we may need to seek ways to combine insights from different strategies.
+</div>
+
 <h1 id="sec:introduction">Introduction</h1>
 <p>Start with the idea that shared intention, whatever that is, is
 something which makes things we do together the genuinely joint
