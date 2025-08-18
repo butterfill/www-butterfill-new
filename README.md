@@ -114,6 +114,17 @@ This generates `public/llms.txt` containing all publications and talks in a form
 1. **Manual approach:** Create markdown files in `src/content/writing/`
 2. **BibTeX approach:** Use `sync-bibtex.mjs` to import from bibliography files
 
+#### Adding full text to publications
+
+Add markdown to `public/md`. Make sure the md has the same basename as the article. The build script will find the markdown file. 
+
+Where a markdown file exists, `Copy for Chat` (with LLMs) will be enabled. [∞todo: also add link to full text in the `LLMS.txt` file]
+
+#### Adding pdfs to publications
+
+Add the pdf to `public/pdf` and update the `pdfUrl` property [∞todo: auto match pdfs to filenames]. Make sure the pdf has the same basename as the article.
+
+
 #### Talks
 
 1. Create markdown files in `src/content/talks/YYYY/` (organized by year)

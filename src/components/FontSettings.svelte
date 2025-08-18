@@ -29,7 +29,7 @@
 
   // Keyboard shortcuts mapping
   const shortcuts = {
-    'KeyF': () => toggleModal(),
+    // 'KeyF': () => toggleModal(),
     'KeyS': () => setFontSize('small'),
     'KeyM': () => setFontSize('medium'),
     'KeyL': () => setFontSize('large'),
@@ -103,6 +103,15 @@
   }
 
   function handleKeydown(event) {
+    if (!showModal && event.ctrlKey && event.code === 'KeyF') {
+      showModal = true;
+    }
+
+    // Ignore all other shortcuts unless the modal is open
+    if (!showModal) {
+      return;
+    }
+
     // Ignore shortcuts if any modifier keys are pressed
     if (event.metaKey || event.altKey || event.ctrlKey) {
       return;
@@ -199,7 +208,7 @@
       
       <div class="font-modal-help">
         <p><strong>Keyboard shortcuts:</strong></p>
-        <p><kbd>F</kbd> - Toggle this modal</p>
+        <p><kbd>F</kbd> - Open this modal</p>
         <p><kbd>S/M/L/X</kbd> - Font sizes</p>
         <p><kbd>R/N</kbd> - Serif/Sans fonts</p>
         <p><kbd>Esc</kbd> - Close modal</p>

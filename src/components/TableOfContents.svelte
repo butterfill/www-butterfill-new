@@ -103,6 +103,11 @@
   }
 
   function handleKeydown(event) {
+    // ignore if modal is not open
+    if (!showModal && !event.ctrlKey && !event.metaKey) {
+      return;
+    }
+
     // Handle Escape key
     if (event.key === 'Escape' && showModal) {
       showModal = false;

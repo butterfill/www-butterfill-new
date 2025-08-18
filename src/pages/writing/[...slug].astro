@@ -2,6 +2,8 @@
 // src/pages/writing/[...slug].astro
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
+import fs from 'fs';
+import path from 'path';
 
 // This function runs at build time to find all publications
 // and tell Astro to create a page for each one.
@@ -19,9 +21,33 @@ import CitationDisplay from '../../components/CitationDisplay.svelte';
 import TableOfContents from '../../components/TableOfContents.svelte';
 import FootnoteManager from '../../components/FootnoteManager.svelte';
 import FontSettings from '../../components/FontSettings.svelte';
+import { parseBibtex, generatePlainText } from '../../lib/citation-utils';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render(); // This gets the Markdown content
+
+// Step 2 & 3: Check for markdown file and read content
+const markdownFilePath = path.join(process.cwd(), 'public', 'md', `${entry.slug}.md`);
+let hasMarkdownFile = fs.existsSync(markdownFilePath);
+let markdownContent = '';
+
+if (hasMarkdownFile) {
+  try {
+    markdownContent = fs.readFileSync(markdownFilePath, 'utf-8');
+  } catch (error) {
+    console.error(`Error reading markdown file for ${entry.slug}:`, error);
+    hasMarkdownFile = false; // Treat as if file doesn't exist
+  }
+}
+
+const bibtexData = entry.data.bibtex;
+
+// Step 4: Generate formatted citation
+let formattedCitation = '';
+if (hasMarkdownFile && bibtexData) {
+  const parsed = parseBibtex(bibtexData);
+  formattedCitation = generatePlainText(parsed).replace(/\*/g, ''); // Remove markdown formatting
+}
 
 // Format the content specifically for the clipboard
 // Use the raw markdown body instead of the rendered Content component
@@ -35,9 +61,34 @@ Year: ${entry.data.year}
 ${entry.body}
 `.trim();
 
+// Step 5: Create enhanced content format for markdown files
+let enhancedTextForLLM = '';
+if (hasMarkdownFile) {
+  enhancedTextForLLM = `<instructions>
+You are a professor of philosophy who will be asked questions about the <article> below.
+Please read this carefully and ensure that your answers are based on the article only.
+Give exact, word-for-word quotes from the article to support your points.
+
+If your tools include web search, you may find it useful to consult \`https://butterfill.com/llms.txt\` for information about related work. If you do consult related works, please be sure to correctly identify each source you rely on in answering the user's questions.
+</instructions>
+
+<article>
+Title: ${entry.data.title}
+Authors: ${entry.data.authors}
+Year: ${entry.data.year}
+
+<citation>
+${formattedCitation}
+</citation>
+
+<full-text>
+${markdownContent}
+</full-text>
+</article>`;
+}
+
 
 const pdfUrl = entry.data.pdfUrl;
-const bibtexData = entry.data.bibtex;
 
 // Define actions specific to this page
 const pageActions = [];
@@ -51,12 +102,14 @@ if (pdfUrl) {
   });
 }
 
-// Add Copy for Chat as second item
-pageActions.push({
-  label: 'Copy for Chat',
-  action: 'copyToClipboard',
-  text: textForLLM
-});
+// Step 7: Add Copy for Chat only if markdown file exists
+if (hasMarkdownFile) {
+  pageActions.push({
+    label: 'Copy for Chat',
+    action: 'copyToClipboard',
+    text: enhancedTextForLLM
+  });
+}
 
 // Add citation actions if bibtex is available
 if (bibtexData) {
@@ -103,7 +156,9 @@ if (bibtexData) {
 ---
 <PageLayout title={entry.data.title} contextualActions={pageActions}>
   <div class="flex justify-end mb-4 space-x-2">
-    <CopyForChat contentToCopy={textForLLM} client:load />
+    {hasMarkdownFile && (
+      <CopyForChat contentToCopy={enhancedTextForLLM} client:load />
+    )}
     {bibtexData && (
       <span> </span>
       <CiteButton bibtex={bibtexData} client:load />
