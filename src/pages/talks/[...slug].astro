@@ -15,6 +15,7 @@ export async function getStaticPaths() {
 }
 
 import CopyForChat from '../../components/CopyForChat.svelte';
+import EditSourceButton from '../../components/EditSourceButton.svelte';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
@@ -30,10 +31,51 @@ Year: ${entry.data.pubDate ? new Date(entry.data.pubDate).getFullYear() : 'Unkno
 
 ${entry.body}
 `.trim();
+// Define actions specific to this page
+const pageActions = [];
+
+// Add open source action in development mode
+if (import.meta.env.DEV) {
+  pageActions.push({
+    label: 'Edit Source',
+    action: 'openSource',
+    slug: entry.slug,
+    contentType: 'talks'
+  });
+}
+
+// Add Copy for Chat action
+pageActions.push({
+  label: 'Copy for Chat',
+  action: 'copyToClipboard',
+  text: textForLLM
+});
+
+// Add Handout download if available
+if (entry.data.handoutUrl) {
+  pageActions.push({
+    label: 'Download Handout',
+    action: 'openUrl',
+    url: entry.data.handoutUrl
+  });
+}
+
+// Add Slides download if available
+if (entry.data.slidesUrl) {
+  pageActions.push({
+    label: 'Download Slides',
+    action: 'openUrl',
+    url: entry.data.slidesUrl
+  });
+}
 ---
-<PageLayout title={entry.data.title}>
+<PageLayout title={entry.data.title} contextualActions={pageActions}>
   <div class="flex justify-end mb-4 space-x-2">
     <CopyForChat contentToCopy={textForLLM} client:load />
+    {import.meta.env.DEV && (
+      <span> </span> 
+      <EditSourceButton slug={entry.slug} contentType="talks" client:load />
+    )}
     {entry.data.handoutUrl && (
       <a 
         href={entry.data.handoutUrl} 

@@ -17,6 +17,7 @@ export async function getStaticPaths() {
 
 import CopyForChat from '../../components/CopyForChat.svelte';
 import CiteButton from '../../components/CiteButton.svelte';
+import EditSourceButton from '../../components/EditSourceButton.svelte';
 import CitationDisplay from '../../components/CitationDisplay.svelte';
 import TableOfContents from '../../components/TableOfContents.svelte';
 import FootnoteManager from '../../components/FootnoteManager.svelte';
@@ -159,8 +160,12 @@ if (bibtexData) {
     {hasMarkdownFile && (
       <CopyForChat contentToCopy={enhancedTextForLLM} client:load />
     )}
+    {import.meta.env.DEV && (
+      <span> </span> 
+      <EditSourceButton slug={entry.slug} contentType="writing" client:load />
+    )}
     {bibtexData && (
-      <span> </span>
+      <span> </span> 
       <CiteButton bibtex={bibtexData} client:load />
     )}
     {pdfUrl && (

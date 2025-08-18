@@ -12,6 +12,9 @@
     text?: string;
     bibtex?: string;
     format?: 'bibtex' | 'ris' | 'plaintext';
+    filePath?: string; // For open source action
+    contentType?: string; // For open source action
+    slug?: string; // For open source action
   }
 
   // Props passed from Astro
@@ -117,6 +120,30 @@
           }
         }
         break;
+      case 'openSource':
+        if (import.meta.env.DEV && action.slug && action.contentType) {
+          try {
+            // Determine the file path based on content type
+            const filePath = `${action.contentType}/${action.slug}.md`;
+            
+            const response = await fetch('/api/open-source', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ filePath }),
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok || !result.success) {
+              console.error('Failed to open file in VS Code:', result.error);
+            }
+          } catch (err) {
+            console.error('Error opening file:', err);
+          }
+        }
+        break;
       // Add more action types here as needed
       default:
         console.warn('Unknown action type:', action.action);
@@ -152,6 +179,10 @@
             {:else if action.action === 'openUrl'}
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+              </svg>
+            {:else}
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
             {/if}
             <span>{action.label}</span>

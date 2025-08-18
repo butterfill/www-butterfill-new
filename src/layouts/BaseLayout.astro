@@ -22,6 +22,8 @@ interface ContextualAction {
   label: string;
   action: string;
   url?: string;
+  slug?: string; // For openSource action
+  contentType?: string; // For openSource action
 }
 
 interface Props {
