@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Butterfill seed mark">
+  <defs>
+    <style>
+      .fg { fill: #111; }
+    </style>
+  </defs>
+  <!-- Seed/leaf pair forming a hidden 'b' counter -->
+  <path class="fg" d="M120 32c-40 0-72 32-72 72 0 60 48 120 80 120s80-60 80-120c0-24-20-44-44-44-20 0-34 10-44 28 0-32-12-56-40-56z"/>
+  <circle cx="164" cy="104" r="28" fill="#fff"/>
+</svg>

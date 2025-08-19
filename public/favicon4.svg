@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Stephen A. Butterfill monogram">
+  <defs>
+    <style>
+      .bg { fill: #fff; }
+      .fg { fill: #111; }
+    </style>
+  </defs>
+  <rect class="bg" width="256" height="256" rx="40" ry="40"/>
+  <!-- Stem + serif: authoritative and crisp -->
+  <path class="fg" d="M92 44c0-6 4-10 10-10h14c6 0 10 4 10 10v74c15-18 36-28 60-28 34 0 60 23 60 56 0 38-30 68-74 68-23 0-41-8-56-24v20c0 6-4 10-10 10H92c-6 0-10-4-10-10V66c-9 6-20 10-32 12V62c19-4 34-9 42-18z"/>
+  <!-- Bowl of the b -->
+  <path class="fg" d="M186 120c-26 0-48 18-48 46 0 28 22 46 48 46 28 0 46-18 46-46 0-28-18-46-46-46z"/>
+  <!-- Negative-space 'A' punched from bowl -->
+  <path d="M170 132l-30 60h16l6-14h16l6 14h16l-30-60zm-2 34l6-12 6 12h-12z" fill="#fff"/>
+  <!-- Subtle 'S' carve for distinctiveness -->
+  <path d="M208 104c0 8-8 12-28 15-26 5-40 12-40 27 0 5 1 9 4 13-4-6-6-13-6-21 0-26 22-40 50-40 9 0 15 2 20 6z" fill="#fff" opacity=".9"/>
+</svg>

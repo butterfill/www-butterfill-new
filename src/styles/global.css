@@ -84,6 +84,16 @@
   color: rgb(226, 232, 240); /* slate-200 */
 }
 
+.fulltext blockquote {
+  margin: 1em 0;
+  padding-left: 1em;
+  border-left: 2px solid rgb(226, 232, 240); /* slate-200 */
+}
+
+.dark .fulltext blockquote {
+  border-left-color: rgb(71, 85, 105); /* slate-600 */
+}
+
 /* Footnotes section styling */
 .fulltext .footnotes {
   margin-top: 3em;

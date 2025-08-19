@@ -167,6 +167,14 @@ if (bibtexData) {
 
 ---
 <PageLayout title={entry.data.title} contextualActions={pageActions}>
+    <CitationDisplay 
+    bibtex={bibtexData}
+    authors={entry.data.authors}
+    year={entry.data.year}
+    journal={entry.data.journal}
+    doi={entry.data.doi}
+    client:load 
+  />
   <div class="flex justify-end mb-4 space-x-2">
     {hasMarkdownFile && (
       <CopyForChat contentToCopy={enhancedTextForLLM} client:load />
@@ -195,14 +203,7 @@ if (bibtexData) {
       </a>
     )}
   </div>
-  <CitationDisplay 
-    bibtex={bibtexData}
-    authors={entry.data.authors}
-    year={entry.data.year}
-    journal={entry.data.journal}
-    doi={entry.data.doi}
-    client:load 
-  />
+
   
   <!-- Main content with footnote manager -->
   <div style="position: relative;" class="markdown-body-container footnote-manager-container">
