@@ -1,42 +1,80 @@
 # Academic Website
 
-A static academic website built with Astro, featuring academic publications, talks, and teaching materials. This site includes interactive slide presentations, content management scripts, and is optimized for deployment on Cloudflare Pages.
+A static academic website built with Astro + Svelte and Tailwind CSS.
 
-## 🚀 Quick Start
+You’re welcome to re-use this for your own site.
+
+## How to Re-use This Site
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18 or higher
 - npm or yarn
 
-### Installation
+### 1. Installation
 
-1. **Clone and install dependencies:**
-   ```bash
-   git clone <repository-url>
-   cd <project-directory>
-   npm install
-   ```
+Clone this repository and install dependencies:
 
-2. **Install script dependencies:**
-   ```bash
-   cd scripts
-   npm install
-   cd ..
-   ```
+```bash
+git clone <your-fork-url>
+cd <project-directory>
+npm install
+cd scripts && npm install && cd ..
+```
 
-3. **Set up Reveal.js assets (for slide presentations):**
-   ```bash
-   mkdir -p public/reveal.js/dist
-   cp -r node_modules/reveal.js/dist/* public/reveal.js/dist/
-   ```
+### 2. Replace Personal Information
 
-4. **Start development server:**
-   ```bash
-   npm run dev
-   ```
+**Essential replacements** (search and replace these throughout the codebase):
+
+1. **Name and Identity**:
+   - Replace `Stephen A. Butterfill` and `Stephen Butterfill` with your name
+   - Replace `Butterfill` in navigation (see `src/layouts/BaseLayout.astro` line 79)
+
+2. **Email Address**:
+   - Update `s.butterfill@warwick.ac.uk` in `src/components/EmailModal.svelte` (line 6)
+
+3. **Site Title and Description**:
+   - Update page titles in `src/pages/index.astro` (line 48)
+   - Update the hero section description (lines 61-63)
+   - Update the personal bio section (lines 257-277)
+
+4. **Footer**:
+   - Update copyright in `src/layouts/BaseLayout.astro` (line 108)
+
+### 3. Content Setup
+
+**Remove existing content and add yours**:
+
+```bash
+# Remove all existing content
+rm -rf src/content/writing/*
+rm -rf src/content/talks/*  
+rm -rf src/content/teaching/*
+rm -rf public/md/*
+```
+
+**Add your content**:
+
+1. **Publications**: Create `.md` files in `src/content/writing/` (see Content Management section below)
+2. **Talks**: Create `.md` files in `src/content/talks/`
+3. **Teaching**: Create `.md` files in `src/content/teaching/`
+
+### 4. Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
 
 Visit `http://localhost:4321` to see your site.
+
+### 5. Build and Deploy
+
+```bash
+npm run build  # Builds the site and generates llms.txt
+npm run preview  # Preview the built site locally
+```
 
 ## 📁 Project Structure
 
@@ -69,7 +107,8 @@ The `scripts/` directory contains tools for importing and managing academic cont
 
 #### 1. BibTeX Content Sync (`sync-bibtex.mjs`)
 
-Imports academic publications from BibTeX files and creates markdown files:
+You can create the entries in writing manually, but if you already have them as bibtex
+then this script will import them for you:
 
 ```bash
 cd scripts
@@ -116,7 +155,9 @@ This generates `public/llms.txt` containing all publications and talks in a form
 
 #### Adding full text to publications
 
-Add markdown to `public/md`. Make sure the md has the same basename as the article. The build script will find the markdown file. 
+1. Add the full text as html in `<div class="fulltext"></div>` in the `article.md` file.
+
+2. Add markdown to `public/md`. Make sure the md has the same basename as the article. The build script will find the markdown file. 
 
 Where a markdown file exists, `Copy for Chat` (with LLMs) will be enabled. [∞todo: also add link to full text in the `LLMS.txt` file]
 
@@ -135,7 +176,6 @@ Add the pdf to `public/pdf` and update the `pdfUrl` property [∞todo: auto matc
 
 Create markdown files in `src/content/teaching/` for course materials and lectures.
 
-## 🎨 Features
 
 ### Interactive Slide Presentations
 
@@ -150,13 +190,6 @@ slideImages:
 ---
 ```
 
-### Command Palette
-
-Press `Ctrl+K` (or `Cmd+K` on Mac) to open the command palette for quick navigation.
-
-### Citation Display
-
-Academic publications include formatted citations and copy-to-clipboard functionality.
 
 ## 🏗️ Building and Deployment
 
@@ -209,31 +242,8 @@ This site is optimized for deployment on Cloudflare Pages.
 
 The site includes redirect rules in `public/_redirects` for maintaining backward compatibility with old URL structures. These are automatically handled by Cloudflare Pages.
 
-### Custom Domain
+You probably do not want these as they’re specific to my old site.
 
-To use a custom domain:
-1. Add your domain in the Cloudflare Pages dashboard
-2. Update DNS settings to point to Cloudflare
-3. Configure SSL/TLS settings as needed
-
-## 🛠️ Development
-
-### Available Commands
-
-| Command | Action |
-|---------|--------|
-| `npm run dev` | Start development server at `localhost:4321` |
-| `npm run build` | Build production site to `./dist/` |
-| `npm run preview` | Preview build locally |
-| `npm run astro ...` | Run Astro CLI commands |
-
-### Key Technologies
-
-- **Astro**: Static site generator with component islands
-- **Svelte**: Interactive UI components
-- **Tailwind CSS**: Utility-first CSS framework
-- **Reveal.js**: Interactive slide presentations
-- **TypeScript**: Type-safe development
 
 ### Content Collections
 
