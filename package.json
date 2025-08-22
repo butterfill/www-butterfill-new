@@ -7,7 +7,8 @@
     "build": "node ./scripts/generate-llms.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "surge": "surge dist --domain butterfill-com-test.surge.sh"
+    "surge": "surge dist --domain butterfill-com-test.surge.sh",
+    "test": "vitest"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.4",
@@ -38,6 +39,7 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.3.6",
+    "vitest": "^3.2.4",
     "yaml": "^2.8.1"
   }
 }
