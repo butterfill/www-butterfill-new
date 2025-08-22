@@ -1,0 +1,155 @@
+---
+// src/pages/teaching/[...slug].astro
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+
+// This function runs at build time to find all teaching entries
+// and tell Astro to create a page for each one.
+export async function getStaticPaths() {
+  const teachingEntries = await getCollection('teaching');
+  return teachingEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+import CopyForChat from '../../components/CopyForChat.svelte';
+import EditSourceButton from '../../components/EditSourceButton.svelte';
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Format the content specifically for the clipboard
+// Use the raw markdown body instead of the rendered Content component
+const textForLLM = `
+Title: ${entry.data.title}
+Authors: ${entry.data.authors}
+Year: ${entry.data.year}
+
+---
+
+${entry.body}
+`.trim();
+
+// Define actions specific to this page
+const pageActions = [];
+
+// Add open source action in development mode
+if (import.meta.env.DEV) {
+  pageActions.push({
+    label: 'Edit Source',
+    action: 'openSource',
+    slug: entry.slug,
+    contentType: 'teaching'
+  });
+}
+
+// Add Copy for Chat action
+pageActions.push({
+  label: 'Copy for Chat',
+  action: 'copyToClipboard',
+  text: textForLLM
+});
+
+// If this is an external teaching entry with a URL, add a "Visit Course" action
+if (entry.data.url) {
+  pageActions.push({
+    label: 'Visit Course',
+    action: 'openUrl',
+    url: entry.data.url
+  });
+}
+---
+
+<PageLayout title={entry.data.title} contextualActions={pageActions}>
+  <div class="flex justify-end mb-4 space-x-2">
+    <CopyForChat contentToCopy={textForLLM} client:load />
+    {import.meta.env.DEV && (
+      <span> </span> 
+      <EditSourceButton slug={entry.slug} contentType="teaching" client:load />
+    )}
+    {entry.data.url && (
+      <a 
+        href={entry.data.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center w-auto h-8 rounded-full bg-slate-100 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-blue-900/50 transition-colors px-3"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mr-1" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+          <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+        </svg>
+        <span class="text-xs font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">
+          Visit Course
+        </span>
+      </a>
+    )}
+  </div>
+  
+  <div class="mb-4 text-sm text-slate-600 dark:text-slate-400">
+    <p class="mb-2">
+      <span>by</span>
+      <span class="font-medium">{entry.data.authors}</span>
+      <span>({entry.data.year})</span>
+      <span>•</span>
+      <span>{entry.data.term}</span>
+      {entry.data.place && (
+        <>
+          <span>•</span>
+          <span>{entry.data.place}</span>
+        </>
+      )}
+    </p>
+  </div>
+
+  <!-- Abstract section -->
+  {entry.data.abstract && (
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-3 text-slate-800 dark:text-slate-200">Abstract</h2>
+      <div class="prose prose-slate dark:prose-invert max-w-none">
+        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+          {entry.data.abstract}
+        </p>
+      </div>
+    </div>
+  )}
+
+  <!-- If this is an external teaching entry, show a message -->
+  {entry.data.url && (
+    <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+      <p class="text-slate-700 dark:text-slate-300">
+        For lecture notes, handouts, slides and video,
+        <a 
+          href={entry.data.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="ml-2 font-medium hover:text-blue-600 dark:hover:text-blue-400"
+        >
+          visit the course website
+          <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </p>
+    </div>
+  )}
+
+  <!-- If this is an internal teaching entry with lectures, show them -->
+  {entry.data.lectures && (
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-3 text-slate-800 dark:text-slate-200">Lectures</h2>
+      <ul class="space-y-2">
+        {Object.entries(entry.data.lectures).map(([lectureNumber, lectureTitle]) => (
+          <li key={lectureNumber} class="flex items-start">
+            <span class="inline-block w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium flex items-center justify-center mr-3 flex-shrink-0">
+              {lectureNumber}
+            </span>
+            <span class="text-slate-800 dark:text-slate-200">{lectureTitle}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  <Content />
+</PageLayout>

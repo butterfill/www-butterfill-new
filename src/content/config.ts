@@ -39,7 +39,6 @@ const talksCollection = defineCollection({
 
 // Schema for 'teaching' (courses)
 const teachingCollection = defineCollection({
-    loader: glob({ pattern: '*.md', base: './src/content/teaching' }),
     schema: z.object({
         title: z.string(),
         year: z.string(),
@@ -47,8 +46,11 @@ const teachingCollection = defineCollection({
         authors: z.string(),
         place: z.string(),
         abstract: z.string(),
+        // Optional URL for external teaching content
+        url: z.string().optional(),
+        // Optional lectures object for internal teaching content
         // Defines an object where keys are strings (e.g., '01') and values are strings (lecture titles)
-        lectures: z.record(z.string()),
+        lectures: z.record(z.string()).optional(),
         featured: z.boolean().optional(),
     }),
 });
