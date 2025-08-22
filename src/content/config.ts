@@ -41,11 +41,12 @@ const talksCollection = defineCollection({
 const teachingCollection = defineCollection({
     schema: z.object({
         title: z.string(),
-        year: z.string(),
-        term: z.string(),
-        authors: z.string(),
-        place: z.string(),
-        abstract: z.string(),
+        // Fields that are required for main teaching entries but optional for lectures
+        year: z.string().optional(),
+        term: z.string().optional(),
+        authors: z.string().optional(),
+        place: z.string().optional(),
+        abstract: z.string().optional(),
         // Optional URL for external teaching content
         url: z.string().optional(),
         // Optional lectures object for internal teaching content

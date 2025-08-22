@@ -88,11 +88,23 @@ if (entry.data.url) {
   
   <div class="mb-4 text-sm text-slate-600 dark:text-slate-400">
     <p class="mb-2">
-      <span>by</span>
-      <span class="font-medium">{entry.data.authors}</span>
-      <span>({entry.data.year})</span>
-      <span>•</span>
-      <span>{entry.data.term}</span>
+      {entry.data.authors && (
+        <>
+          <span>by</span>
+          <span class="font-medium">{entry.data.authors}</span>
+        </>
+      )}
+      {entry.data.term && (
+        <>
+          <span>•</span>
+          <span>{entry.data.term}</span>
+        </>
+      )}
+      {entry.data.year && (
+        <>
+          <span>{entry.data.year}</span>
+        </>
+      )}
       {entry.data.place && (
         <>
           <span>•</span>
