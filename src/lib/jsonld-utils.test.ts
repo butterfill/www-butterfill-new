@@ -96,11 +96,11 @@ describe('JSON-LD Utility Functions', () => {
       it('should generate the correct @type and @context', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('@context', 'https://schema.org');
         expect(result).toHaveProperty('@type', 'ScholarlyArticle');
       });
@@ -108,11 +108,11 @@ describe('JSON-LD Utility Functions', () => {
       it('should map title, author, and datePublished correctly', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('headline', 'Test Article');
         expect(result).toHaveProperty('author');
         expect(result).toHaveProperty('datePublished', '2023-01-01');
@@ -121,11 +121,11 @@ describe('JSON-LD Utility Functions', () => {
       it('should create an absolute URL for the page', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('url');
         expect(result.url).toContain('/writing/test-article');
       });
@@ -133,12 +133,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should create a "Periodical" for isPartOf when a journal is present', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article',
           journal: 'Nature'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('isPartOf');
         expect(result.isPartOf).toHaveProperty('@type', 'Periodical');
         expect(result.isPartOf).toHaveProperty('name', 'Nature');
@@ -147,12 +147,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should create a "Book" for isPartOf when a booktitle is present', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article',
           booktitle: 'Conference Proceedings'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('isPartOf');
         expect(result.isPartOf).toHaveProperty('@type', 'Book');
         expect(result.isPartOf).toHaveProperty('name', 'Conference Proceedings');
@@ -161,12 +161,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should include a DOI as an identifier and sameAs link', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article',
           doi: '10.1000/xyz123'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('identifier', '10.1000/xyz123');
         expect(result).toHaveProperty('sameAs', 'https://doi.org/10.1000/xyz123');
       });
@@ -174,12 +174,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should create an absolute URL for the PDF in the encoding property', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article',
-          pdf_url: '/pdf/test-article.pdf'
+          pdfUrl: '/pdf/test-article.pdf'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).toHaveProperty('encoding');
         expect(result.encoding).toHaveProperty('@type', 'MediaObject');
         expect(result.encoding).toHaveProperty('contentUrl');
@@ -189,11 +189,11 @@ describe('JSON-LD Utility Functions', () => {
       it('should omit properties for missing data (e.g., no DOI, no PDF)', () => {
         const frontmatter = {
           title: 'Test Article',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: 2023,
           slug: 'test-article'
         };
-        const result = generateJsonLd(frontmatter, 'writing');
+        const result = generateJsonLd(frontmatter, 'writing', 'test-article');
         expect(result).not.toHaveProperty('identifier');
         expect(result).not.toHaveProperty('sameAs');
         expect(result).not.toHaveProperty('encoding');
@@ -204,24 +204,24 @@ describe('JSON-LD Utility Functions', () => {
       it('should generate the correct @type for a talk', () => {
         const frontmatter = {
           title: 'Test Talk',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          pubDate: '2023-01-01',
           slug: 'test-talk'
         };
-        const result = generateJsonLd(frontmatter, 'talks');
+        const result = generateJsonLd(frontmatter, 'talks', 'test-talk');
         expect(result).toHaveProperty('@type', 'EducationalEvent');
       });
 
       it('should format startDate and endDate as ISO strings', () => {
         const frontmatter = {
           title: 'Test Talk',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          pubDate: '2023-01-01',
           slug: 'test-talk',
-          start_time: '14:00',
-          end_time: '15:30'
+          startTime: '14:00',
+          endTime: '15:30'
         };
-        const result = generateJsonLd(frontmatter, 'talks');
+        const result = generateJsonLd(frontmatter, 'talks', 'test-talk');
         expect(result).toHaveProperty('startDate');
         expect(result).toHaveProperty('endDate');
         // Should contain the date and time in ISO format
@@ -232,12 +232,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should create a Place object for the location', () => {
         const frontmatter = {
           title: 'Test Talk',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          pubDate: '2023-01-01',
           slug: 'test-talk',
-          place: 'University of Cambridge'
+          address: 'University of Cambridge'
         };
-        const result = generateJsonLd(frontmatter, 'talks');
+        const result = generateJsonLd(frontmatter, 'talks', 'test-talk');
         expect(result).toHaveProperty('location');
         expect(result.location).toHaveProperty('@type', 'Place');
         expect(result.location).toHaveProperty('name', 'University of Cambridge');
@@ -246,12 +246,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should create an Organization object for the event organizer', () => {
         const frontmatter = {
           title: 'Test Talk',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          pubDate: '2023-01-01',
           slug: 'test-talk',
-          organiser: 'Department of Philosophy'
+          event: 'Department of Philosophy'
         };
-        const result = generateJsonLd(frontmatter, 'talks');
+        const result = generateJsonLd(frontmatter, 'talks', 'test-talk');
         expect(result).toHaveProperty('organizer');
         expect(result.organizer).toHaveProperty('@type', 'Organization');
         expect(result.organizer).toHaveProperty('name', 'Department of Philosophy');
@@ -260,11 +260,11 @@ describe('JSON-LD Utility Functions', () => {
       it('should correctly populate the speaker property', () => {
         const frontmatter = {
           title: 'Test Talk',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          pubDate: '2023-01-01',
           slug: 'test-talk'
         };
-        const result = generateJsonLd(frontmatter, 'talks');
+        const result = generateJsonLd(frontmatter, 'talks', 'test-talk');
         expect(result).toHaveProperty('speaker');
         expect(Array.isArray(result.speaker)).toBe(true);
         expect(result.speaker[0]).toHaveProperty('@type', 'Person');
@@ -274,13 +274,13 @@ describe('JSON-LD Utility Functions', () => {
       it('should include handout and slides URLs in hasPart', () => {
         const frontmatter = {
           title: 'Test Talk',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          pubDate: '2023-01-01',
           slug: 'test-talk',
-          handout_url: '/handouts/test-talk.pdf',
-          slides_url: '/slides/test-talk.pdf'
+          handoutUrl: '/handouts/test-talk.pdf',
+          slidesUrl: '/slides/test-talk.pdf'
         };
-        const result = generateJsonLd(frontmatter, 'talks');
+        const result = generateJsonLd(frontmatter, 'talks', 'test-talk');
         expect(result).toHaveProperty('hasPart');
         expect(Array.isArray(result.hasPart)).toBe(true);
         expect(result.hasPart).toHaveLength(2);
@@ -293,11 +293,11 @@ describe('JSON-LD Utility Functions', () => {
       it('should generate a nested Course within a CourseInstance', () => {
         const frontmatter = {
           title: 'Philosophy of Mind',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: '2023',
           slug: 'philosophy-of-mind'
         };
-        const result = generateJsonLd(frontmatter, 'teaching');
+        const result = generateJsonLd(frontmatter, 'teaching', 'philosophy-of-mind');
         expect(result).toHaveProperty('@type', 'CourseInstance');
         expect(result).toHaveProperty('course');
         expect(result.course).toHaveProperty('@type', 'Course');
@@ -306,24 +306,24 @@ describe('JSON-LD Utility Functions', () => {
       it('should use the external URL for the Course if provided', () => {
         const frontmatter = {
           title: 'Philosophy of Mind',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: '2023',
           slug: 'philosophy-of-mind',
-          external_url: 'https://example.com/course'
+          url: 'https://example.com/course'
         };
-        const result = generateJsonLd(frontmatter, 'teaching');
+        const result = generateJsonLd(frontmatter, 'teaching', 'philosophy-of-mind');
         expect(result.course).toHaveProperty('url', 'https://example.com/course');
       });
 
       it('should correctly parse the provider name from the "place" field', () => {
         const frontmatter = {
           title: 'Philosophy of Mind',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: '2023',
           slug: 'philosophy-of-mind',
           place: 'University of Cambridge'
         };
-        const result = generateJsonLd(frontmatter, 'teaching');
+        const result = generateJsonLd(frontmatter, 'teaching', 'philosophy-of-mind');
         expect(result).toHaveProperty('provider');
         expect(result.provider).toHaveProperty('@type', 'Organization');
         expect(result.provider).toHaveProperty('name', 'University of Cambridge');
@@ -332,15 +332,15 @@ describe('JSON-LD Utility Functions', () => {
       it('should map the "lectures" object to an array of CreativeWork objects in hasPart', () => {
         const frontmatter = {
           title: 'Philosophy of Mind',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: '2023',
           slug: 'philosophy-of-mind',
           lectures: {
-            'lecture-1': { title: 'Introduction', date: '2023-01-15' },
-            'lecture-2': { title: 'Dualism', date: '2023-01-22' }
+            'lecture-1': 'Introduction',
+            'lecture-2': 'Dualism'
           }
         };
-        const result = generateJsonLd(frontmatter, 'teaching');
+        const result = generateJsonLd(frontmatter, 'teaching', 'philosophy-of-mind');
         expect(result).toHaveProperty('hasPart');
         expect(Array.isArray(result.hasPart)).toBe(true);
         expect(result.hasPart).toHaveLength(2);
@@ -351,13 +351,12 @@ describe('JSON-LD Utility Functions', () => {
       it('should construct a descriptive name for the CourseInstance from title, term, and year', () => {
         const frontmatter = {
           title: 'Philosophy of Mind',
-          author: 'John Doe',
-          date: '2023-01-01',
+          authors: 'John Doe',
+          year: '2023',
           slug: 'philosophy-of-mind',
-          term: 'Spring',
-          year: '2023'
+          term: 'Spring'
         };
-        const result = generateJsonLd(frontmatter, 'teaching');
+        const result = generateJsonLd(frontmatter, 'teaching', 'philosophy-of-mind');
         expect(result).toHaveProperty('name', 'Philosophy of Mind (Spring 2023)');
       });
     });

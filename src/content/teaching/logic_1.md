@@ -2,7 +2,7 @@
 title: "Logic 1"
 url: "https://logic-1.butterfill.com/"
 authors: Stephen A. Butterfill
-year: 2015-15
+year: 2015-16
 term: Spring
 place: University of Warwick, UK
 abstract: |

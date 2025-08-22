@@ -2,6 +2,7 @@
 // src/pages/teaching/[...slug].astro
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
+import { generateJsonLd } from '../../lib/jsonld-utils';
 
 // This function runs at build time to find all teaching entries
 // and tell Astro to create a page for each one.
@@ -18,6 +19,9 @@ import EditSourceButton from '../../components/EditSourceButton.svelte';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+
+// Generate JSON-LD structured data
+const jsonLd = generateJsonLd(entry.data, 'teaching', entry.slug);
 
 // Format the content specifically for the clipboard
 // Use the raw markdown body instead of the rendered Content component
@@ -61,7 +65,7 @@ if (entry.data.url) {
 }
 ---
 
-<PageLayout title={entry.data.title} contextualActions={pageActions}>
+<PageLayout title={entry.data.title} contextualActions={pageActions} jsonLd={jsonLd}>
   <div class="flex justify-end mb-4 space-x-2">
     <CopyForChat contentToCopy={textForLLM} client:load />
     {import.meta.env.DEV && (

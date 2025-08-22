@@ -32,9 +32,10 @@ interface Props {
   // Allow pages to pass extra actions
   contextualActions?: ContextualAction[];
   zoteroMetadata?: Record<string, any>;
+  jsonLd?: Record<string, any>;
 }
 
-const { title, contextualActions = [], zoteroMetadata } = Astro.props;
+const { title, contextualActions = [], zoteroMetadata, jsonLd } = Astro.props;
 
 // Add 'Home' action as first item in navigation (except on home page)
 const currentPageUrl = Astro.url.pathname;
@@ -70,6 +71,11 @@ const navigationActions = currentPageUrl !== '/' ? [
         {zoteroMetadata.citation_doi && <meta name="citation_doi" content={zoteroMetadata.citation_doi} />}
         {zoteroMetadata.citation_pdf_url && <meta name="citation_pdf_url" content={Astro.url.origin + zoteroMetadata.citation_pdf_url} />}
       </>
+    )}
+    
+    <!-- JSON-LD structured data -->
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd, null, 2)}></script>
     )}
     <script is:inline>
       // This script is executed as-is, before the page is rendered.

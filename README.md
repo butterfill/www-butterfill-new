@@ -69,7 +69,21 @@ npm run dev
 
 Visit `http://localhost:4321` to see your site.
 
-### 5. Build and Deploy
+### 5. Testing
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+For a single test run without watching for changes:
+
+```bash
+npm test -- --run
+```
+
+### 6. Build and Deploy
 
 ```bash
 npm run build  # Builds the site and generates llms.txt
