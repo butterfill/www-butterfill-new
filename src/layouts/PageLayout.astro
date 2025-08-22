@@ -11,10 +11,11 @@ interface ContextualAction {
 interface Props {
   title: string;
   contextualActions?: ContextualAction[];
+  zoteroMetadata?: Record<string, any>;
 }
-const { title, contextualActions } = Astro.props;
+const { title, contextualActions, zoteroMetadata } = Astro.props;
 ---
-<BaseLayout title={title} contextualActions={contextualActions}>
+<BaseLayout title={title} contextualActions={contextualActions} zoteroMetadata={zoteroMetadata}>
   <div class="container mx-auto max-w-6xl px-4 py-8">
     <article>
       <h1 class="text-3xl font-bold tracking-tight text-slate-800 dark:text-slate-200 mb-6 text-center">{title}</h1>

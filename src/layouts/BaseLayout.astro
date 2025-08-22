@@ -31,9 +31,10 @@ interface Props {
   title: string;
   // Allow pages to pass extra actions
   contextualActions?: ContextualAction[];
+  zoteroMetadata?: Record<string, any>;
 }
 
-const { title, contextualActions = [] } = Astro.props;
+const { title, contextualActions = [], zoteroMetadata } = Astro.props;
 
 // Add 'Home' action as first item in navigation (except on home page)
 const currentPageUrl = Astro.url.pathname;
@@ -48,6 +49,28 @@ const navigationActions = currentPageUrl !== '/' ? [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon3.svg" />
     <title>{title}</title>
+    
+    <!-- Zotero metadata for citation detection -->
+    {zoteroMetadata && (
+      <>
+        {zoteroMetadata.citation_title && <meta name="citation_title" content={zoteroMetadata.citation_title} />}
+        {zoteroMetadata.citation_author?.map((author: string) => (
+          <meta name="citation_author" content={author} />
+        ))}
+        {zoteroMetadata.citation_editor?.map((editor: string) => (
+          <meta name="citation_editor" content={editor} />
+        ))}
+        {zoteroMetadata.citation_publication_date && <meta name="citation_publication_date" content={zoteroMetadata.citation_publication_date} />}
+        {zoteroMetadata.citation_journal_title && <meta name="citation_journal_title" content={zoteroMetadata.citation_journal_title} />}
+        {zoteroMetadata.citation_book_title && <meta name="citation_book_title" content={zoteroMetadata.citation_book_title} />}
+        {zoteroMetadata.citation_volume && <meta name="citation_volume" content={zoteroMetadata.citation_volume} />}
+        {zoteroMetadata.citation_issue && <meta name="citation_issue" content={zoteroMetadata.citation_issue} />}
+        {zoteroMetadata.citation_firstpage && <meta name="citation_firstpage" content={zoteroMetadata.citation_firstpage} />}
+        {zoteroMetadata.citation_lastpage && <meta name="citation_lastpage" content={zoteroMetadata.citation_lastpage} />}
+        {zoteroMetadata.citation_doi && <meta name="citation_doi" content={zoteroMetadata.citation_doi} />}
+        {zoteroMetadata.citation_pdf_url && <meta name="citation_pdf_url" content={Astro.url.origin + zoteroMetadata.citation_pdf_url} />}
+      </>
+    )}
     <script is:inline>
       // This script is executed as-is, before the page is rendered.
       const theme = (() => {

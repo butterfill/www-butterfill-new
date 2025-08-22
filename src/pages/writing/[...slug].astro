@@ -22,7 +22,7 @@ import CitationDisplay from '../../components/CitationDisplay.svelte';
 import TableOfContents from '../../components/TableOfContents.svelte';
 import FootnoteManager from '../../components/FootnoteManager.svelte';
 import FontSettings from '../../components/FontSettings.svelte';
-import { parseBibtex, generatePlainText } from '../../lib/citation-utils';
+import { parseBibtex, generatePlainText, generateZoteroMetadata } from '../../lib/citation-utils';
 
 const { entry } = Astro.props;
 const { Content } = await entry.render(); // This gets the Markdown content
@@ -42,6 +42,9 @@ if (hasMarkdownFile) {
 }
 
 const bibtexData = entry.data.bibtex;
+
+// Generate Zotero metadata for citation detection
+const zoteroMetadata = generateZoteroMetadata(entry);
 
 // Step 4: Generate formatted citation
 let formattedCitation = '';
@@ -166,7 +169,7 @@ if (bibtexData) {
 }
 
 ---
-<PageLayout title={entry.data.title} contextualActions={pageActions}>
+<PageLayout title={entry.data.title} contextualActions={pageActions} zoteroMetadata={zoteroMetadata}>
     <CitationDisplay 
     bibtex={bibtexData}
     authors={entry.data.authors}

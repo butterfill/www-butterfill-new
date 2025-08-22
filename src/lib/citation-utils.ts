@@ -15,7 +15,7 @@ export interface ParsedCitation {
 
 // Helper function to extract field value with proper brace balancing
 function extractBibtexField(bibtexString: string, fieldName: string): string {
-  const regex = new RegExp(`${fieldName}\\s*=\\s*([{"])`, 'i');
+  const regex = new RegExp(`\\b${fieldName}\\s*=\\s*([{"])`, 'i');
   const match = bibtexString.match(regex);
   
   if (!match) return '';
@@ -38,6 +38,11 @@ function extractBibtexField(bibtexString: string, fieldName: string): string {
     let i = startIndex + 1;
     
     while (i < bibtexString.length && braceCount > 0) {
+      if (bibtexString[i] === '\\') {
+        // Skip escaped characters
+        i += 2;
+        continue;
+      }
       if (bibtexString[i] === '{') {
         braceCount++;
       } else if (bibtexString[i] === '}') {
@@ -247,4 +252,132 @@ export function downloadFile(content: string, filename: string, mimeType: string
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ===== ZOTERO METADATA UTILITIES =====
+
+// Format contributors (authors/editors) for Zotero metadata
+export function formatContributorsForZotero(nameString: string): string[] {
+  if (!nameString) return [];
+  
+  // Split by " and " to get individual contributors
+  const contributors = nameString.split(' and ').map(name => name.trim()).filter(name => name);
+  
+  return contributors.map(contributor => {
+    // Handle institutional authors wrapped in double curly braces
+    if (contributor.startsWith('{{') && contributor.endsWith('}}')) {
+      return contributor.slice(2, -2);
+    }
+    
+    // Clean protective braces first (reuse existing cleanBibtexField logic)
+    let cleaned = cleanBibtexField(contributor);
+    
+    // If already contains comma, assume it's in "Last, First" format
+    if (cleaned.includes(',')) {
+      return cleaned;
+    }
+    
+    // Parse "First Middle Last" format
+    const nameParts = cleaned.split(/\s+/).filter(part => part);
+    if (nameParts.length === 0) return cleaned;
+    if (nameParts.length === 1) return nameParts[0]; // Single name
+    
+    // Last part is surname, everything else is given names
+    const surname = nameParts[nameParts.length - 1];
+    const givenNames = nameParts.slice(0, -1).join(' ');
+    
+    return `${surname}, ${givenNames}`;
+  });
+}
+
+// Parse page ranges for Zotero metadata
+export function parsePageRange(pages: string): { first: string; last: string } {
+  if (!pages) return { first: '', last: '' };
+  
+  // Normalize various dash types to standard hyphen
+  const normalized = pages.replace(/[–—]/g, '-').replace(/--/g, '-');
+  
+  // Split by hyphen
+  const parts = normalized.split('-').map(part => part.trim());
+  
+  return {
+    first: parts[0] || '',
+    last: parts[1] || parts[0] || ''
+  };
+}
+
+// Interface for Astro content entry (simplified for our needs)
+interface AstroContentEntry {
+  data: {
+    bibtex: string;
+    pdfUrl?: string;
+  };
+}
+
+// Generate Zotero metadata from an Astro content entry
+export function generateZoteroMetadata(entry: AstroContentEntry): Record<string, any> {
+  if (!entry?.data?.bibtex) return {};
+  
+  try {
+    const parsed = parseBibtex(entry.data.bibtex);
+    const metadata: Record<string, any> = {};
+    
+    // Determine publication type
+    if (parsed.journal) {
+      metadata.publication_type = 'journalArticle';
+    } else if (parsed.booktitle) {
+      metadata.publication_type = 'bookSection';
+    }
+    
+    // Basic metadata
+    if (parsed.title) {
+      metadata.citation_title = parsed.title;
+    }
+    
+    if (parsed.author) {
+      metadata.citation_author = formatContributorsForZotero(parsed.author);
+    }
+    
+    if (parsed.year) {
+      metadata.citation_publication_date = parsed.year;
+    }
+    
+    if (parsed.doi) {
+      metadata.citation_doi = parsed.doi;
+    }
+    
+    if (entry.data.pdfUrl) {
+      metadata.citation_pdf_url = entry.data.pdfUrl;
+    }
+    
+    // Type-specific fields
+    if (parsed.journal) {
+      metadata.citation_journal_title = parsed.journal;
+      if (parsed.volume) metadata.citation_volume = parsed.volume;
+      if (parsed.number) metadata.citation_issue = parsed.number;
+    }
+    
+    if (parsed.booktitle) {
+      metadata.citation_book_title = parsed.booktitle;
+      
+      // Extract editor field if present
+      const editorField = extractBibtexField(entry.data.bibtex, 'editor');
+      if (editorField) {
+        const cleanedEditor = cleanBibtexField(editorField);
+        metadata.citation_editor = formatContributorsForZotero(cleanedEditor);
+      }
+    }
+    
+    // Parse pages
+    if (parsed.pages) {
+      const pageRange = parsePageRange(parsed.pages);
+      if (pageRange.first) metadata.citation_firstpage = pageRange.first;
+      if (pageRange.last) metadata.citation_lastpage = pageRange.last;
+    }
+    
+    return metadata;
+  } catch (error) {
+    console.error('Error generating Zotero metadata:', error);
+    return {};
+  }
 }
