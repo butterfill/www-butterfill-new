@@ -8,16 +8,16 @@ place: University of Warwick, UK
 abstract: |
   This is an introductory course covering six themes. 
   
-  [Mind] What good is your perceptual awareness of the objects around you? 
+  * *Mind* What good is your perceptual awareness of the objects around you? 
   
-  [Thought & Language] What’s special about having two names for one thing? 
+  * *Thought & Language* What’s special about having two names for one thing? 
   
-  [Politics] Are you responsible for the harm of world poverty? 
+  * *Politics* Are you responsible for the harm of world poverty? 
   
-  [Metaphysics] What is necessary for your personal survival? 
+  * *Metaphysics* What is necessary for your personal survival? 
   
-  [Action] Of the events involving you, what determines which are your actions? 
+  * *Action* Of the events involving you, what determines which are your actions? 
   
-  [Ethics] Who, if anyone, has the right to determine whether you should die?
+  * *Ethics* Who, if anyone, has the right to determine whether you should die?
 featured: false
 ---

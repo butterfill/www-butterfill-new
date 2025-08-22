@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import { generateJsonLd } from '../../lib/jsonld-utils';
+import { marked } from 'marked';
 
 // This function runs at build time to find all teaching entries
 // and tell Astro to create a page for each one.
@@ -122,11 +123,7 @@ if (entry.data.url) {
   {entry.data.abstract && (
     <div class="mb-8">
       <h2 class="text-xl font-semibold mb-3 text-slate-800 dark:text-slate-200">Abstract</h2>
-      <div class="prose prose-slate dark:prose-invert max-w-none">
-        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
-          {entry.data.abstract}
-        </p>
-      </div>
+      <div class="prose prose-slate dark:prose-invert max-w-none" set:html={marked(entry.data.abstract)} />
     </div>
   )}
 
