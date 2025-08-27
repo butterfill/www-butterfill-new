@@ -94,6 +94,29 @@
   border-left-color: rgb(71, 85, 105); /* slate-600 */
 }
 
+/* Lists inside fulltext */
+.fulltext ol {
+  list-style-type: decimal;
+  list-style-position: outside;
+  padding-left: 1.5em;
+  margin: 0 0 1.25em 0;
+}
+
+.fulltext ul {
+  list-style-type: disc;
+  list-style-position: outside;
+  padding-left: 1.5em;
+  margin: 0 0 1.25em 0;
+}
+
+/* Nested lists */
+.fulltext ol ol { list-style-type: lower-alpha; }
+.fulltext ol ol ol { list-style-type: lower-roman; }
+.fulltext ul ul { list-style-type: circle; }
+.fulltext ul ul ul { list-style-type: square; }
+
+.fulltext li { margin: 0.25em 0; }
+
 /* Footnotes section styling */
 .fulltext .footnotes {
   margin-top: 3em;

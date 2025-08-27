@@ -5,7 +5,8 @@ import SearchTrigger from '../components/SearchTrigger.svelte';
 import EmailModal from '../components/EmailModal.svelte';
 import { getCollection } from 'astro:content';
 import ThemeToggle from '../components/ThemeToggle.svelte';
-import '../styles/global.css'; 
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
 
 // Fetch ALL content at build time
 const writing = await getCollection('writing');

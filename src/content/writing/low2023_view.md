@@ -17,6 +17,18 @@ De Neys’ incisive critique of empirical and theoretical research on the exclus
 
 <div class="fulltext">
 
+<em>This is a response to Wim De Neys’</em> <a 
+          href="https://doi.org/10.1017/S0140525X2200142X"
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="ml-2 font-medium hover:text-blue-600 dark:hover:text-blue-400"
+        >
+          Advancing theorizing about fast-and-slow thinking
+          <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+
 
 De Neys opposes the ‘exclusivity feature’, on which fast and slow processes are ‘exclusively tied’ to particular responses. De Neys explains that ‘there is no solid empirical ground for the exclusivity assumption’—this is the ‘fundamental problem’ of the target article. However, with respect to empirical evidence, De Neys mentions mindreading only in passing.  Will a closer look at mindreading give him reason to reconsider the exclusivity assumption?
 
