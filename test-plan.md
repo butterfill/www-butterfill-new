@@ -54,9 +54,10 @@ Phase 2 – Tricky Components (interaction/keyboard behaviors)
   - Theme/Font toggles: toggles update DOM classes; preference persisted in `localStorage`.
   - Copy buttons (`CopyForChat.svelte`, `CiteButton.svelte`): success path + error logging.
 - Implementation
-  - Prefer Vitest + @testing-library/svelte (jsdom) for logic-centric assertions when feasible.
-  - Use Playwright (page or component tests) for keyboard navigation, focus/aria expectations, and clipboard behaviors.
-  - Stub network for `/api/open-source` and gate those tests to `import.meta.env.DEV` or mock the guard.
+  - Initial Playwright coverage added (no CI):
+    - Command palette: open via window event and via keyboard; filter and navigate to a writing page; copy BibTeX citation (clipboard permissions granted); mock `/api/open-source` to avoid launching editors.
+    - UI interactions: theme toggle persistence; Email modal open + copy to clipboard; Table of Contents modal open and navigate (on a page with `.fulltext`).
+  - Next optional step: add Vitest + @testing-library/svelte component tests for additional logic-focused assertions where browser is unnecessary.
 - Output
   - Component test suites per target with clear fixtures, aria-role queries, and keyboard sequences.
   - A focused Playwright project `interactions` covering keyboard/focus flows and clipboard/download edge cases.
