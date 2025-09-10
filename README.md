@@ -130,6 +130,7 @@ npm run preview  # Preview the built site locally
 ├── scripts/                  # Content management scripts
 │   ├── generate-llms.mjs     # Generates LLM-friendly content file
 │   ├── sync-bibtex.mjs       # Syncs content from BibTeX files
+│   ├── import-talks.mjs      # Imports talks from external repository
 │   └── bib-filter.js         # Filters BibTeX entries by author
 └── docs-developers/          # Developer documentation
 ```
@@ -171,7 +172,17 @@ Options:
 - Automatically excludes conference abstracts and thesis entries
 - Filters out entries with "submitted", "progress", or "preparation" in year field
 
-#### 3. LLM Content Generation (`generate-llms.mjs`)
+#### 3. Import Talks (`import-talks.mjs`)
+
+Automatically imports talks from a separate talks repository:
+
+```bash
+node scripts/import-talks.mjs --help
+```
+
+This script detects new or updated talks from your talks repository and creates corresponding content files. See `--help` for all options including dry-run mode.
+
+#### 4. LLM Content Generation (`generate-llms.mjs`)
 
 Creates a consolidated text file for LLM consumption:
 

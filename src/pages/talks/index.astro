@@ -27,9 +27,14 @@ const allTalks = (await getCollection('talks')).sort(
             {allTalks.map(item => (
               <article class="group rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
                 <div class="flex justify-between items-start">
-                  <a href={`/talks/${item.slug}/`} class="block space-y-2 flex-grow">
+                  <a href={item.data.externalUrl ? item.data.externalUrl : `/talks/${item.slug}/`} class="block space-y-2 flex-grow" target={item.data.externalUrl ? '_blank' : undefined} rel={item.data.externalUrl ? 'noopener noreferrer' : undefined}>
                     <h3 class="font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {item.data.title}
+                      {item.data.externalUrl && (
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      )}
                     </h3>
                     <div class="text-sm text-slate-600 dark:text-slate-400">
                       {item.data.authors}
@@ -67,22 +72,7 @@ const allTalks = (await getCollection('talks')).sort(
                         </span>
                       </a>
                     )}
-                    {item.data.slidesUrl && (
-                      <a 
-                        href={item.data.slidesUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        class="flex items-center justify-center w-auto h-8 rounded-full bg-slate-100 hover:bg-green-100 dark:bg-slate-700 dark:hover:bg-green-900/50 transition-colors px-2"
-                        title="View Slides"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 hover:text-green-600 dark:text-slate-400 dark:hover:text-green-400 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M7 4a2 2 0 012-2h6a2 2 0 012 2v2h4a2 2 0 012 2v6a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4V4z" />
-                        </svg>
-                        <span class="text-xs font-medium text-slate-600 hover:text-green-600 dark:text-slate-400 dark:hover:text-green-400">
-                          Slides
-                        </span>
-                      </a>
-                    )}
+                    {false && item.data.externalUrl}
                   </div>
                 </div>
               </article>
