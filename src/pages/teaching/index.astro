@@ -28,7 +28,7 @@ const allTeaching = (await getCollection('teaching'))
           </h2>
           <div class="grid gap-4">
             {allTeaching.map(item => (
-              <article class="group border border-slate-200 dark:border-slate-800 rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+              <article class="group rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
                 <div class="flex justify-between items-start">
                   <a href={`/teaching/${item.slug}/`} class="block space-y-2 flex-grow">
                     <h3 class="font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
