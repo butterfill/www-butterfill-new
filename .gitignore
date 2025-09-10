@@ -26,3 +26,6 @@ pnpm-debug.log*
 repomix-output.xml
 
 test-results/
+
+.import-talks-preview/
+.cache/
