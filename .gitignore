@@ -24,3 +24,5 @@ pnpm-debug.log*
 .idea/
 
 repomix-output.xml
+
+test-results/

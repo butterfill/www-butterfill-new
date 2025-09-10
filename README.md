@@ -83,6 +83,27 @@ For a single test run without watching for changes:
 npm test -- --run
 ```
 
+#### End-to-End Smoke Tests (Playwright)
+
+Phase 1 adds Playwright smoke tests that start the Astro dev server and verify key routes load without console or network errors.
+
+Commands:
+
+```bash
+# One-time: install the Playwright browser
+npm run e2e:install
+
+# Run smoke tests (starts `npm run dev` automatically on :4321)
+npm run test:e2e:dev
+
+# Optional interactive UI runner
+npm run e2e:open
+```
+
+Notes:
+- Tests target `http://localhost:4321` (Astro default). If you change the dev port, update `playwright.config.ts`.
+- The smoke suite fails on console errors, failed requests, or 4xx/5xx responses. If there are known benign warnings you want to ignore, add an allowlist in `tests/smoke.spec.ts`.
+
 ### 6. Build and Deploy
 
 ```bash

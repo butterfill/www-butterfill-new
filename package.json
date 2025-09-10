@@ -8,7 +8,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "surge": "surge dist --domain butterfill-com-test.surge.sh",
-    "test": "vitest"
+    "test": "vitest",
+    "test:e2e:dev": "playwright test -c playwright.config.ts --project=smoke",
+    "e2e:open": "playwright test -c playwright.config.ts --ui --project=smoke",
+    "e2e:install": "playwright install chromium"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.4",
@@ -46,6 +49,8 @@
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.1",
+    "@playwright/test": "^1.48.2",
+    "@testing-library/svelte": "^5.2.6"
   }
 }
