@@ -32,6 +32,7 @@ const talksCollection = defineCollection({
     address: z.string().optional(),
     handoutUrl: z.string().optional(),
     slidesUrl: z.string().optional(),
+    externalUrl: z.string().optional(),
     slideImages: z.array(z.string()).optional(), // For Reveal.js slide decks
     featured: z.boolean().optional(),
   }),
