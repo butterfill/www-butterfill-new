@@ -14,7 +14,6 @@ featured: true
 ---
 
 
- have some advantages over those accounts.
 
 
 <div class="fulltext">
