@@ -129,10 +129,11 @@ const featuredTeaching = (await getCollection('teaching')).filter(
                 </div>
               </article>
             ))}
-            <article class="border border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-4 text-center">
-              <a href="/writing/" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <article class="group relative rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+              <div class="text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                 all writing →
-              </a>
+              </div>
+              <a href="/writing/" class="absolute inset-0" aria-label="All writing"></a>
             </article>
           </div>
         </section>
@@ -207,10 +208,11 @@ const featuredTeaching = (await getCollection('teaching')).filter(
                 </div>
               </article>
             ))}
-            <article class="border border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-4 text-center">
-              <a href="/talks/" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <article class="group relative rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+              <div class="text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                 all talks →
-              </a>
+              </div>
+              <a href="/talks/" class="absolute inset-0" aria-label="All talks"></a>
             </article>
           </div>
         </section>
@@ -274,10 +276,11 @@ const featuredTeaching = (await getCollection('teaching')).filter(
                 </div>
               </article>
             ))}
-            <article class="border border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-4 text-center">
-              <a href="/teaching/" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <article class="group relative rounded-lg p-4 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+              <div class="text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                 all teaching →
-              </a>
+              </div>
+              <a href="/teaching/" class="absolute inset-0" aria-label="All teaching"></a>
             </article>
           </div>
         </section>
