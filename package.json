@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "node ./scripts/generate-llms.mjs && astro build",
+    "build": "node ./scripts/get-md-for-writing.mjs && node ./scripts/generate-llms.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "surge": "surge dist --domain butterfill-com-test.surge.sh",
