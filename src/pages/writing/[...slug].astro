@@ -23,6 +23,7 @@ import TableOfContents from '../../components/TableOfContents.svelte';
 import FootnoteManager from '../../components/FootnoteManager.svelte';
 import FontSettings from '../../components/FontSettings.svelte';
 import { parseBibtex, generatePlainText, generateZoteroMetadata } from '../../lib/citation-utils';
+import { renderFulltextFromMarkdown } from '../../lib/fulltext-from-md.mjs';
 import { generateJsonLd } from '../../lib/jsonld-utils';
 
 const { entry } = Astro.props;
@@ -43,6 +44,16 @@ if (hasMarkdownFile) {
 }
 
 const bibtexData = entry.data.bibtex;
+const contentHasFulltext = entry.body && entry.body.includes('<div class="fulltext"');
+let injectedFulltextHtml = '';
+if (!contentHasFulltext && hasMarkdownFile) {
+  try {
+    injectedFulltextHtml = await renderFulltextFromMarkdown(markdownContent);
+  } catch (e) {
+    injectedFulltextHtml = '';
+    console.error('Error generating fulltext HTML from markdown for', entry.slug, e);
+  }
+}
 
 // Generate Zotero metadata for citation detection
 const zoteroMetadata = generateZoteroMetadata(entry);
@@ -249,6 +260,9 @@ if (bibtexData) {
   <!-- Main content with footnote manager -->
   <div style="position: relative;" class="markdown-body-container footnote-manager-container">
     <Content /> <!-- This renders the main body of the Markdown file -->
+    {(!contentHasFulltext && hasMarkdownFile && injectedFulltextHtml) && (
+      <div set:html={injectedFulltextHtml} />
+    )}
     <FootnoteManager client:load />
   </div>
   
