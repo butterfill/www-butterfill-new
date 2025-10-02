@@ -9,7 +9,7 @@ export default defineConfig({
     environment: 'node',
     include: [
       'src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-      'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      'tests/**/*.vitest.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
     ],
     exclude: ['node_modules', 'dist', '.astro'],
     pool: 'forks',
