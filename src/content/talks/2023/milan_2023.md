@@ -5,5 +5,5 @@ pubDate: 2023-06-06
 address: Milan
 handoutUrl: https://handouts.butterfill.com/assets/pdf/milan_2023_handout.pdf
 externalUrl: https://handouts.butterfill.com/docs/milan_2023/milan_2023/
-featured: true
+featured: false
 ---

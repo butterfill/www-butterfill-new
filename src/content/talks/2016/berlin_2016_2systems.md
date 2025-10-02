@@ -4,7 +4,7 @@ authors: Stephen A. Butterfill
 pubDate: 2016-03-30T23:00:00.000Z
 event: The Nature and Origins of Human Cognition
 address: Berlin School of Mind and Brain, Humboldt Universität zu Berlin, Germany
-featured: true
+featured: false
 ---
 
 ## Abstract

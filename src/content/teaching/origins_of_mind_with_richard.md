@@ -9,7 +9,7 @@ abstract: |
   How do humans first come to know about—
   and to knowingly manipulate—objects, causes,
   words, numbers, colours, actions and minds?
-featured: true
+featured: false
 ---
 
 <div class=''>
