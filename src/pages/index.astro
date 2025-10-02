@@ -41,23 +41,30 @@ const featuredTeaching = (await getCollection('teaching')).filter(
   item => item.data.featured
 ).sort(
   (a, b) => {
-    // Convert year strings to numbers for comparison
-    const aYear = parseInt(a.data.year.split('-')[0]);
-    const bYear = parseInt(b.data.year.split('-')[0]);
+    // Convert year strings to numbers for comparison. Guard against missing year fields.
+    const aYear = a.data.year ? parseInt(a.data.year.split('-')[0]) : 0;
+    const bYear = b.data.year ? parseInt(b.data.year.split('-')[0]) : 0;
     return bYear - aYear;
   }
 );
 ---
 <BaseLayout title="Stephen A. Butterfill | Home">
   <div class="container mx-auto max-w-6xl px-4 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Use a single-column layout and center the main column. Keeping lg:w-3/4
+         preserves the same visual width the main had when the sidebar was present
+         (it previously occupied ~3/4 of the container). mx-auto centers it. -->
+    <div class="grid grid-cols-1 justify-center">
       <!-- Sidebar -->
-      <aside class="lg:col-span-1">
+      <!-- 
+        removed sidebar: not listing all writing so page is quite short + confusing to have
+        links called 'writing, 'talks' etc in sidebar and in the header.
+      -->
+      <!-- <aside class="lg:col-span-1">
         <Sidebar />
-      </aside>
+      </aside> -->
       
-      <!-- Main Content -->
-      <main class="lg:col-span-3 space-y-8">
+  <!-- Main Content (centered) -->
+  <main class="space-y-8 w-full lg:w-3/4 mx-auto">
         <!-- Hero Section -->
         <section id="mini-about" class="text-center space-y-4">
           <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200">Stephen A. Butterfill</h1>
