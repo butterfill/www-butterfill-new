@@ -128,7 +128,7 @@ npm run preview  # Preview the built site locally
 │   ├── layouts/              # Page layouts
 │   └── pages/                # Site pages and routing
 ├── scripts/                  # Content management scripts
-│   ├── generate-llms.mjs     # Generates LLM-friendly content file
+│   ├── generate-llms.mjs     # Generates the LLM bundle (text + metadata + content)
 │   ├── sync-bibtex.mjs       # Syncs content from BibTeX files
 │   ├── import-talks.mjs      # Imports talks from external repository
 │   └── bib-filter.js         # Filters BibTeX entries by author
@@ -184,13 +184,13 @@ This script detects new or updated talks from your talks repository and creates 
 
 #### 4. LLM Content Generation (`generate-llms.mjs`)
 
-Creates a consolidated text file for LLM consumption:
+Builds the complete LLM bundle (text index, metadata, and long-form markdown files):
 
 ```bash
 node scripts/generate-llms.mjs
 ```
 
-This generates `public/llms.txt` containing all publications and talks in a format optimized for Large Language Models.
+Outputs land in `public/llms.txt` and `public/llms/` (metadata, index, and per-item content).
 
 ### Adding New Content
 
@@ -205,7 +205,7 @@ This generates `public/llms.txt` containing all publications and talks in a form
 
 2. Add markdown to `public/md`. Make sure the md has the same basename as the article. The build script will find the markdown file. 
 
-Where a markdown file exists, `Copy for Chat` (with LLMs) will be enabled. [∞todo: also add link to full text in the `LLMS.txt` file]
+Where a markdown file exists, `Copy for Chat` (with LLMs) will be enabled. [∞todo: also add shortcuts in the LLM bundle metadata]
 
 #### Adding pdfs to publications
 
@@ -246,7 +246,7 @@ npm run build
 ```
 
 This command:
-1. Runs `generate-llms.mjs` to create the LLM content file
+1. Runs `generate-llms.mjs` to refresh the LLM bundle
 2. Builds the static site to `./dist/`
 
 ### Preview Build

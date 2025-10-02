@@ -1,0 +1,20 @@
+---
+title: "Introduction: Symposium on ‘How to Constuct a Minimal Theory of Mind’"
+authors: Stephen A. Butterfill & Ian A. Apperly
+type: Publication
+collection: writing
+slug: writing/minimal_brains_discussion_intro
+url: /writing/minimal_brains_discussion_intro/
+summary: '<p>The target paper is here: <a
+  href="/writing/minimaltheoryofmind/">How to Construct a Minimal Theory of
+  Mind</a></p> <p>There are commentaries by <a href="http://philosophyofbrains.
+  com/wp-content/uploads/2013/11/rakoczy. pdf" target="blank">Hannes Rakoczy
+  [pdf]</a><span>, </span><a href="http://philosophyofbrains.
+  com/wp-content/uploads/2013/11/spaulding.'
+year: 2013
+source: src/content/writing/minimal_brains_discussion_intro.md
+---
+
+<p>The target paper is here: <a href="/writing/minimal_theory_of_mind/">How to Construct a Minimal Theory of Mind</a></p>
+<p>There are commentaries by <a href="http://philosophyofbrains.com/wp-content/uploads/2013/11/rakoczy.pdf" target="_blank">Hannes Rakoczy [pdf]</a><span>, </span><a href="http://philosophyofbrains.com/wp-content/uploads/2013/11/spaulding.pdf" target="_blank">Shannon Spaulding [pdf]</a><span> and </span><a href="http://philosophyofbrains.com/wp-content/uploads/2013/11/zawidzki.pdf" target="_blank">Tadeusz Zawidzki [pdf]</a><span> and comments from many others on  </span><a href="http://philosophyofbrains.com/2013/11/11/symposium-on-butterfill-and-apperlys-how-to-construct-a-minimal-theory-of-mind-mind-language-28-5-606-63.aspx">Brains</a><span>.</span></p>
+<p>We also wrote  <a href="/writing/minimal_brains_discussion_replies/">replies to the commentaries</a><span>.</span></p>
