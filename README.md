@@ -4,6 +4,17 @@ A static academic website built with Astro + Svelte and Tailwind CSS.
 
 You’re welcome to re-use this for your own site.
 
+## How to deploy
+
+```sh
+wrangler pages deploy dist
+```
+
+(after `wrangler pages project create www-butterfill-new` to create the cloudflare project)
+
+[For full instructions see pplx page](https://www.perplexity.ai/search/i-have-made-a-static-site-with-1gVnq4kLQzaCF.OeeLFMIg)
+
+
 ## How to Re-use This Site
 
 ### Prerequisites
