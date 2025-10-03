@@ -11,8 +11,6 @@ tagline: |
   * Two kinds of awareness: *mindreading* (tracking what people believe and how it guides action) and *interpreting* (using beliefs to give reasons).
   * *Mindreading* can handle conflicting beliefs without invoking truth or falsity.
   * *Interpreting* requires a grasp of truth/falsehood to explain why beliefs justify actions.
-
-
 ---
 
 
