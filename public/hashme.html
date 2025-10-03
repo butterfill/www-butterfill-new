@@ -1,86 +1,250 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>hashme (legacy)</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 20px;
+        font-size: 16px;
+      }
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      form { margin-bottom: 20px; }
+      .input-group { margin-bottom: 15px; position: relative; }
+      label { display: block; margin-bottom: 5px; font-weight: bold; }
+      input {
+        padding: 12px;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+      input:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+      }
+      #result {
+        font-weight: bold;
+        cursor: pointer;
+        padding: 12px;
+        border: 1px dashed #ccc;
+        border-radius: 4px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        background-color: #f9f9f9;
+        transition: background-color 0.2s;
+        word-break: break-all;
+        margin-top: 5px;
+      }
+      #result:hover { background-color: #f0f0f0; }
+      #result:active { background-color: #e0e0e0; }
+      .result-container { margin-top: 25px; }
+      .result-label { display: block; margin-bottom: 5px; font-weight: bold; }
+      .green { color: #2ecc71; }
+      .red { color: #e74c3c; }
+      .note {
+        font-size: 0.85em;
+        color: #666;
+        margin-top: 25px;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #4a90e2;
+      }
+      .note p { margin: 0.5em 0; }
+      @media (max-width: 480px) {
+        body { padding: 15px; }
+        h1 { font-size: 1.5rem; }
+        input { padding: 10px; }
+        .note { padding: 10px; }
+      }
+    </style>
+  </head>
   <body>
-    <p>
-      (this is the old version; 
-      <a href="./hashme-q3.html">please use the new version</a>
-      )
-    </p>
+    <h1>hashme (legacy)</h1>
+
     <form>
-      password: <input id="pw1" type="password" />
-      <br/>
-      domain: <input id="dom1" type="text" onchange=update />
-      <br/>
-      confirm password: <input id="pw2" type="password" />
-      <br/>
-      confirm domain: <input id="dom2"  type="text" />
+      <div class="input-group">
+        <label for="pw1">Master Password</label>
+        <input id="pw1" type="password" autocomplete="off" placeholder="Enter your master password" />
+      </div>
+      <div class="input-group">
+        <label for="dom1">Domain</label>
+        <input id="dom1" type="text" placeholder="e.g., example.com" />
+      </div>
+      <div class="input-group">
+        <label for="pw2">Confirm Password</label>
+        <input id="pw2" type="password" autocomplete="off" placeholder="Re-enter your master password" />
+      </div>
+      <div class="input-group">
+        <label for="dom2">Confirm Domain</label>
+        <input id="dom2" type="text" placeholder="Re-enter the domain" />
+      </div>
     </form>
-    <p>
-      result: <span id="result"></span>
-      <br/>
-      match: <span id="match"></span>
-    </p>
-    
-    <!-- ui only -->
+
+    <div class="result-container">
+      <div>
+        <span class="result-label">Generated Password</span>
+        <div id="result">Enter details above</div>
+      </div>
+      <div style="margin-top: 15px;">
+        <span class="result-label">Inputs Match</span>
+        <span id="match" style="font-weight: bold;">false</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <p>Click the generated password to copy it to your clipboard.</p>
+      <p>This is a legacy generator preserved for compatibility.</p>
+    </div>
+
+    <!-- UI script: styling, events, clipboard. Does NOT change algorithm. -->
     <script>
       function match() {
-        var pw1= document.getElementById('pw1').value;
-        var pw2= document.getElementById('pw2').value;
+        var pw1 = document.getElementById('pw1').value;
+        var pw2 = document.getElementById('pw2').value;
         var dom1 = document.getElementById('dom1').value;
         var dom2 = document.getElementById('dom2').value;
-        return (pw1 === pw2) && (dom1 == dom2);
+        return (pw1 === pw2) && (dom1 === dom2);
       }
+
       function match_display() {
         var matches = match();
-        document.getElementById('match').innerHTML=matches;
-        if( matches ) {
-          document.getElementById('match').style.color='green';
-          document.getElementById('result').style.color='black';
+        document.getElementById('match').innerHTML = matches;
+        if (matches) {
+          document.getElementById('match').className = 'green';
+          document.getElementById('result').className = '';
         } else {
-          document.getElementById('match').style.color='red';
-          document.getElementById('result').style.color='red';
+          document.getElementById('match').className = 'red';
+          document.getElementById('result').className = 'red';
         }
       }
-      //nb: doesn't check for match
+
+      // compute using legacy algorithm
       function result() {
-        var pw1= document.getElementById('pw1').value;
-        var dom1= document.getElementById('dom1').value;
-        return hashme(pw1,dom1);
+        var pw1 = document.getElementById('pw1').value;
+        var dom1 = document.getElementById('dom1').value;
+        return hashme(pw1, dom1);
       }
+
       function result_display() {
-        var pw2= document.getElementById('pw2').value;
+        var pw1 = document.getElementById('pw1').value;
+        var pw2 = document.getElementById('pw2').value;
+        var dom1 = document.getElementById('dom1').value;
         var dom2 = document.getElementById('dom2').value;
+
         var condition = match();
-        condition = condition || (dom2==='' && pw2==='');
-        if(condition) {
-          document.getElementById('result').innerHTML=result();
+        condition = condition || (dom2 === '' && pw2 === '');
+
+        if (condition && pw1 && dom1) {
+          document.getElementById('result').innerHTML = result();
+        } else if (!pw1 || !dom1) {
+          document.getElementById('result').innerHTML = 'Enter details above';
         } else {
-          document.getElementById('result').innerHTML='--- match! ---';
+          document.getElementById('result').innerHTML = '--- match inputs first! ---';
         }
       }
+
       function update() {
         match_display();
         result_display();
       }
-      //http://stackoverflow.com/questions/400212/how-to-copy-to-the-clipboard-in-javascript
+
+      // Clipboard helpers (modern API with fallback), with visual feedback
       function copy_pw() {
         var res = document.getElementById('result').innerHTML;
-        //clear display of result
-        document.getElementById('result').innerHTML='';
-        window.prompt(" fk", res);
+        if (!res || res === 'Enter details above' || res === '--- match inputs first! ---' || res === 'Error') {
+          return;
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(res).then(showCopiedFeedback).catch(function () {
+            fallbackCopyToClipboard(res);
+          });
+        } else {
+          fallbackCopyToClipboard(res);
+        }
       }
-      //configure updating
-      document.getElementById('pw1').onchange = update;
-      document.getElementById('pw1').onkeyup = update;
-      document.getElementById('pw2').onchange = update;
-      document.getElementById('pw2').onkeyup = update;
-      document.getElementById('dom1').onchange = update;
-      document.getElementById('dom1').onkeyup = update;
-      document.getElementById('dom2').onchange = update;
-      document.getElementById('dom2').onkeyup = update;
-      //configure click for pw prompt
-      document.getElementById('result').onclick = copy_pw;
+
+      function fallbackCopyToClipboard(text) {
+        var textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        textArea.style.left = '0';
+        textArea.style.top = '0';
+        document.body.appendChild(textArea);
+
+        // iOS handling
+        if (navigator.userAgent && /ipad|ipod|iphone/i.test(navigator.userAgent)) {
+          var editable = textArea.contentEditable;
+          var readOnly = textArea.readOnly;
+          textArea.contentEditable = true;
+          textArea.readOnly = false;
+          var range = document.createRange();
+          range.selectNodeContents(textArea);
+          var selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          textArea.setSelectionRange(0, 999999);
+          textArea.contentEditable = editable;
+          textArea.readOnly = readOnly;
+        } else {
+          textArea.select();
+        }
+
+        try {
+          document.execCommand('copy');
+          showCopiedFeedback();
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+          alert('Could not copy password. Please long-press and copy manually.');
+        }
+        document.body.removeChild(textArea);
+      }
+
+      function showCopiedFeedback() {
+        var resultEl = document.getElementById('result');
+        var originalText = resultEl.innerHTML;
+        var originalBg = resultEl.style.backgroundColor;
+        var originalColor = resultEl.style.color;
+        var originalBorder = resultEl.style.borderColor;
+        resultEl.innerHTML = 'Copied!';
+        resultEl.style.backgroundColor = '#d4edda';
+        resultEl.style.color = '#155724';
+        resultEl.style.borderColor = '#c3e6cb';
+        setTimeout(function () {
+          resultEl.innerHTML = originalText;
+          resultEl.style.backgroundColor = originalBg;
+          resultEl.style.color = originalColor;
+          resultEl.style.borderColor = originalBorder;
+        }, 1500);
+      }
+
+      // Event bindings
+      document.getElementById('pw1').addEventListener('input', update);
+      document.getElementById('pw2').addEventListener('input', update);
+      document.getElementById('dom1').addEventListener('input', update);
+      document.getElementById('dom2').addEventListener('input', update);
+      document.getElementById('result').addEventListener('click', copy_pw);
+
+      // Initial update
+      update();
     </script>
-    
+
     <!-- hashme -->
     <script>
     function hashme(pw,domain) {
