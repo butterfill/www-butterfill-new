@@ -6,6 +6,8 @@ const writingCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     authors: z.string(),
+    // Short summary or tagline to show in lists
+    tagline: z.string().optional(),
     pubDate: z.date().optional(),
     year: z.number(),
     isForthcoming: z.boolean().optional(),

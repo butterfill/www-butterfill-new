@@ -3,8 +3,8 @@
 A static academic website built with Astro + Svelte and Tailwind CSS.
 
 You’re welcome to re-use this for your own site, but (i) some of the scripts are
-built around my own file organization and (ii) much of this was written
-with the codex and claude cli tools.
+built around my own file organization; (ii) much of this was written
+with the codex and claude cli tools; and (iii) it’s still work in progress.
 
 
 ## How to Re-use This Site

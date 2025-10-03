@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import CiteButton from '../components/CiteButton.svelte';
 import { getCollection } from 'astro:content';
+import { marked } from 'marked';
 
 // // Get all publications
 // const allWriting = (await getCollection('writing')).sort(
@@ -87,6 +88,11 @@ const featuredTeaching = (await getCollection('teaching')).filter(
                     <h3 class="font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {item.data.title}
                     </h3>
+                    {item.data.tagline && (
+                      <div class="mb-1 -mt-2">
+                        <div class="prose prose-sm prose-slate dark:prose-invert m-0 [&>*:first-child]:mt-0 [&>p:first-child]:mt-0 [&>ul:first-child]:mt-0 [&>ol:first-child]:mt-0" set:html={marked.parse(String(item.data.tagline))}></div>
+                      </div>
+                    )}
                     <div class="text-sm text-slate-600 dark:text-slate-400">
                       {item.data.authors}
                     </div>
