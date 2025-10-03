@@ -1,4 +1,4 @@
-# Academic Website
+# Steve Butterfill’s Academic Website
 
 A static academic website built with Astro + Svelte and Tailwind CSS.
 
