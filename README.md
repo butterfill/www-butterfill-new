@@ -4,16 +4,6 @@ A static academic website built with Astro + Svelte and Tailwind CSS.
 
 You’re welcome to re-use this for your own site.
 
-## How to deploy
-
-```sh
-wrangler pages deploy dist
-```
-
-(after `wrangler pages project create www-butterfill-new` to create the cloudflare project)
-
-[For full instructions see pplx page](https://www.perplexity.ai/search/i-have-made-a-static-site-with-1gVnq4kLQzaCF.OeeLFMIg)
-
 
 ## How to Re-use This Site
 
@@ -32,6 +22,31 @@ cd <project-directory>
 npm install
 cd scripts && npm install && cd ..
 ```
+
+### 1b. Tweak the build script
+
+There are scripts to automate getting markdown of my publications 
+which you probably cannot use (see the section on scripts below). 
+Remove these `node ./scripts/get-md-for-writing.mjs && ` from the `build` script in `package.json`.
+It should look like this:
+
+```json
+{
+   ...
+  "scripts": {
+     "dev": "astro dev",
+     "build": "node ./scripts/generate-llms.mjs && astro build",
+     ...
+  }
+...
+}
+```
+
+### 1c. Hint
+
+If you understand what you are doing, you should be able to point the codex CLI or claude code 
+at this README and ask it to do the rest of the setup for you.
+
 
 ### 2. Replace Personal Information
 
@@ -93,10 +108,9 @@ For a single test run without watching for changes:
 ```bash
 npm test -- --run
 ```
-
-#### End-to-End Smoke Tests (Playwright)
-
-Phase 1 adds Playwright smoke tests that start the Astro dev server and verify key routes load without console or network errors.
+#### Playwright Tests (Not Meaningful)
+The playwright tests are not meaningful guarantees of anything (I always start with good intentions 
+but can never quite figure out how to maintain them).
 
 Commands:
 
@@ -122,7 +136,7 @@ npm run build  # Builds the site and generates llms.txt
 npm run preview  # Preview the built site locally
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 /
@@ -146,11 +160,12 @@ npm run preview  # Preview the built site locally
 └── docs-developers/          # Developer documentation
 ```
 
-## 📝 Content Management
+## Auto-import Content
 
 ### Using the Scripts
 
-The `scripts/` directory contains tools for importing and managing academic content:
+The `scripts/` directory contains tools for importing and managing academic content.
+These are related to my own file organization and workflow, so unlikely to be useful.
 
 #### 1. BibTeX Content Sync (`sync-bibtex.mjs`)
 
@@ -185,7 +200,8 @@ Options:
 
 #### 3. Import Talks (`import-talks.mjs`)
 
-Automatically imports talks from a separate talks repository:
+Automatically imports talks from a separate talks repository
+(will not work for you as it depends on the way I organize my files):
 
 ```bash
 node scripts/import-talks.mjs --help
@@ -194,6 +210,9 @@ node scripts/import-talks.mjs --help
 This script detects new or updated talks from your talks repository and creates corresponding content files. See `--help` for all options including dry-run mode.
 
 #### 4. LLM Content Generation (`generate-llms.mjs`)
+
+This creates files for LLMs crawling the site (you want them to 
+train on your work).
 
 Builds the complete LLM bundle (text index, metadata, and long-form markdown files):
 
@@ -236,9 +255,12 @@ Create markdown files in `src/content/teaching/` for course materials and lectur
 
 ### Interactive Slide Presentations
 
+I only do it this way for some ancient talks with slides as images.
+(If you do not have that problem, use Reveal.js directly
+or put slides and handouts on a separate site.)
 Talks can include interactive slide presentations using Reveal.js:
 
-```markdown
+```yaml
 ---
 title: "My Talk"
 slideImages:
@@ -248,7 +270,7 @@ slideImages:
 ```
 
 
-## 🏗️ Building and Deployment
+## Building and Deployment
 
 ### Local Build
 
@@ -268,22 +290,19 @@ npm run preview
 
 Preview the built site locally before deployment.
 
-## ☁️ Cloudflare Pages Deployment
+## Cloudflare Pages Deployment
 
-This site is optimized for deployment on Cloudflare Pages.
+I currently use Cloudflare Pages with manual deploy. (Have used s3 in the past; also use surge.sh for testing.)
 
-### Automatic Deployment
-
-1. **Connect your repository** to Cloudflare Pages
-2. **Configure build settings:**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Node.js version: 18+
-
-3. **Environment variables** (if needed):
-   - No special environment variables required for basic deployment
 
 ### Manual Deployment
+
+0. **Set up Cloudflare Pages** (one-time setup)
+   ```bash
+   npm install -g wrangler
+   npx wrangler login
+   wrangler pages project create <project name, e.g. 'www-butterfill-new' for me>
+   ```
 
 1. **Build the site:**
    ```bash
@@ -295,6 +314,8 @@ This site is optimized for deployment on Cloudflare Pages.
    npx wrangler pages deploy dist
    ```
 
+
+
 ### Redirects
 
 The site includes redirect rules in `public/_redirects` for maintaining backward compatibility with old URL structures. These are automatically handled by Cloudflare Pages.
@@ -302,21 +323,12 @@ The site includes redirect rules in `public/_redirects` for maintaining backward
 You probably do not want these as they’re specific to my old site.
 
 
-### Content Collections
+## Documentation
 
-Content is managed using Astro's content collections:
-- `writing`: Academic publications
-- `talks`: Conference presentations
-- `teaching`: Educational materials
+Additional docs cover specific features and were mostly auto generated.
+- [`docs-developers/`](docs-developers/generate) - about fulltext, command pallet, llms.txt, etc
+- [`specs/`](specs/) - design specs for some of the features
 
-## 📚 Documentation
-
-Additional documentation for developers:
-- [`docs-developers/generate-llms-script.md`](docs-developers/generate-llms-script.md) - LLM content generation
-- [`docs-developers/reveal-js-slides-for-talks.md`](docs-developers/reveal-js-slides-for-talks.md) - Slide presentations
-- [`docs-developers/command-menu.md`](docs-developers/command-menu.md) - Command palette system
-
-
-## 📄 License
+## License
 
 MIT (do whatever you want with it)
