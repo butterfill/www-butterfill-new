@@ -89,8 +89,10 @@ const featuredTeaching = (await getCollection('teaching')).filter(
                       {item.data.title}
                     </h3>
                     {item.data.tagline && (
-                      <div class="mb-1 -mt-2">
-                        <div class="prose prose-sm prose-slate dark:prose-invert m-0 [&>*:first-child]:mt-0 [&>p:first-child]:mt-0 [&>ul:first-child]:mt-0 [&>ol:first-child]:mt-0" set:html={marked.parse(String(item.data.tagline))}></div>
+                      <div class="mb-1 -mt-2 italic">
+                        <div class="border-l  border-slate-300 dark:border-slate-700 pl-3 ml-0">
+                          <div class="prose prose-sm prose-slate dark:prose-invert m-0 prose-p:mb-1 prose-ul:mt-1 prose-ol:mt-1" set:html={marked.parse(String(item.data.tagline))}></div>
+                        </div>
                       </div>
                     )}
                     <div class="text-sm text-slate-600 dark:text-slate-400">

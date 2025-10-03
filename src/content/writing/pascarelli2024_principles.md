@@ -8,6 +8,11 @@ pages: "103625"
 doi: "10.1016/j.concog.2023.103625"
 bibtex: "@article{pascarelli:2024_principles,\n    doi = {10.1016/j.concog.2023.103625},\n    url = {https://www.sciencedirect.com/science/article/pii/S1053810023001629},\n    note = {[Online; accessed 2024-02-29]},\n    author = {Pascarelli, M. T. and Quarona, D. and Barchiesi, G. and Riva, G. and Butterfill, S. A. and Sinigaglia, C.},\n    journal = {Consciousness and Cognition},\n    year = {2024},\n    month = {jan 1},\n    pages = {103625},\n    title = {Principles of belief acquisition. {How} we read other minds},\n    howpublished = {https://www.sciencedirect.com/science/article/pii/S1053810023001629},\n    volume = {117}\n}\n\n"
 pdfUrl: "/pdf/pascarelli2024_principles.pdf"
+tagline: |
+  Does mindreading adhere to ‘seeing is believing’?
+  * In automatic responses, people behaved as if an agent had a belief even when the agent never saw the event.
+  * Processes behind automatic mindreading may clash with philosophical principles about mindreading.
+
 ---
 
 
@@ -15,7 +20,7 @@ pdfUrl: "/pdf/pascarelli2024_principles.pdf"
 
 # Abstract
 
-Reading other minds is a pervasive feature of human social life. A decade of research indicates that people can automatically track an agent’s beliefs regardless of whether this is required. But little is known about the principles t guide automatic belief tracking. In six experiments adapting a false belief task introduced by Kovacs et al. (2010), we tested whether belief tracking is interrupted by either an agent’s lack of perceptual access or else by an agent’s constrained action possibilities. We also tested whether such manipulations create interruptions when participants were instructed to track beliefs. Our main finding: the agent’s lack of perceptual access did not interrupt belief tracking when participants were not instructed to track beliefs. Overall, our findings raise a challenge: some of the phenomena that have been labelled mindreading are perhaps not mindreading at all, or—more likely—they are mindreading but not as we know it.  
+Reading other minds is a pervasive feature of human social life. A decade of research indicates that people can automatically track an agent’s beliefs regardless of whether this is required. But little is known about the principles that guide automatic belief tracking. In six experiments adapting a false belief task introduced by Kovacs et al. (2010), we tested whether belief tracking is interrupted by either an agent’s lack of perceptual access or else by an agent’s constrained action possibilities. We also tested whether such manipulations create interruptions when participants were instructed to track beliefs. Our main finding: the agent’s lack of perceptual access did not interrupt belief tracking when participants were not instructed to track beliefs. Overall, our findings raise a challenge: some of the phenomena that have been labelled mindreading are perhaps not mindreading at all, or—more likely—they are mindreading but not as we know it.  
 
 Keywords: Social Cognition, Mindreading, Belief-tracking, Automatic processes
 

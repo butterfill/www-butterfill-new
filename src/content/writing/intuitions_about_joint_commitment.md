@@ -10,6 +10,8 @@ pages: "1-16"
 doi: "10.1080/09515089.2022.2153659"
 pdfUrl: "/pdf/intuitions_about_joint_commitment.pdf"
 bibtex: "@article{michael:2022_intuitions,\n    author = {Michael, John and Butterfill, Stephen},\n    doi = {10.1080/09515089.2022.2153659},\n    journal = {Philosophical Psychology},\n    month = {dec 1},\n    number = {0},\n    pages = {1--16},\n    publisher = {Routledge},\n    title = {Intuitions about joint commitment},\n    url = {https://doi.org/10.1080/09515089.2022.2153659},\n    volume = {0},\n    year = {2022},\n    bdsk-url-1 = {https://doi.org/10.1080/09515089.2022.2153659}\n}\n\n"
+tagline: |
+  Is commitment essential to joint action? We tested intuitions about this using controlled scenarios. Results hint at links between commitment and joint action, but do not support the view that commitment is essential to joint action.
 ---
 
 

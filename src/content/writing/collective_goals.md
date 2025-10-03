@@ -11,6 +11,13 @@ doi: "10.1093/mind/fzab096"
 pdfUrl: "/pdf/collective_goals.pdf"
 bibtex: "@article{butterfill:2022_mechanistically,\n    author = {Butterfill, Stephen A and Sinigaglia, Corrado},\n    date-modified = {2022-05-09 11:13:42 +0100},\n    doi = {10.1093/mind/fzab096},\n    issn = {0026-4423},\n    journal = {Mind},\n    number = {525},\n    pages = {1–29},\n    shorttitle = {Towards a {{Mechanistically Neutral Account}} of {{Acting Jointly}}},\n    title = {Towards a {{Mechanistically Neutral Account}} of {{Acting Jointly}}: {{The Notion}} of a {{Collective Goal}}},\n    volume = {132},\n    year = {2022},\n    bdsk-url-1 = {https://doi.org/10.1093/mind/fzab096}\n}\n\n"
 featured: true
+tagline: |
+  What distinguishes genuinely acting together from acting in parallel but merely individually?
+  * The standard view: shared intentions make the difference.
+  * Our alternative: a collective goal is enough, at least on standard criteria.
+  * This view is mechanistically neutral: it says nothing about what’s in your head.
+  * Payoff: we can identify targets of explanation without presupposing claims about which mechanisms explain them.
+
 ---
 
 
@@ -20,7 +27,7 @@ featured: true
 
 <h1 id="sec:abstract"><strong>Abstract</strong></h1>
 <div class='abstract'>
-Anyone who has ever walked, cooked or crafted with a friend is in a position to know that acting jointly is not just acting side-by-side.  But what distinguishes acting jointly from acting in parallel yet merely individually?  Four decades of philosophical research have yielded broad consensus on a strategy for answering this question.  This strategy is emph{mechanistically committed}; that is, it hinges on invoking states of the agents who are acting jointly (often dubbed ‘shared’, ‘we-’ or ‘collective’ intentions).  Despite the consensus, enduring disagreement remains. The disagreement may be a consequence of the strategy; at least this is plausible enough to motivate considering the prospects for an alternative. Our aim is therefore to draw attention to a coherent alternative that is present in the literature but often overlooked. This alternative is emph{mechanistically neutral}: it avoids invoking states of agents. Implementing the alternative, we introduce the notion of a collective goal and a characterisation of acting jointly which meets criteria standardly used in evaluating other accounts and may
+Anyone who has ever walked, cooked or crafted with a friend is in a position to know that acting jointly is not just acting side-by-side.  But what distinguishes acting jointly from acting in parallel yet merely individually?  Four decades of philosophical research have yielded broad consensus on a strategy for answering this question.  This strategy is <span class="italic">mechanistically committed</span>; that is, it hinges on invoking states of the agents who are acting jointly (often dubbed ‘shared’, ‘we-’ or ‘collective’ intentions).  Despite the consensus, enduring disagreement remains. The disagreement may be a consequence of the strategy; at least this is plausible enough to motivate considering the prospects for an alternative. Our aim is therefore to draw attention to a coherent alternative that is present in the literature but often overlooked. This alternative is <span class="italic">mechanistically neutral</span>: it avoids invoking states of agents. Implementing the alternative, we introduce the notion of a collective goal and a characterisation of acting jointly which meets criteria standardly used in evaluating other accounts and may
 </div>
 
 <h1 id="sec:intro"><strong>Introduction</strong></h1>

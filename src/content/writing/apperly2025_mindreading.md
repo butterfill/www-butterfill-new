@@ -6,15 +6,18 @@ doi: "10.2139/ssrn.5360183"
 bibtex: "@article{apperly:2025_mindreading,\n    doi = {10.2139/ssrn.5360183},\n    url = {https://papers.ssrn.com/abstract=5360183},\n    note = {[Online; accessed 2025-08-15]},\n    address = {Rochester, NY},\n    author = {Apperly, Ian and Devine, Rory T. and Butterfill, Stephen A.},\n    year = {2025},\n    month = {jul 21},\n    publisher = {Social Science Research Network},\n    title = {Mindreading is an {Asynchronous} {Joint} {Activity}: The {M}-a-{J}-a {Account} of {Theory} of {Mind} {Performance}, and {Individual} {Differences}},\n    type = {SSRN {Scholarly} {Paper}}\n}\n\n"
 pdfUrl: "/pdf/apperly2025_mindreading.pdf"
 featured: true
+tagline: |
+  What is it to be skilled at mindreading?
+  * Mindreading is a joint activity you can do alone: we generate and select explanations of thoughts and action that other people would recognize as reasonable.
+  * Social experiences plus context tune what feels plausible.
+  * This explains individual differences and offers new ways to measure mindreading skill.
+
 ---
 
 
 
 <div class="fulltext">
-<p><strong>Mindreading is an Asynchronous Joint Activity: The M-A-J-A
-Account of Theory of Mind performance, and individual
-differences.</strong></p>
-<p><strong>Abstract</strong></p>
+<div class='abstract'><h1><strong>Abstract</strong></h1>
 <p>Research on mindreading has been dominated by questions about the
 presence, absence or nature of mindreading concepts or structures, and
 by paradigms designed to create the most favourable circumstances for
@@ -41,6 +44,9 @@ lifespan, and for developing interpretable and psychometrically robust
 measures to study this variation.</p>
 <p>Keywords: mentalizing; theory of mind; joint action; individual
 differences; psychometric</p>
+</div>
+
+<h1 id="sec:intro"><strong>Introduction</strong></h1>
 <p>Forty years after the first empirical paper testing children’s false
 belief reasoning, research on mindreading is still viewed predominantly
 through the lens of early development. This focus on <em>when</em> such

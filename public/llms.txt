@@ -1,6 +1,6 @@
 Site: Stephen Butterfill's Personal Academic Website
 Author: Stephen Butterfill
-Generated: 2025-10-03T09:21:38.257Z
+Generated: 2025-10-03T13:24:47.788Z
 Items: 152
 
 ---
@@ -1270,11 +1270,10 @@ Summary: Could interacting mindreaders be in a position to know things which the
 
 ---
 
-Title: Intuitions about Joint Commitment
-Authors: John Michael and Stephen A. Butterfill
+Title: Untitled
+Authors: Unknown
 Type: Publication
 URL: /writing/intuitions_about_joint_commitment/
-Year: 2022
 
 Summary: In what sense is commitment essential to joint action, and do the participants in a joint action themselves perceive commitment as essential? Attempts to answer this question have so far been hampered by clashes of intuition. Perhaps this is because the intuitions in question have mostly been investigated using informal methods only.
 
