@@ -2,7 +2,9 @@
 
 A static academic website built with Astro + Svelte and Tailwind CSS.
 
-You’re welcome to re-use this for your own site.
+You’re welcome to re-use this for your own site, but (i) some of the scripts are
+built around my own file organization and (ii) much of this was written
+with the codex and claude cli tools.
 
 
 ## How to Re-use This Site
@@ -326,7 +328,7 @@ You probably do not want these as they’re specific to my old site.
 ## Documentation
 
 Additional docs cover specific features and were mostly auto generated.
-- [`docs-developers/`](docs-developers/generate) - about fulltext, command pallet, llms.txt, etc
+- [`docs-developers/`](docs-developers/) - about fulltext, command pallet, llms.txt, etc
 - [`specs/`](specs/) - design specs for some of the features
 
 ## License
