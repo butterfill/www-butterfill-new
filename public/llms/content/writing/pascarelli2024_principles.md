@@ -9,7 +9,7 @@ url: /writing/pascarelli2024_principles/
 summary: Reading other minds is a pervasive feature of human social life. A
   decade of research indicates that people can automatically track an agent’s
   beliefs regardless of whether this is required. But little is known about the
-  principles t guide automatic belief tracking. In six experiments adapting a
+  principles that guide automatic belief tracking. In six experiments adapting a
   false belief task introduced by Kovacs et al.
 year: 2024
 source: src/content/writing/pascarelli2024_principles.md

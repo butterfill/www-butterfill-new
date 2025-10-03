@@ -647,7 +647,7 @@
     "title": "Awareness of Belief",
     "type": "Publication",
     "url": "/writing/awareness_of_belief/",
-    "summary": "Is it possible to appreciate how different people may have beliefs different from one's own (including beliefs which are inconsistent with one's own beliefs) without understanding what it is for beliefs to be true or false? In this paper I argue that it is.",
+    "summary": "<div class=\"fulltext\"> <h1 id=\"sec:abstract\">Abstract</h1> <div class=\"abstract\"> Is it possible to appreciate how different people may have beliefs different from one's own (including beliefs which are inconsistent with one's own beliefs) without understanding what it is for beliefs to be true or false? In this paper I argue that it is.",
     "contentPath": "llms/content/writing/awareness_of_belief.md"
   },
   "writing/blueprint_social_animal": {
@@ -784,7 +784,7 @@
     "contentPath": "llms/content/writing/interacting_mindreaders.md"
   },
   "writing/intuitions_about_joint_commitment": {
-    "title": "Untitled",
+    "title": "Intuitions about Joint Commitment",
     "type": "Publication",
     "url": "/writing/intuitions_about_joint_commitment/",
     "summary": "In what sense is commitment essential to joint action, and do the participants in a joint action themselves perceive commitment as essential? Attempts to answer this question have so far been hampered by clashes of intuition. Perhaps this is because the intuitions in question have mostly been investigated using informal methods only.",
@@ -899,7 +899,7 @@
     "title": "Principles of belief acquisition. How we read other minds",
     "type": "Publication",
     "url": "/writing/pascarelli2024_principles/",
-    "summary": "Reading other minds is a pervasive feature of human social life. A decade of research indicates that people can automatically track an agent’s beliefs regardless of whether this is required. But little is known about the principles t guide automatic belief tracking. In six experiments adapting a false belief task introduced by Kovacs et al.",
+    "summary": "Reading other minds is a pervasive feature of human social life. A decade of research indicates that people can automatically track an agent’s beliefs regardless of whether this is required. But little is known about the principles that guide automatic belief tracking. In six experiments adapting a false belief task introduced by Kovacs et al.",
     "contentPath": "llms/content/writing/pascarelli2024_principles.md"
   },
   "writing/perceiving_expressions_emotion": {

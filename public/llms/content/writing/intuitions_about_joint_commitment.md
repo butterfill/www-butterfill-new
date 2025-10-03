@@ -1,5 +1,6 @@
 ---
-title: Untitled
+title: Intuitions about Joint Commitment
+authors: John Michael and Stephen A. Butterfill
 type: Publication
 collection: writing
 slug: writing/intuitions_about_joint_commitment
@@ -9,6 +10,8 @@ summary: In what sense is commitment essential to joint action, and do the
   Attempts to answer this question have so far been hampered by clashes of
   intuition. Perhaps this is because the intuitions in question have mostly been
   investigated using informal methods only.
+year: 2022
+forthcoming: true
 source: src/content/writing/intuitions_about_joint_commitment.md
 ---
 

@@ -16,11 +16,7 @@ featured: true
 source: src/content/writing/apperly2025_mindreading.md
 ---
 
-**Mindreading is an Asynchronous Joint Activity: The M-A-J-A
-Account of Theory of Mind performance, and individual
-differences.**
-
-**Abstract**
+# **Abstract**
 
 Research on mindreading has been dominated by questions about the
 presence, absence or nature of mindreading concepts or structures, and
@@ -49,6 +45,8 @@ measures to study this variation.
 
 Keywords: mentalizing; theory of mind; joint action; individual
 differences; psychometric
+
+# **Introduction**
 
 Forty years after the first empirical paper testing children’s false
 belief reasoning, research on mindreading is still viewed predominantly
