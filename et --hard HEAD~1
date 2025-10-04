@@ -1,0 +1,503 @@
+[33mcommit f9f438cdc81de9dff567609e2571242110fd0104[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 13:22:16 2025 +0000
+
+    Revert "tagline added"
+    
+    This reverts commit bafdf38f71f6f6c46aa80e8e94c9348c3385caca.
+
+[33mcommit bafdf38f71f6f6c46aa80e8e94c9348c3385caca[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 14:16:13 2025 +0100
+
+    tagline added
+
+[33mcommit f2c65d22a85ab8896b3bd670d7ef0c824775c0ce[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 10:22:23 2025 +0100
+
+    ready?
+
+[33mcommit 6a1787f820fa9a6ff14aedf08b3c471383291a4b[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 10:21:30 2025 +0100
+
+    ready?
+
+[33mcommit 7d7974bf35e77e689cfc3db77a126fdcb05a8315[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 10:14:56 2025 +0100
+
+    ready?
+
+[33mcommit 38653257aa7d2078aaf76c88cc2125d9bf298069[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 08:54:09 2025 +0000
+
+    hashme.html second pass
+
+[33mcommit bbac11e5db06f8a3674de4e651a24c09834a6b7a[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 08:45:59 2025 +0000
+
+    hashme.html first pass
+
+[33mcommit 1d94f253b1cb77c004a8a7d9a52b2750e7c3dc38[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Oct 3 09:26:35 2025 +0100
+
+    hide cite and html buttons on narrow screen
+
+[33mcommit b733abd0b2ff91da43a3ce2d0e0e0d2f9749e48b[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 22:28:06 2025 +0100
+
+    added some md sources
+
+[33mcommit 0fd0ad7252f06b7aca63f3908f35ce903e6f5fc2[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 20:03:59 2025 +0000
+
+    script to get .md files and use them to generate full text on web pages
+
+[33mcommit 15909506301a1b16d2255676c51beadcf6fe1628[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 19:43:22 2025 +0000
+
+    script to get .md files for writing using cite2md
+
+[33mcommit d6299b1d353ac91fbd2c41563cf8cfd77fe4e31f[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 20:15:53 2025 +0100
+
+    [no message]
+
+[33mcommit ff8768bf41a538e51388a8be85cdf97942c17382[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 19:15:47 2025 +0000
+
+    sitemap
+
+[33mcommit ac185e926ed56f86e9d7d066be5f567aec582be9[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 19:01:11 2025 +0000
+
+    fix tests
+
+[33mcommit 66ba4e636c2eb70fa4d7775ce399d399af886b3f[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 18:59:23 2025 +0000
+
+    test: scope vitest to dedicated files
+
+[33mcommit 4c0a14839c10e6747b8e64eb81b79a3e0eda260c[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 18:15:46 2025 +0000
+
+    feat: rebuild llm bundle outputs
+
+[33mcommit 5d7ac7e78f373488a9501ccfa53f74d0039d1487[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Thu Oct 2 18:17:06 2025 +0100
+
+    tweaks
+
+[33mcommit f1f452c8f218d466e2ca1d6f50496d50c887f901[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Tue Sep 16 14:08:46 2025 +0100
+
+    added cli tool to get BibTeX of my publications
+
+[33mcommit f0fcbf8c33fa08eb9b34f0142cf032b2601243f4[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 22:04:45 2025 +0100
+
+    modified copy for LLM prompt based on SIFT
+
+[33mcommit ad1893122a2e02055773b9620211313158c1bb53[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 20:40:12 2025 +0000
+
+    footer pinned to bottom of viewport
+
+[33mcommit 4f8e0f861100e937525fcaad4cc687f05e8eef09[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 20:30:38 2025 +0000
+
+    fix for talks with external lnks
+
+[33mcommit 0b4fa7d33c7cd7fc6cacf29c1d47a0d9e6aaf1d0[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 21:26:49 2025 +0100
+
+    imported talks from writing2/talks
+
+[33mcommit 2b0260e62034f4c3363ce1a7736ef20b6915dfef[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 20:25:06 2025 +0000
+
+    talks with external links should link directly to that external page
+
+[33mcommit 385f5422a0cec9d64388ab90b602730a661a83e3[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 20:12:26 2025 +0000
+
+    implemented script to import talks from writing2/talks
+
+[33mcommit 8ba1001720ff105fcc14f0c96f52b16f93c779d4[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 20:44:48 2025 +0100
+
+    updated import talks plan
+
+[33mcommit 3a656366337022cc47908ff996afc52238f81c29[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 19:24:48 2025 +0000
+
+    test(phase2): stabilize email modal test and mock open-source API
+    
+    - Stub /api/open-source via in-page fetch to avoid launching editors and assert via window flag
+    - Make email modal test robust: wait on dialog content, re-click trigger if needed, and scope button lookup
+    - Preserve original test intent from test-plan phase 2
+
+[33mcommit 3bb4e946b26e4a90bc03f8425fe1a66358cdef65[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 17:13:07 2025 +0000
+
+    docs: add Playwright smoke test instructions to README; implement Phase 1 e2e setup and fix locator scoping.\n\n- Add test-plan.md and Phase 1 details\n- Add Playwright config + smoke test\n- Update package.json with e2e scripts\n- Fix header locator to role-scoped banner\n- Update plan to reflect no CI/wrangler yet
+
+[33mcommit 3b6128231acb4d773554cd41444620dc7e6af03a[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 16:40:33 2025 +0000
+
+    fix "all writing" etc
+
+[33mcommit cec82a971da10fbcb7300a9ccc1d89f56b3d80e5[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 17:37:03 2025 +0100
+
+    removed borders
+
+[33mcommit df8b3261d22693592399495e99a445d647013e38[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 17:27:31 2025 +0100
+
+    minor fix
+
+[33mcommit af155b1021ae80ded8608b9251bd7ce4c2830b04[m
+Author: butterfill <stephen@butterfill.com>
+Date:   Wed Sep 10 16:20:25 2025 +0000
+
+    attempt to fix bug
+
+[33mcommit a0e4ac9dc9885444f21a90d3d4f68c378df30ebb[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Sat Sep 6 22:30:07 2025 +0100
+
+    [no message]
+
+[33mcommit 7626a440263165404ee877367d53da3ab17c2dbe[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Aug 27 23:02:31 2025 +0100
+
+    fulltext added
+
+[33mcommit 746661cc32912a8b08e707b4df0b209db30b06e5[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Aug 27 22:51:28 2025 +0100
+
+    equations in fulltext now render (katex, server side)
+
+[33mcommit b1902b0131f7f6f6994ee40882b321f960f8de02[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Aug 27 22:00:17 2025 +0100
+
+    added fulltext
+
+[33mcommit f19522bc7bfd9be6a75f3d9a8007e6c3989a2060[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Wed Aug 27 21:40:05 2025 +0100
+
+    added fulltext
+
+[33mcommit 8d4a7dda0c2d4a5509fa3884cea9f8317617afaf[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 19:36:01 2025 +0100
+
+    html buttons
+
+[33mcommit a651521630b8d24561265873a6be4ebff1c63a9a[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 19:23:55 2025 +0100
+
+    reveal.js back in public for slides
+
+[33mcommit 28ba3b8dbc2641b25eec478683cc487bd19c6a29[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 19:02:52 2025 +0100
+
+    json-ld added. also all teaching (except the pages that are on www.butterfill.com)
+
+[33mcommit 1aea1801b0d37f1503e22ec6aba21f21d59fbf7c[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 18:17:26 2025 +0100
+
+    tests for json-ld created by qwen (just the tests, all failing)
+
+[33mcommit 25976f414dc077aeb1928ac131f3ff7a2478f956[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 18:12:25 2025 +0100
+
+    about to add json-ld data
+
+[33mcommit 8db9348d61be1bca141987014acecb5d601a73cc[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 17:51:09 2025 +0100
+
+    citation metadata available for zotero extension auto import
+
+[33mcommit d435fdd277c312ff8912a6a4ebd529ea83e9dac9[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 16:57:33 2025 +0100
+
+    working on teaching section
+
+[33mcommit 227dbff11ccb940233af21f27468be1d3702f403[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 16:49:49 2025 +0100
+
+    working on teaching section
+
+[33mcommit ec4c04b8b817ee6fb39b751fc9581e03433d1a6b[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Fri Aug 22 16:14:02 2025 +0100
+
+    working on teaching section
+
+[33mcommit a63f45c35e76ab33c11082c381db394546c657f8[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Tue Aug 19 22:53:23 2025 +0100
+
+    updated readme
+
+[33mcommit 57e4b8708760cbf1644c80cedaa4162a4d490bd8[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Tue Aug 19 22:45:16 2025 +0100
+
+    added email me modal
+
+[33mcommit b32e3f6f237d620a02877d5b76cceb3291d63c92[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Mon Aug 18 23:07:53 2025 +0100
+
+    [no message]
+
+[33mcommit 365607d16652e42744f9a59de610a9f742f38e05[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Mon Aug 18 17:21:50 2025 +0100
+
+    added 'edit source' button for dev mode (quickly open source for a page in vs code)
+
+[33mcommit 93aab36cc515a41e237af725577648b033d1d74d[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Mon Aug 18 16:51:14 2025 +0100
+
+    [no message]
+
+[33mcommit 4cbe13631bef078ebbdb0bc7bea44ed275cdb69e[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Mon Aug 18 10:20:54 2025 +0100
+
+    add markdown fulltext to public/md/ to enable copy-for-chat feature
+
+[33mcommit a8cdd370cd2eeaf3ab5dccb8c6af2ef834e020c4[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Sun Aug 17 22:16:21 2025 +0100
+
+    about to work on copy-for-chat
+
+[33mcommit 1397ba523b5a971aa6c4fdae78c1a201209739bf[m
+Author: Stephen Butterfill <stephen@butterfill.com>
+Date:   Sun Aug 17 21:49:16 2025 +0100
+
+    minor tweaks to article full text dsiplay in progress
+
+[33mcommit 2a07726e0bfae0240926f3155fb8de5544a4c779[m
+Author: monstress <monstress@monstress>
+Date:   Sun Aug 17 15:50:11 2025 +0100
+
+    fixed footnotes as sidenotes vertical spacing
+
+[33mcommit cca954338a0bd6e42953406a6d9717b0039b29be[m
+Author: monstress <monstress@monstress>
+Date:   Sat Aug 16 11:59:14 2025 +0100
+
+    font selector created working
+
+[33mcommit a4d088802cb8fd2b58a2b4b7223f83760dcc8f4c[m
+Author: monstress <monstress@monstress>
+Date:   Sat Aug 16 11:39:41 2025 +0100
+
+    font selector created but not working
+
+[33mcommit bc2c7b2ab5ee83324ec38837c61c0c3b2a1d4f98[m
+Author: monstress <monstress@monstress>
+Date:   Sat Aug 16 11:33:38 2025 +0100
+
+    footnote positionig fixed
+
+[33mcommit df689db509296971fc783410aec4fd8216ef978f[m
+Author: monstress <monstress@monstress>
+Date:   Sat Aug 16 11:25:41 2025 +0100
+
+    added fulltext style and features
+
+[33mcommit 497c9e5c31db06aa8ca6ef000c52726cdb31f6bb[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 21:21:35 2025 +0100
+
+    added about section
+
+[33mcommit ef09a4a4cadc4122c19570bd29bf1e8b8cf3a6ca[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 20:46:21 2025 +0100
+
+    fixed error with bibtex to plain text citations
+
+[33mcommit e30fa8bda57e632dc8f78d5d15cd5b0ffd82171f[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 20:39:50 2025 +0100
+
+    improved citation display on article pages
+
+[33mcommit 44362bfedac2152f25b0d62cf3ac956e73f629ed[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 20:27:18 2025 +0100
+
+    added citation button to main page
+
+[33mcommit 23fadd4fd080c6fdd8b21fe8c5531991a8c01bc6[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 20:23:40 2025 +0100
+
+    citations added to command menu
+
+[33mcommit a47ec9824d9f94a470a5a61da8d819b5774363a3[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 20:16:02 2025 +0100
+
+    mid way through adding citation actions to command menu
+
+[33mcommit fb7a684e40b35442d55ba08b630d8000ab62ba0f[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 17:36:28 2025 +0100
+
+    creating from bibtex file mostly working, adding features
+
+[33mcommit 3ebcddd740f8bb3ea57f98e26d94f7ebad8933ec[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 17:04:45 2025 +0100
+
+    creating from bibtex file mostly working, but needs some tweaks
+
+[33mcommit dee69cf1a21976cd0d7dbb51b142f6135aaf87ec[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 16:24:40 2025 +0100
+
+    creating from bibtex file mostly working, but needs some tweaks
+
+[33mcommit 58766740051bc51f42a2268ea10c01515f9874c0[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 16:24:10 2025 +0100
+
+    creating from bibtex file mostly working, but needs some tweaks
+
+[33mcommit aa1cafb8bf1fc0844acc4001bd5b31569bf4f696[m
+Author: monstress <monstress@monstress>
+Date:   Fri Aug 15 15:57:25 2025 +0100
+
+    [no message]
+
+[33mcommit 19762e827f1907769b377f22b54cae74c627be30[m
+Author: monstress <monstress@monstress>
+Date:   Thu Aug 14 12:36:08 2025 +0100
+
+    lectures and talks are now listed (but incompletely)
+
+[33mcommit e2cacf16fb9e215c28311a9703cd340cf61df6c0[m
+Author: monstress <monstress@monstress>
+Date:   Thu Aug 14 12:25:20 2025 +0100
+
+    added dev doc for command menu
+
+[33mcommit d6562e5f0e064296ba94fb7d34d0520af3d78c5d[m
+Author: monstress <monstress@monstress>
+Date:   Thu Aug 14 11:15:32 2025 +0100
+
+    ignore repomix-output.xml
+
+[33mcommit d4b399effd9d0b89bf347df4dc9b4f53542d4495[m
+Author: monstress <monstress@monstress>
+Date:   Thu Aug 14 11:11:47 2025 +0100
+
+    fixed slugs (https://aistudio.google.com/prompts/11zwzn7gmzhM4WhqCiymjMwSpEzBfDE38)
+
+[33mcommit 0a87ce2a78604b9b045005073a1e730533dd0c4e[m
+Author: monstress <monstress@monstress>
+Date:   Tue Aug 12 19:55:32 2025 +0100
+
+    fixed build llms.txt (the content is not great but it works)
+
+[33mcommit 9956ae1a6a4c665f521581b8b9fe834c3ffee5e7[m
+Author: monstress <monstress@monstress>
+Date:   Tue Aug 12 15:33:28 2025 +0100
+
+    hashme-q3.html is working
+
+[33mcommit 45d2531eb49f87a7da7f64bdf50d1b7e6e1bcce8[m
+Author: monstress <monstress@monstress>
+Date:   Tue Aug 12 15:15:49 2025 +0100
+
+    command pallet working
+
+[33mcommit 9899b78ef65b9cca8b73be0ba40c9dc8326c0a91[m
+Author: monstress <monstress@monstress>
+Date:   Tue Aug 12 11:54:24 2025 +0100
+
+    working on phase 4
+
+[33mcommit d4c9576e5be5b9257beeb13dd659a65832fd38b5[m
+Author: monstress <monstress@monstress>
+Date:   Mon Aug 11 18:39:35 2025 +0100
+
+    migration sort of working. made one manual fix, ensured that validation does not apply to subdirectories in teaching/ (as these are individual lectures)
+
+[33mcommit 1fca3e0cb09be30bfc7e2dc0f72fa33ce64ff00e[m
+Author: monstress <monstress@monstress>
+Date:   Mon Aug 11 18:18:11 2025 +0100
+
+    migration seems to be working ok including images, pdfs and respecting subfolders
+
+[33mcommit 205ec2a562f33e2b14744803704aad2c7d0bfe74[m
+Author: monstress <monstress@monstress>
+Date:   Mon Aug 11 18:05:04 2025 +0100
+
+    migration does copy talks etc but not images or pdfs
+
+[33mcommit 8d8339b227c60180258f4653d07067f3c9db5334[m
+Author: monstress <monstress@monstress>
+Date:   Mon Aug 11 17:38:54 2025 +0100
+
+    phase 2 task 2.5 complete; also some of phase 3 done manually
+
+[33mcommit 8ee2a6de8f80ed8080cae5484ad4b4a73cb9cbe7[m
+Author: monstress <monstress@monstress>
+Date:   Mon Aug 11 17:23:12 2025 +0100
+
+    first
+
+[33mcommit 8fdc67c9e2fe448bf2df1d0d247e6f4c5fe6c2e6[m
+Author: houston[bot] <astrobot-houston@users.noreply.github.com>
+Date:   Mon Aug 11 16:58:25 2025 +0100
+
+    Initial commit from Astro
