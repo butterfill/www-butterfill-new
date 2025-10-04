@@ -240,7 +240,7 @@ export async function renderFulltextFromMarkdown(markdown) {
 function remarkPandocInlineSpans() {
   return (tree) => {
     const RE_ATTR_ONLY = /\{\s*([^}]+)\s*\}/g;
-    const RE_BRACKETED = /\[([^\]]+)\]\{\s*([^}]+)\s*\}/g;
+    const RE_BRACKETED = /\[([^\]]*)\]\{\s*([^}]+)\s*\}/g;
     const BLOCK_SKIP = new Set(['code']);
     const INLINE_SKIP = new Set(['inlineCode', 'link', 'image', 'definition']);
 

@@ -57,6 +57,7 @@
 - Output HTML: `<span id="id" class="class1 class2"></span>` (omit `class` attribute if no classes present).
 - Input syntax (with inner text): `[Text here]{#id .class1 .class2}`.
 - Output HTML: `<span id="id" class="class1 class2">Text here</span>` (HTML‑escape text as needed).
+ - Input syntax (empty text): `[]{#id .class1}` → Output HTML: `<span id="id" class="class1"></span>` (no literal `[]` text should appear).
 - Parsing rules:
   - Recognize `id` after `#` and any number of space‑separated `.class` tokens.
   - Ignore inside code fences and inline code.

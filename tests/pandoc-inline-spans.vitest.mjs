@@ -27,6 +27,13 @@ describe('Pandoc inline attribute spans', () => {
     expect(html).toMatch(/A\s*<span id=\"tag\" class=\"k\">X<\/span>\s*B/);
   });
 
+  it('converts []{#id .class} to an empty anchor and does not leave []', async () => {
+    const md = 'Start []{#_ENREF_40 .anchor} End';
+    const html = await renderFulltextFromMarkdown(md);
+    expect(html).toContain('<span id="_ENREF_40" class="anchor"></span>');
+    expect(html).not.toContain('[]');
+  });
+
   it('does not affect links like [text](url)', async () => {
     const md = '[example](https://example.com)';
     const html = await renderFulltextFromMarkdown(md);
