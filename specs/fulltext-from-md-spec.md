@@ -5,6 +5,7 @@
 - When a writing page lacks an inline `<div class="fulltext">…</div>`, render full text from `public/md/<slug>.md` without modifying source content files.
 - Preserve existing behaviour when fulltext is present in `src/content/writing/<slug>.md`.
 - Produce HTML with required wrappers/classes: `.fulltext`, `.abstract`, and footnotes converted from Markdown to HTML (GFM footnotes) with markup compatible with `FootnoteManager`.
+ - Parse Pandoc inline attribute spans like `{#_ENREF_11 .anchor}` into empty HTML spans for anchoring, preserving their ids/classes in the final HTML.
 
 **Context**
 - Route: `src/pages/writing/[...slug].astro` (renders `Content` from Astro Content).
@@ -18,6 +19,7 @@
 - Generation pipeline (server‑side):
   - Read `public/md/<slug>.md`.
   - Parse and convert to HTML using `remark` → `remark-gfm` (enable footnotes), `remark-math` → `rehype-katex` → `rehype-stringify`.
+  - Pandoc span support: add a small `remark` plugin that detects inline tokens of the form `{#id .class1 .class2}` and converts them to raw HTML spans `<span id="id" class="class1 class2"></span>` in mdast before HTML conversion. Do not transform inside code blocks or code spans.
   - Footnote HTML normalization: if the emitted HTML differs from the expected markup (see Footnotes section), post‑process the HTML string using a light DOM transform (e.g., `node-html-parser` or `cheerio`) to:
     - Ensure each in‑text footnote mark is an anchor with class `footnote-ref` whose text is wrapped in a `<sup>` element, and that it carries a stable `id="fnrefN"` and `href="#fnN"` pairing.
     - Ensure the footnote list renders inside a bottom block with class `.footnotes` (`<section id="footnotes" class="footnotes footnotes-end-of-document">…</section>`), with each item as `<li id="fnN">… <a class="footnote-back" href="#fnrefN">↩︎</a></li>`.
@@ -30,6 +32,7 @@
 - Optional abstract: `<div class=\"abstract\"> <p><strong>Abstract.</strong> …</p> </div>`
 - Body: converted HTML from `public/md/<slug>.md` (minus abstract section if extracted)
 - Footnotes: ordered list under `.footnotes` as produced by GFM footnotes
+ - Pandoc spans: zero‑width anchors rendered as `<span id="…" class="…"></span>` at their inline positions
 
 **Footnotes**
 - Input syntax (Markdown):
@@ -48,6 +51,14 @@
 - Prefer `remark-gfm` to parse the footnotes; this yields consistent mdast nodes for references and definitions.
 - Some HTML serializers emit different wrapping order for `<sup>` and `<a>`. Add a small normalization pass over the resulting HTML to enforce the anchor‑outer pattern and class names used by the site.
 - Add stable `id`/`href` pairs using the form `fnN` and `fnrefN` (no hyphens) if the upstream library uses hyphenated IDs like `fn-1`; update both references and list item IDs to match.
+
+**Pandoc Inline Spans**
+- Input syntax: `{#id .class1 .class2}` (no inner text).
+- Output HTML: `<span id="id" class="class1 class2"></span>` (omit `class` attribute if no classes present).
+- Parsing rules:
+  - Recognize `id` after `#` and any number of space‑separated `.class` tokens.
+  - Ignore inside code fences and inline code.
+  - Preserve placement inline; commonly used for citation/section anchors.
 
 **Wiring in `[...slug].astro`**
 - Compute `contentHasFulltext = entry.body.includes('<div class=\"fulltext\"')`.
@@ -78,6 +89,7 @@
 **Acceptance Criteria**
 - For a writing page lacking inline fulltext but having `public/md/<slug>.md`, the rendered HTML contains a single `.fulltext` block, an `.abstract` block when applicable, and interactive footnotes managed by `FootnoteManager`.
 - For pages already containing `.fulltext` in source content, the output is unchanged.
- - A sample input like:
+- A sample input like:
   - `Paragraph with a note.[^1]` and `[^1]: Footnote text.`
   results in HTML where the paragraph contains `<a class="footnote-ref" id="fnref1" href="#fn1"><sup>1</sup></a>` and the page contains a bottom `<section class="footnotes">…<li id="fn1">Footnote text <a class="footnote-back" href="#fnref1">↩︎</a></li>…</section>`.
+ - A sample input like `{#_ENREF_11 .anchor}` renders `<span id="_ENREF_11" class="anchor"></span>` at that position in the output.

@@ -213,8 +213,13 @@ function prefixAbstractLabel(html) {
 }
 
 export async function renderFulltextFromMarkdown(markdown) {
-  const mdProcessor = unified().use(remarkParse).use(remarkGfm).use(remarkMath);
-  const mdast = mdProcessor.parse(markdown);
+  const mdProcessor = unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkMath)
+    .use(remarkPandocInlineSpans);
+  const parsed = mdProcessor.parse(markdown);
+  const mdast = await mdProcessor.run(parsed);
 
   const { body, abstract, hasAbstract } = extractAbstractMdast(mdast);
 
@@ -229,4 +234,59 @@ export async function renderFulltextFromMarkdown(markdown) {
 
   const finalHtml = `<div class="fulltext">${abstractHtml}${bodyHtml}</div>`;
   return finalHtml;
+}
+
+// remark plugin: transform Pandoc inline attribute spans like {#id .class}
+function remarkPandocInlineSpans() {
+  return (tree) => {
+    const RE = /\{\s*#([A-Za-z0-9_:.-]+)(?:\s+(\.[A-Za-z0-9_:.-]+(?:\s+\.[A-Za-z0-9_:.-]+)*))?\s*\}/g;
+    const BLOCK_SKIP = new Set(['code']);
+    const INLINE_SKIP = new Set(['inlineCode', 'link', 'image', 'definition']);
+
+    function splitTextToNodes(value) {
+      const nodes = [];
+      let lastIndex = 0;
+      let m;
+      while ((m = RE.exec(value))) {
+        if (m.index > lastIndex) {
+          nodes.push({ type: 'text', value: value.slice(lastIndex, m.index) });
+        }
+        const id = m[1];
+        const classesRaw = (m[2] || '').trim();
+        const classes = classesRaw
+          ? classesRaw.split(/\s+/).map((s) => s.replace(/^\./, '')).filter(Boolean)
+          : [];
+        const classAttr = classes.length ? ` class=\"${classes.join(' ')}\"` : '';
+        nodes.push({ type: 'html', value: `<span id=\"${id}\"${classAttr}></span>` });
+        lastIndex = m.index + m[0].length;
+      }
+      if (lastIndex < value.length) {
+        nodes.push({ type: 'text', value: value.slice(lastIndex) });
+      }
+      return nodes;
+    }
+
+    function visit(node) {
+      if (!node || typeof node !== 'object') return;
+      if (BLOCK_SKIP.has(node.type)) return; // skip code blocks
+      const children = node.children;
+      if (Array.isArray(children) && !INLINE_SKIP.has(node.type)) {
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i];
+          if (child && child.type === 'text' && typeof child.value === 'string' && RE.test(child.value)) {
+            // reset regex for subsequent execs
+            RE.lastIndex = 0;
+            const replacement = splitTextToNodes(child.value);
+            // splice in place
+            children.splice(i, 1, ...replacement);
+            i += replacement.length - 1;
+            continue;
+          }
+          visit(child);
+        }
+      }
+    }
+
+    visit(tree);
+  };
 }
