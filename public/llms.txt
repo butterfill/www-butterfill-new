@@ -1,6 +1,6 @@
 Site: Stephen Butterfill's Personal Academic Website
 Author: Stephen Butterfill
-Generated: 2025-10-03T14:40:40.475Z
+Generated: 2025-10-04T12:25:44.391Z
 Items: 152
 
 ---
@@ -1286,7 +1286,7 @@ Type: Publication
 URL: /writing/joint_action_development/
 Year: 2011
 
-Summary: Given the premise that joint action plays some role in explaining how humans come to understand minds, what could joint action be? Not what a leading account, Michael Bratman's, says it is.
+Summary: Summary not available.
 
 ---
 
