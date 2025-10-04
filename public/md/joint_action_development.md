@@ -1,5 +1,3 @@
-**Joint Action and Development**
-
 **Abstract**
 
 Given the premise that joint action plays some role in explaining how
@@ -18,7 +16,6 @@ account characterises a kind of joint action involving shared goals.
 KEYWORDS: Joint action, shared intention, plural activity, cognitive
 development, action
 
-WORD COUNT: 9600 (plus 1200 words in reference list)
 
 **1. The question**
 

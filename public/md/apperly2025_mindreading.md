@@ -1,7 +1,5 @@
-**Mindreading is an Asynchronous Joint Activity: The M-A-J-A Account of
-Theory of Mind performance, and individual differences.**
 
-**Abstract**
+## Abstract
 
 Research on mindreading has been dominated by questions about the
 presence, absence or nature of mindreading concepts or structures, and
