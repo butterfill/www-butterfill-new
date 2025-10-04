@@ -239,29 +239,76 @@ export async function renderFulltextFromMarkdown(markdown) {
 // remark plugin: transform Pandoc inline attribute spans like {#id .class}
 function remarkPandocInlineSpans() {
   return (tree) => {
-    const RE = /\{\s*#([A-Za-z0-9_:.-]+)(?:\s+(\.[A-Za-z0-9_:.-]+(?:\s+\.[A-Za-z0-9_:.-]+)*))?\s*\}/g;
+    const RE_ATTR_ONLY = /\{\s*([^}]+)\s*\}/g;
+    const RE_BRACKETED = /\[([^\]]+)\]\{\s*([^}]+)\s*\}/g;
     const BLOCK_SKIP = new Set(['code']);
     const INLINE_SKIP = new Set(['inlineCode', 'link', 'image', 'definition']);
 
+    const escapeHtml = (s) => String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    function parseAttrList(attr) {
+      const tokens = String(attr).trim().split(/\s+/).filter(Boolean);
+      let id = null;
+      const classes = [];
+      for (const t of tokens) {
+        if (t.startsWith('#') && t.length > 1) id = t.slice(1);
+        else if (t.startsWith('.') && t.length > 1) classes.push(t.slice(1));
+      }
+      return { id, classes };
+    }
+
     function splitTextToNodes(value) {
       const nodes = [];
-      let lastIndex = 0;
-      let m;
-      while ((m = RE.exec(value))) {
-        if (m.index > lastIndex) {
-          nodes.push({ type: 'text', value: value.slice(lastIndex, m.index) });
+      let i = 0;
+      const len = value.length;
+      while (i < len) {
+        RE_BRACKETED.lastIndex = i;
+        RE_ATTR_ONLY.lastIndex = i;
+        const mb = RE_BRACKETED.exec(value);
+        const ma = RE_ATTR_ONLY.exec(value);
+        // choose earliest match, prefer bracketed if same index
+        let m = null, kind = null;
+        if (mb && ma) {
+          if (mb.index <= ma.index) { m = mb; kind = 'bracketed'; }
+          else { m = ma; kind = 'attr'; }
+        } else if (mb) { m = mb; kind = 'bracketed'; }
+        else if (ma) { m = ma; kind = 'attr'; }
+        if (!m) {
+          nodes.push({ type: 'text', value: value.slice(i) });
+          break;
         }
-        const id = m[1];
-        const classesRaw = (m[2] || '').trim();
-        const classes = classesRaw
-          ? classesRaw.split(/\s+/).map((s) => s.replace(/^\./, '')).filter(Boolean)
-          : [];
-        const classAttr = classes.length ? ` class=\"${classes.join(' ')}\"` : '';
-        nodes.push({ type: 'html', value: `<span id=\"${id}\"${classAttr}></span>` });
-        lastIndex = m.index + m[0].length;
-      }
-      if (lastIndex < value.length) {
-        nodes.push({ type: 'text', value: value.slice(lastIndex) });
+        // preceding text
+        if (m.index > i) nodes.push({ type: 'text', value: value.slice(i, m.index) });
+
+        if (kind === 'bracketed') {
+          const text = m[1];
+          const { id, classes } = parseAttrList(m[2]);
+          if (!id && classes.length === 0) {
+            // no meaningful attrs; keep literal
+            nodes.push({ type: 'text', value: m[0] });
+          } else {
+            const idAttr = id ? ` id=\"${id}\"` : '';
+            const classAttr = classes.length ? ` class=\"${classes.join(' ')}\"` : '';
+            nodes.push({ type: 'html', value: `<span${idAttr}${classAttr}>${escapeHtml(text)}</span>` });
+          }
+          i = m.index + m[0].length;
+        } else {
+          // attr-only
+          const { id, classes } = parseAttrList(m[1]);
+          if (!id && classes.length === 0) {
+            nodes.push({ type: 'text', value: m[0] });
+          } else {
+            const idAttr = id ? ` id=\"${id}\"` : '';
+            const classAttr = classes.length ? ` class=\"${classes.join(' ')}\"` : '';
+            nodes.push({ type: 'html', value: `<span${idAttr}${classAttr}></span>` });
+          }
+          i = m.index + m[0].length;
+        }
       }
       return nodes;
     }
@@ -273,9 +320,7 @@ function remarkPandocInlineSpans() {
       if (Array.isArray(children) && !INLINE_SKIP.has(node.type)) {
         for (let i = 0; i < children.length; i++) {
           const child = children[i];
-          if (child && child.type === 'text' && typeof child.value === 'string' && RE.test(child.value)) {
-            // reset regex for subsequent execs
-            RE.lastIndex = 0;
+          if (child && child.type === 'text' && typeof child.value === 'string' && child.value.includes('{')) {
             const replacement = splitTextToNodes(child.value);
             // splice in place
             children.splice(i, 1, ...replacement);

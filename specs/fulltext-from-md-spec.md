@@ -53,8 +53,10 @@
 - Add stable `id`/`href` pairs using the form `fnN` and `fnrefN` (no hyphens) if the upstream library uses hyphenated IDs like `fn-1`; update both references and list item IDs to match.
 
 **Pandoc Inline Spans**
-- Input syntax: `{#id .class1 .class2}` (no inner text).
+- Input syntax (no inner text): `{#id .class1 .class2}`.
 - Output HTML: `<span id="id" class="class1 class2"></span>` (omit `class` attribute if no classes present).
+- Input syntax (with inner text): `[Text here]{#id .class1 .class2}`.
+- Output HTML: `<span id="id" class="class1 class2">Text here</span>` (HTML‑escape text as needed).
 - Parsing rules:
   - Recognize `id` after `#` and any number of space‑separated `.class` tokens.
   - Ignore inside code fences and inline code.
