@@ -17,4 +17,3 @@ tagline: |
   * There are at least two kinds of joint action: planning-based (shared intentions) and minimal (shared goals).
 
 ---
-

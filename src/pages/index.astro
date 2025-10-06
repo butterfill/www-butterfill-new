@@ -51,9 +51,6 @@ const featuredTeaching = (await getCollection('teaching')).filter(
 ---
 <BaseLayout title="Stephen A. Butterfill | Home">
   <div class="container mx-auto max-w-6xl px-4 py-8">
-    <!-- Use a single-column layout and center the main column. Keeping lg:w-3/4
-         preserves the same visual width the main had when the sidebar was present
-         (it previously occupied ~3/4 of the container). mx-auto centers it. -->
     <div class="grid grid-cols-1 justify-center">
       <!-- Sidebar -->
       <!-- 
@@ -66,13 +63,28 @@ const featuredTeaching = (await getCollection('teaching')).filter(
       
   <!-- Main Content (centered) -->
   <main class="space-y-8 w-full lg:w-3/4 mx-auto">
-        <!-- Hero Section -->
-        <section id="mini-about" class="text-center space-y-4">
+    <!-- Hero Section -->
+    <section id="mini-about" class="space-y-4">
+      <div class="grid grid-cols-2 items-start gap-6">
+        <!-- Left: text -->
+        <div class="text-left space-y-4">
           <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200">Stephen A. Butterfill</h1>
-          <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+          <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl">
             Philosopher specializing in joint action, mindreading, and cognitive development
           </p>
-        </section>
+        </div>
+
+        <!-- Right: portrait -->
+        <div class="flex items-start justify-end">
+          <img
+            src="/img/butterfill.jpg"
+            alt="Stephen A. Butterfill"
+            class="w-36 h-36 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm self-start"
+          />
+        </div>
+      </div>
+    </section>
+
 
         <!-- Writing Section -->
         <section id="writing" class="space-y-6">
