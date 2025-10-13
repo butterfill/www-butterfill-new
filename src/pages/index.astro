@@ -65,15 +65,17 @@ const featuredTeaching = (await getCollection('teaching')).filter(
   <main class="space-y-8 w-full lg:w-3/4 mx-auto">
     <!-- Hero Section -->
     <section id="mini-about" class="space-y-4">
-      <div class="grid grid-cols-2 items-start gap-6">
+      <div class="grid grid-cols-[minmax(0,_1fr)_auto] items-start gap-6">
         <!-- Left: text -->
         <div class="text-left space-y-4">
           <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200">Stephen A. Butterfill</h1>
           <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl">
-            Philosopher specializing in joint action, mindreading, and cognitive development
+            Philosopher specializing in joint action, mindreading, 
+            <br>
+            & cognitive development
+            at the University of Warwick
           </p>
         </div>
-
         <!-- Right: portrait -->
         <div class="flex items-start justify-end">
           <img
@@ -84,6 +86,7 @@ const featuredTeaching = (await getCollection('teaching')).filter(
         </div>
       </div>
     </section>
+
 
 
         <!-- Writing Section -->
