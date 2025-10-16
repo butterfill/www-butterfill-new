@@ -8,7 +8,7 @@ volume: "22"
 number: "4"
 pages: "450-73"
 doi: "10.1111/j.1468-0017.2007.00316.x"
-bibtex: "@article{Butterfill:2007pe,\n    author = {Butterfill, Stephen A.},\n    date-added = {2010-08-04 17:40:21 +0100},\n    journal = {Mind and Language},\n    number = {4},\n    pages = {450-73},\n    title = {What are Modules and What Is Their Role in Development?},\n    volume = {22},\n    year = {2007}\n}\n\n"
+bibtex: "@article{Butterfill:2007pe,\n  doi = {10.1111/j.1468-0017.2007.00316.x},\n  author = {Butterfill, Stephen A.},\n    date-added = {2010-08-04 17:40:21 +0100},\n    journal = {Mind and Language},\n    number = {4},\n    pages = {450-73},\n    title = {What are Modules and What Is Their Role in Development?},\n    volume = {22},\n    year = {2007}\n}\n\n"
 ---
 
 

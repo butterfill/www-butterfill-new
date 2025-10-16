@@ -7,7 +7,7 @@ booktitle: "Minimal Cooperation and Shared Agency"
 pages: "111-125"
 doi: "10.1007/978-3-030-29783-1_7"
 pdfUrl: "/pdf/blueprint_social_animal.pdf"
-bibtex: "@article{butterfill:2020_blueprint,\n    note = {[Online; accessed 2022-05-05]},\n    author = {Butterfill, Stephen and Pacherie, Elisabeth},\n    journal = {Minimal Cooperation and Shared Agency},\n    year = {2020},\n    pages = {111--125},\n    publisher = {Springer, Cham},\n    title = {Towards a {Blueprint} for a {Social} {Animal}}\n}\n\n"
+bibtex: "@article{butterfill:2020_blueprint,\ndoi = {10.1007/978-3-030-29783-1_7},\n    note = {[Online; accessed 2022-05-05]},\n    author = {Butterfill, Stephen and Pacherie, Elisabeth},\n    journal = {Minimal Cooperation and Shared Agency},\n    year = {2020},\n    pages = {111--125},\n    publisher = {Springer, Cham},\n    title = {Towards a {Blueprint} for a {Social} {Animal}}\n}\n\n"
 ---
 
 

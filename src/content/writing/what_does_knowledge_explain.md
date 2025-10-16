@@ -7,7 +7,7 @@ booktitle: "Oxford Studies in Epistemology"
 volume: "4"
 pages: "309--320"
 pdfUrl: "/pdf/what_does_knowledge_explain.pdf"
-bibtex: "@incollection{Butterfill:2012fk,\n    address = {Oxford},\n    author = {Butterfill, Stephen A.},\n    booktitle = {Oxford Studies in Epistemology},\n    date-added = {2012-10-16 17:10:49 +0100},\n    editor = {Tamar Szab{\\'o} Gendler and John Hawthorn},\n    pages = {309--320},\n    publisher = {Oxford University Press},\n    title = {What Does Knowledge Explain? Commentary on Jennifer Nagel},\n    volume = {4},\n    year = {2013}\n}\n\n"
+bibtex: "@incollection{Butterfill:2012fk,\n  doi = {10.1093/acprof:oso/9780199672707.003.0011},  address = {Oxford},\n    author = {Butterfill, Stephen A.},\n    booktitle = {Oxford Studies in Epistemology},\n    date-added = {2012-10-16 17:10:49 +0100},\n    editor = {Tamar Szab{\\'o} Gendler and John Hawthorn},\n    pages = {309--320},\n    publisher = {Oxford University Press},\n    title = {What Does Knowledge Explain? Commentary on Jennifer Nagel},\n    volume = {4},\n    year = {2013}\n}\n\n"
 ---
 
 

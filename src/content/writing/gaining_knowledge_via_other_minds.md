@@ -8,7 +8,7 @@ volume: "29"
 number: "4"
 pages: "961-980"
 doi: "10.1111/j.2044-835X.2011.02036.x"
-bibtex: "@article{Robinson:2010uq,\n    author = {Robinson, Elizabeth and Stephen Butterfill and Erika Nurmsoo},\n    date-added = {2010-11-12 18:20:39 +0000},\n    journal = {British Journal of Developmental Psychology},\n    title = {Gaining Knowledge via Other Minds: Children's Flexible Trust in Others as Sources of Information},\n    year = {forthcoming 2010}\n}\n\n"
+bibtex: "@article{Robinson:2010uq,\n  doi = {10.1111/j.2044-835X.2011.02036.x},\n  author = {Robinson, Elizabeth and Stephen Butterfill and Erika Nurmsoo},\n    date-added = {2010-11-12 18:20:39 +0000},\n    journal = {British Journal of Developmental Psychology},\n    title = {Gaining Knowledge via Other Minds: Children's Flexible Trust in Others as Sources of Information},\n    year = {2011}, volume = {29}, number = {4}, pages = {961-980},\n}\n\n"
 ---
 
 

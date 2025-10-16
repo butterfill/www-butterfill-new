@@ -6,7 +6,7 @@ isForthcoming: false
 booktitle: "Routledge Handbook of Skill and Expertise"
 pages: "292-305"
 pdfUrl: "/pdf/motor_representation_skill.pdf"
-bibtex: "@incollection{sinigaglia:2020_motor,\n    address = {London},\n    author = {Sinigaglia, Corrado and Butterfill, Stephen A.},\n    booktitle = {The Routledge Handbook of Philosophy of Skill And Expertise},\n    date-added = {2021-01-31 18:33:08 +0000},\n    editor = {Ellen Fridland and Carlotta Pavese},\n    pages = {292-305},\n    publisher = {Routledge},\n    title = {Motor Representation and Knowledge of Skilled Action},\n    year = {2020}\n}\n\n"
+bibtex: "@incollection{sinigaglia:2020_motor,\n doi = {10.4324/9781315180809-29},\n   address = {London},\n    author = {Sinigaglia, Corrado and Butterfill, Stephen A.},\n    booktitle = {The Routledge Handbook of Philosophy of Skill And Expertise},\n    date-added = {2021-01-31 18:33:08 +0000},\n    editor = {Ellen Fridland and Carlotta Pavese},\n    pages = {292-305},\n    publisher = {Routledge},\n    title = {Motor Representation and Knowledge of Skilled Action},\n    year = {2020}\n}\n\n"
 ---
 
 

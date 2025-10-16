@@ -724,8 +724,8 @@
     "title": "Cue Competition Effects and Young Children's Causal and Counterfactual Inferences",
     "type": "Publication",
     "url": "/writing/cue_competition_effects/",
-    "summary": "The authors examined cue competition effects in young children using the blicket detector paradigm, in which objects are placed either singly or in pairs on a novel machine and children must judge which objects have the causal power to make the machine work. Cue competition effects were found in a 5- to 6-year-old group but not in a 4-year-old group.",
-    "contentPath": "llms/content/writing/cue_competition_effects.md"
+    "summary": "Summary not available.",
+    "contentPath": null
   },
   "writing/dellagatta2017_drawn": {
     "title": "Drawn Together: When Motor Representations Ground Joint Actions",
@@ -738,7 +738,7 @@
     "title": "The Developing Mind: A Philosophical Introduction",
     "type": "Publication",
     "url": "/writing/developing_mind/",
-    "summary": "<html> <head> <style type=\"text/css\"> #page-container { / PDF container / position:absolute; / required for calculating relative positions of pages in pdf2htmlEX. js / top:0; left:0px; margin:0; padding:0; border:0; / required for lazy page loading in pdf2htmlEX.",
+    "summary": "<style type=\"text/css\"> page-container { / PDF container / position:absolute; / required for calculating relative positions of pages in pdf2htmlEX. js / top:0; left:0px; margin:0; padding:0; border:0; / required for lazy page loading in pdf2htmlEX.",
     "contentPath": "llms/content/writing/developing_mind.md"
   },
   "writing/fizke_limits": {
@@ -878,8 +878,8 @@
     "title": "Motor Representation in Goal Ascription",
     "type": "Publication",
     "url": "/writing/motor_representation_in_goal_ascription/",
-    "summary": "Goal ascription, the process of identifying outcomes to which purposive actions are directed, is indispensable for predicting others’ behaviours and understanding their minds. But which mechanisms underpin goal ascription? This chapter examines several ways in which motor representations and processes are involved in different forms of goal ascription.",
-    "contentPath": "llms/content/writing/motor_representation_in_goal_ascription.md"
+    "summary": "Summary not available.",
+    "contentPath": null
   },
   "writing/motor_representation_skill": {
     "title": "Motor Representation and Knowledge of Skilled Action",
@@ -913,8 +913,8 @@
     "title": "Planning for Collective Agency",
     "type": "Publication",
     "url": "/writing/planning_for_collective_agency/",
-    "summary": "Which planning mechanisms enable agents to coordinate their actions, and what if anything do these tell us about the nature of collective agency? On the leading, best developed account, Michael Bratman's, collective agency is explained in terms of interconnected planning.",
-    "contentPath": "llms/content/writing/planning_for_collective_agency.md"
+    "summary": "Summary not available.",
+    "contentPath": null
   },
   "writing/primal_self": {
     "title": "From foraging to autonoetic consciousness: The primal self as a consequence of embodied prospective foraging",

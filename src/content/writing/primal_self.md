@@ -8,7 +8,7 @@ volume: "61"
 number: "2"
 pages: "368--381"
 pdfUrl: "/pdf/primal_self.pdf"
-bibtex: "@article{hills:2015_foraging,\n    author = {Hills, Thomas T. and Butterfill, Stephen A.},\n    date-added = {2015-10-14 14:14:07 +0000},\n    journal = {Current Zoology},\n    number = {2},\n    pages = {368--381},\n    title = {From foraging to autonoetic consciousness: The primal self as a consequence of embodied prospective foraging},\n    volume = {61},\n    year = {2015}\n}\n\n"
+bibtex: "@article{hills:2015_foraging,\n  doi = {10.1093/czoolo/61.2.368},  author = {Hills, Thomas T. and Butterfill, Stephen A.},\n    date-added = {2015-10-14 14:14:07 +0000},\n    journal = {Current Zoology},\n    number = {2},\n    pages = {368--381},\n    title = {From foraging to autonoetic consciousness: The primal self as a consequence of embodied prospective foraging},\n    volume = {61},\n    year = {2015}\n}\n\n"
 ---
 
 

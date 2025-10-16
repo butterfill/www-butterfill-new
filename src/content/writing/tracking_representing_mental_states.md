@@ -6,7 +6,7 @@ isForthcoming: false
 booktitle: "Routledge Companion to the Philosophy of Animal Minds"
 pages: "269–279"
 pdfUrl: "/pdf/tracking_representing_mental_states.pdf"
-bibtex: "@incollection{butterfill:2016_animal_mindreading,\n    address = {London},\n    author = {Butterfill, Stephen A.},\n    booktitle = {Routledge Companion to the Philosophy of Animal Minds},\n    date-added = {2016-09-22 12:33:17 +0000},\n    editor = {Andrews, Kristin and Beck, Jacob},\n    pages = {269--279},\n    publisher = {Routledge},\n    title = {Tracking and Representing Others' Mental States},\n    year = {2017}\n}\n\n"
+bibtex: "@incollection{butterfill:2016_animal_mindreading,\n doi = {10.4324/9781315742250-26},   address = {London},\n    author = {Butterfill, Stephen A.},\n    booktitle = {Routledge Companion to the Philosophy of Animal Minds},\n    date-added = {2016-09-22 12:33:17 +0000},\n    editor = {Andrews, Kristin and Beck, Jacob},\n    pages = {269--279},\n    publisher = {Routledge},\n    title = {Tracking and Representing Others' Mental States},\n    year = {2017}\n}\n\n"
 ---
 
 

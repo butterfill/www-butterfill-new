@@ -1,6 +1,6 @@
 Site: Stephen Butterfill's Personal Academic Website
 Author: Stephen Butterfill
-Generated: 2025-10-13T14:23:19.012Z
+Generated: 2025-10-16T11:54:39.560Z
 Items: 152
 
 ---
@@ -1186,7 +1186,7 @@ Type: Publication
 URL: /writing/cue_competition_effects/
 Year: 2009
 
-Summary: The authors examined cue competition effects in young children using the blicket detector paradigm, in which objects are placed either singly or in pairs on a novel machine and children must judge which objects have the causal power to make the machine work. Cue competition effects were found in a 5- to 6-year-old group but not in a 4-year-old group.
+Summary: Summary not available.
 
 ---
 
@@ -1206,7 +1206,7 @@ Type: Publication
 URL: /writing/developing_mind/
 Year: 2020
 
-Summary: <html> <head> <style type="text/css"> #page-container { / PDF container / position:absolute; / required for calculating relative positions of pages in pdf2htmlEX. js / top:0; left:0px; margin:0; padding:0; border:0; / required for lazy page loading in pdf2htmlEX.
+Summary: <style type="text/css"> page-container { / PDF container / position:absolute; / required for calculating relative positions of pages in pdf2htmlEX. js / top:0; left:0px; margin:0; padding:0; border:0; / required for lazy page loading in pdf2htmlEX.
 
 ---
 
@@ -1406,7 +1406,7 @@ Type: Publication
 URL: /writing/motor_representation_in_goal_ascription/
 Year: 2016
 
-Summary: Goal ascription, the process of identifying outcomes to which purposive actions are directed, is indispensable for predicting others’ behaviours and understanding their minds. But which mechanisms underpin goal ascription? This chapter examines several ways in which motor representations and processes are involved in different forms of goal ascription.
+Summary: Summary not available.
 
 ---
 
@@ -1456,7 +1456,7 @@ Type: Publication
 URL: /writing/planning_for_collective_agency/
 Year: 2016
 
-Summary: Which planning mechanisms enable agents to coordinate their actions, and what if anything do these tell us about the nature of collective agency? On the leading, best developed account, Michael Bratman's, collective agency is explained in terms of interconnected planning.
+Summary: Summary not available.
 
 ---
 
