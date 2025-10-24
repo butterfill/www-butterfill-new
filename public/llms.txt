@@ -1,6 +1,6 @@
 Site: Stephen Butterfill's Personal Academic Website
 Author: Stephen Butterfill
-Generated: 2025-10-16T11:54:39.560Z
+Generated: 2025-10-24T17:46:24.072Z
 Items: 152
 
 ---
@@ -1396,7 +1396,7 @@ Type: Publication
 URL: /writing/motor_representation_action_experience/
 Year: 2020
 
-Summary: Acting together with a purpose is a familiar feature of everyday life. We jump together, play music together and move tables together. But what do we experience of action in acting together?
+Summary: Summary not available.
 
 ---
 
@@ -1446,7 +1446,7 @@ Type: Publication
 URL: /writing/perceiving_expressions_emotion/
 Year: 2015
 
-Summary: What evidence could bear on questions about whether humans ever perceptually experience any of another’s mental states, and how might those questions be made precise enough to test experimentally? This paper focusses on emotions and their expression.
+Summary: Summary not available.
 
 ---
 
@@ -1476,7 +1476,7 @@ Type: Publication
 URL: /writing/psychological_research_on_joint_action/
 Year: 2011
 
-Summary: When two or more people coordinate their actions in space and time to produce a joint outcome, they perform a joint action.
+Summary: Summary not available.
 
 ---
 
@@ -1486,7 +1486,7 @@ Type: Publication
 URL: /writing/puzzle_thought_experience_motoric/
 Year: 2015
 
-Summary: Motor representations live a kind of double life. Although paradigmatically involved in performing actions, they also occur when merely observing others act and sometimes influence thoughts about the goals of observed actions.
+Summary: Summary not available.
 
 ---
 
@@ -1626,7 +1626,7 @@ Type: Publication
 URL: /writing/two_systems/
 Year: 2009
 
-Summary: The lack of consensus on how to characterize humans' capacity for belief reasoning has been brought into sharp focus by recent research. Children fail critical tests of belief reasoning before 3 to 4 years of age (H. Wellman, D. Cross, & J.
+Summary: Summary not available.
 
 ---
 
