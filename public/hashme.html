@@ -34,9 +34,10 @@
         border-color: #4a90e2;
         box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
       }
-      #result {
+      #result,
+      #extended-result {
         font-weight: bold;
-        cursor: pointer;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         padding: 12px;
         border: 1px dashed #ccc;
         border-radius: 4px;
@@ -49,11 +50,28 @@
         word-break: break-all;
         margin-top: 5px;
       }
-      #result:hover { background-color: #f0f0f0; }
-      #result:active { background-color: #e0e0e0; }
+      #result { cursor: pointer; }
+      #result-index,
+      #extended-result-index {
+        margin-top: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 1rem;
+        font-weight: bold;
+        line-height: 1.2;
+        color: #666;
+        text-align: center;
+        visibility: hidden;
+      }
+      #result:hover,
+      #extended-result:hover { background-color: #f0f0f0; }
+      #result:active,
+      #extended-result:active { background-color: #e0e0e0; }
+      #extended-result-container {
+        margin-top: 15px;
+        display: none;
+      }
       .result-container { margin-top: 25px; }
       .result-label { display: block; margin-bottom: 5px; font-weight: bold; }
-      .green { color: #2ecc71; }
       .red { color: #e74c3c; }
       .note {
         font-size: 0.85em;
@@ -99,10 +117,16 @@
       <div>
         <span class="result-label">Generated Password</span>
         <div id="result">Enter details above</div>
+        <div id="result-index"></div>
       </div>
-      <div style="margin-top: 15px;">
-        <span class="result-label">Inputs Match</span>
-        <span id="match" style="font-weight: bold;">false</span>
+      <div class="input-group" style="margin-top: 15px;">
+        <label for="extension">Extension</label>
+        <input id="extension" type="text" placeholder="Optional, e.g. /b" />
+      </div>
+      <div id="extended-result-container">
+        <span class="result-label">Generated Password (with extension)</span>
+        <div id="extended-result"></div>
+        <div id="extended-result-index"></div>
       </div>
     </div>
 
@@ -113,24 +137,27 @@
 
     <!-- UI script: styling, events, clipboard. Does NOT change algorithm. -->
     <script>
-      function match() {
-        var pw1 = document.getElementById('pw1').value;
-        var pw2 = document.getElementById('pw2').value;
-        var dom1 = document.getElementById('dom1').value;
-        var dom2 = document.getElementById('dom2').value;
-        return (pw1 === pw2) && (dom1 === dom2);
+      var placeholderText = 'Enter details above';
+      var mismatchInputsText = '--- match inputs first! ---';
+      var mismatchDomainsText = '--- match domains first! ---';
+      var mismatchPasswordsText = '--- match passwords first! ---';
+      var errorText = 'Error';
+
+      function formatPasswordForDisplay(password) {
+        return password.split('').join(' ');
       }
 
-      function match_display() {
-        var matches = match();
-        document.getElementById('match').innerHTML = matches;
-        if (matches) {
-          document.getElementById('match').className = 'green';
-          document.getElementById('result').className = '';
-        } else {
-          document.getElementById('match').className = 'red';
-          document.getElementById('result').className = 'red';
-        }
+      function formatIndexForLength(length) {
+        return Array.from({ length: length }, function (_, index) {
+          return String((index + 1) % 10);
+        }).join(' ');
+      }
+
+      function getMismatchMessage(passwordMismatch, domainMismatch) {
+        if (passwordMismatch && domainMismatch) return mismatchInputsText;
+        if (domainMismatch) return mismatchDomainsText;
+        if (passwordMismatch) return mismatchPasswordsText;
+        return mismatchInputsText;
       }
 
       // compute using legacy algorithm
@@ -140,33 +167,88 @@
         return hashme(pw1, dom1);
       }
 
+      function resetExtendedResult() {
+        var extendedResultContainer = document.getElementById('extended-result-container');
+        var extendedResultElement = document.getElementById('extended-result');
+        var extendedResultIndexElement = document.getElementById('extended-result-index');
+
+        extendedResultContainer.style.display = 'none';
+        extendedResultElement.textContent = '';
+        extendedResultIndexElement.textContent = '';
+        extendedResultIndexElement.style.visibility = 'hidden';
+      }
+
       function result_display() {
         var pw1 = document.getElementById('pw1').value;
         var pw2 = document.getElementById('pw2').value;
         var dom1 = document.getElementById('dom1').value;
         var dom2 = document.getElementById('dom2').value;
+        var extension = document.getElementById('extension').value.trim();
+        var resultEl = document.getElementById('result');
+        var resultIndexEl = document.getElementById('result-index');
+        var extendedResultContainer = document.getElementById('extended-result-container');
+        var extendedResultElement = document.getElementById('extended-result');
+        var extendedResultIndexElement = document.getElementById('extended-result-index');
+        var hasPasswordConfirmation = pw2 !== '';
+        var hasDomainConfirmation = dom2 !== '';
+        var passwordMismatch = hasPasswordConfirmation && pw1 !== pw2;
+        var domainMismatch = hasDomainConfirmation && dom1 !== dom2;
+        var hasPrimaryInputs = !!(pw1 && dom1);
+        var hasMismatch = passwordMismatch || domainMismatch;
 
-        var condition = match();
-        condition = condition || (dom2 === '' && pw2 === '');
+        if (hasPrimaryInputs && !hasMismatch) {
+          try {
+            var generatedPassword = result();
+            resultEl.textContent = formatPasswordForDisplay(generatedPassword);
+            resultEl.dataset.rawPassword = generatedPassword;
+            resultEl.className = '';
+            resultIndexEl.textContent = formatIndexForLength(generatedPassword.length);
+            resultIndexEl.style.visibility = 'visible';
 
-        if (condition && pw1 && dom1) {
-          document.getElementById('result').innerHTML = result();
-        } else if (!pw1 || !dom1) {
-          document.getElementById('result').innerHTML = 'Enter details above';
+            if (extension) {
+              var extendedPassword = hashme(pw1, dom1 + extension);
+              extendedResultContainer.style.display = 'block';
+              extendedResultElement.textContent = formatPasswordForDisplay(extendedPassword);
+              extendedResultIndexElement.textContent = formatIndexForLength(extendedPassword.length);
+              extendedResultIndexElement.style.visibility = 'visible';
+            } else {
+              resetExtendedResult();
+            }
+          } catch (err) {
+            resultEl.textContent = errorText;
+            delete resultEl.dataset.rawPassword;
+            resultEl.className = 'red';
+            resultIndexEl.textContent = '';
+            resultIndexEl.style.visibility = 'hidden';
+            resetExtendedResult();
+            console.error(err);
+          }
+        } else if (!hasPrimaryInputs) {
+          resultEl.textContent = placeholderText;
+          delete resultEl.dataset.rawPassword;
+          resultEl.className = '';
+          resultIndexEl.textContent = '';
+          resultIndexEl.style.visibility = 'hidden';
+          resetExtendedResult();
         } else {
-          document.getElementById('result').innerHTML = '--- match inputs first! ---';
+          resultEl.textContent = getMismatchMessage(passwordMismatch, domainMismatch);
+          delete resultEl.dataset.rawPassword;
+          resultEl.className = 'red';
+          resultIndexEl.textContent = '';
+          resultIndexEl.style.visibility = 'hidden';
+          resetExtendedResult();
         }
       }
 
       function update() {
-        match_display();
         result_display();
       }
 
       // Clipboard helpers (modern API with fallback), with visual feedback
       function copy_pw() {
-        var res = document.getElementById('result').innerHTML;
-        if (!res || res === 'Enter details above' || res === '--- match inputs first! ---' || res === 'Error') {
+        var resultEl = document.getElementById('result');
+        var res = resultEl.dataset.rawPassword;
+        if (!res) {
           return;
         }
 
@@ -218,16 +300,18 @@
 
       function showCopiedFeedback() {
         var resultEl = document.getElementById('result');
-        var originalText = resultEl.innerHTML;
+        var originalPassword = resultEl.dataset.rawPassword;
         var originalBg = resultEl.style.backgroundColor;
         var originalColor = resultEl.style.color;
         var originalBorder = resultEl.style.borderColor;
-        resultEl.innerHTML = 'Copied!';
+        resultEl.textContent = 'Copied!';
         resultEl.style.backgroundColor = '#d4edda';
         resultEl.style.color = '#155724';
         resultEl.style.borderColor = '#c3e6cb';
         setTimeout(function () {
-          resultEl.innerHTML = originalText;
+          if (originalPassword) {
+            resultEl.textContent = formatPasswordForDisplay(originalPassword);
+          }
           resultEl.style.backgroundColor = originalBg;
           resultEl.style.color = originalColor;
           resultEl.style.borderColor = originalBorder;
@@ -239,6 +323,7 @@
       document.getElementById('pw2').addEventListener('input', update);
       document.getElementById('dom1').addEventListener('input', update);
       document.getElementById('dom2').addEventListener('input', update);
+      document.getElementById('extension').addEventListener('input', update);
       document.getElementById('result').addEventListener('click', copy_pw);
 
       // Initial update
