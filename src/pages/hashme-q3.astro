@@ -43,6 +43,7 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
     }
     #result {
       font-weight: bold;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       cursor: pointer;
       padding: 12px;
       border: 1px dashed #ccc;
@@ -55,6 +56,15 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       transition: background-color 0.2s;
       word-break: break-all;
       margin-top: 5px;
+    }
+    #result-index {
+      margin-top: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.85rem;
+      color: #666;
+      text-align: center;
+      letter-spacing: 0.02em;
+      visibility: hidden;
     }
     #result:hover {
       background-color: #f0f0f0;
@@ -136,6 +146,7 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
     <div>
       <span class="result-label">Generated Password:</span>
       <div id="result">Enter details above</div>
+      <div id="result-index"></div>
     </div>
     <div style="margin-top: 15px;">
       <span class="result-label">Inputs Match:</span>
@@ -165,6 +176,18 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
 
     // UI functionality - define and initialize immediately
     function initUI() {
+      const placeholderText = 'Enter details above';
+      const mismatchText = '--- match inputs first! ---';
+      const errorText = 'Error';
+
+      function formatPasswordForDisplay(password) {
+        return password.split('').join(' ');
+      }
+
+      function formatIndexForLength(length) {
+        return Array.from({ length }, (_, index) => String((index + 1) % 10)).join(' ');
+      }
+
       function match() {
         var pw1 = document.getElementById('pw1').value;
         var pw2 = document.getElementById('pw2').value;
@@ -192,21 +215,36 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
         var dom1 = document.getElementById('dom1').value;
         var dom2 = document.getElementById('dom2').value;
         
+        const resultElement = document.getElementById('result');
+        const resultIndexElement = document.getElementById('result-index');
+
         var condition = match();
         condition = condition || (dom2 === '' && pw2 === '');
         
         if (condition && pw1 && dom1) {
           try {
             const generatedPassword = await window.q3_generate_password(pw1, dom1);
-            document.getElementById('result').innerHTML = generatedPassword;
+            resultElement.textContent = formatPasswordForDisplay(generatedPassword);
+            resultElement.dataset.rawPassword = generatedPassword;
+            resultIndexElement.textContent = formatIndexForLength(generatedPassword.length);
+            resultIndexElement.style.visibility = 'visible';
           } catch (error) {
-            document.getElementById('result').innerHTML = 'Error';
+            resultElement.textContent = errorText;
+            delete resultElement.dataset.rawPassword;
+            resultIndexElement.textContent = '';
+            resultIndexElement.style.visibility = 'hidden';
             console.error(error);
           }
         } else if (!pw1 || !dom1) {
-          document.getElementById('result').innerHTML = 'Enter details above';
+          resultElement.textContent = placeholderText;
+          delete resultElement.dataset.rawPassword;
+          resultIndexElement.textContent = '';
+          resultIndexElement.style.visibility = 'hidden';
         } else {
-          document.getElementById('result').innerHTML = '--- match inputs first! ---';
+          resultElement.textContent = mismatchText;
+          delete resultElement.dataset.rawPassword;
+          resultIndexElement.textContent = '';
+          resultIndexElement.style.visibility = 'hidden';
         }
       }
       
@@ -217,8 +255,9 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       
       // Copy password to clipboard
       function copy_pw() {
-        var res = document.getElementById('result').innerHTML;
-        if (res && res !== 'Enter details above' && res !== '--- match inputs first! ---' && res !== 'Error') {
+        const resultElement = document.getElementById('result');
+        var res = resultElement.dataset.rawPassword;
+        if (res) {
           // Try to use the modern clipboard API
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(res)
@@ -287,16 +326,18 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       
       // Show visual feedback that the password was copied
       function showCopiedFeedback() {
-        const originalText = document.getElementById('result').innerHTML;
         const resultElement = document.getElementById('result');
+        const originalPassword = resultElement.dataset.rawPassword;
         
-        resultElement.innerHTML = 'Copied!';
+        resultElement.textContent = 'Copied!';
         resultElement.style.backgroundColor = '#d4edda';
         resultElement.style.color = '#155724';
         resultElement.style.borderColor = '#c3e6cb';
         
         setTimeout(() => {
-          resultElement.innerHTML = originalText;
+          if (originalPassword) {
+            resultElement.textContent = formatPasswordForDisplay(originalPassword);
+          }
           resultElement.style.backgroundColor = '';
           resultElement.style.color = '';
           resultElement.style.borderColor = '';
