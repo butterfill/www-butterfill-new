@@ -41,10 +41,10 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       margin-bottom: 5px;
       font-weight: bold;
     }
-    #result {
+    #result,
+    #extended-result {
       font-weight: bold;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      cursor: pointer;
       padding: 12px;
       border: 1px dashed #ccc;
       border-radius: 4px;
@@ -57,7 +57,11 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       word-break: break-all;
       margin-top: 5px;
     }
-    #result-index {
+    #result {
+      cursor: pointer;
+    }
+    #result-index,
+    #extended-result-index {
       margin-top: 8px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 1rem;
@@ -67,11 +71,17 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       text-align: center;
       visibility: hidden;
     }
-    #result:hover {
+    #result:hover,
+    #extended-result:hover {
       background-color: #f0f0f0;
     }
-    #result:active {
+    #result:active,
+    #extended-result:active {
       background-color: #e0e0e0;
+    }
+    #extended-result-container {
+      margin-top: 15px;
+      display: none;
     }
     .result-container {
       margin-top: 25px;
@@ -80,9 +90,6 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
-    }
-    .green {
-      color: #2ecc71;
     }
     .red {
       color: #e74c3c;
@@ -149,9 +156,14 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       <div id="result">Enter details above</div>
       <div id="result-index"></div>
     </div>
-    <div style="margin-top: 15px;">
-      <span class="result-label">Inputs Match:</span>
-      <span id="match" style="font-weight: bold;">false</span>
+    <div class="input-group" style="margin-top: 15px;">
+      <label for="extension">Extension:</label>
+      <input id="extension" type="text" placeholder="Optional, e.g. /b" />
+    </div>
+    <div id="extended-result-container">
+      <span class="result-label">Generated Password (with extension):</span>
+      <div id="extended-result"></div>
+      <div id="extended-result-index"></div>
     </div>
   </div>
   
@@ -178,7 +190,9 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
     // UI functionality - define and initialize immediately
     function initUI() {
       const placeholderText = 'Enter details above';
-      const mismatchText = '--- match inputs first! ---';
+      const mismatchInputsText = '--- match inputs first! ---';
+      const mismatchDomainsText = '--- match domains first! ---';
+      const mismatchPasswordsText = '--- match passwords first! ---';
       const errorText = 'Error';
 
       function formatPasswordForDisplay(password) {
@@ -189,24 +203,28 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
         return Array.from({ length }, (_, index) => String((index + 1) % 10)).join(' ');
       }
 
-      function match() {
-        var pw1 = document.getElementById('pw1').value;
-        var pw2 = document.getElementById('pw2').value;
-        var dom1 = document.getElementById('dom1').value;
-        var dom2 = document.getElementById('dom2').value;
-        return (pw1 === pw2) && (dom1 === dom2);
-      }
-      
-      function match_display() {
-        var matches = match();
-        document.getElementById('match').innerHTML = matches;
-        if (matches) {
-          document.getElementById('match').className = 'green';
-          document.getElementById('result').className = '';
-        } else {
-          document.getElementById('match').className = 'red';
-          document.getElementById('result').className = 'red';
+      function getMismatchMessage(passwordMismatch, domainMismatch) {
+        if (passwordMismatch && domainMismatch) {
+          return mismatchInputsText;
         }
+        if (domainMismatch) {
+          return mismatchDomainsText;
+        }
+        if (passwordMismatch) {
+          return mismatchPasswordsText;
+        }
+        return mismatchInputsText;
+      }
+
+      function resetExtendedResult() {
+        const extendedResultContainer = document.getElementById('extended-result-container');
+        const extendedResultElement = document.getElementById('extended-result');
+        const extendedResultIndexElement = document.getElementById('extended-result-index');
+
+        extendedResultContainer.style.display = 'none';
+        extendedResultElement.textContent = '';
+        extendedResultIndexElement.textContent = '';
+        extendedResultIndexElement.style.visibility = 'hidden';
       }
       
       // Generate and display the password
@@ -215,42 +233,65 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
         var pw2 = document.getElementById('pw2').value;
         var dom1 = document.getElementById('dom1').value;
         var dom2 = document.getElementById('dom2').value;
+        var extension = document.getElementById('extension').value.trim();
         
         const resultElement = document.getElementById('result');
         const resultIndexElement = document.getElementById('result-index');
-
-        var condition = match();
-        condition = condition || (dom2 === '' && pw2 === '');
+        const extendedResultContainer = document.getElementById('extended-result-container');
+        const extendedResultElement = document.getElementById('extended-result');
+        const extendedResultIndexElement = document.getElementById('extended-result-index');
+        const hasPasswordConfirmation = pw2 !== '';
+        const hasDomainConfirmation = dom2 !== '';
+        const passwordMismatch = hasPasswordConfirmation && pw1 !== pw2;
+        const domainMismatch = hasDomainConfirmation && dom1 !== dom2;
+        const hasPrimaryInputs = Boolean(pw1 && dom1);
+        const hasMismatch = passwordMismatch || domainMismatch;
         
-        if (condition && pw1 && dom1) {
+        if (hasPrimaryInputs && !hasMismatch) {
           try {
             const generatedPassword = await window.q3_generate_password(pw1, dom1);
             resultElement.textContent = formatPasswordForDisplay(generatedPassword);
             resultElement.dataset.rawPassword = generatedPassword;
+            resultElement.className = '';
             resultIndexElement.textContent = formatIndexForLength(generatedPassword.length);
             resultIndexElement.style.visibility = 'visible';
+
+            if (extension) {
+              const extendedPassword = await window.q3_generate_password(pw1, `${dom1}${extension}`);
+              extendedResultContainer.style.display = 'block';
+              extendedResultElement.textContent = formatPasswordForDisplay(extendedPassword);
+              extendedResultIndexElement.textContent = formatIndexForLength(extendedPassword.length);
+              extendedResultIndexElement.style.visibility = 'visible';
+            } else {
+              resetExtendedResult();
+            }
           } catch (error) {
             resultElement.textContent = errorText;
             delete resultElement.dataset.rawPassword;
+            resultElement.className = 'red';
             resultIndexElement.textContent = '';
             resultIndexElement.style.visibility = 'hidden';
+            resetExtendedResult();
             console.error(error);
           }
-        } else if (!pw1 || !dom1) {
+        } else if (!hasPrimaryInputs) {
           resultElement.textContent = placeholderText;
           delete resultElement.dataset.rawPassword;
+          resultElement.className = '';
           resultIndexElement.textContent = '';
           resultIndexElement.style.visibility = 'hidden';
+          resetExtendedResult();
         } else {
-          resultElement.textContent = mismatchText;
+          resultElement.textContent = getMismatchMessage(passwordMismatch, domainMismatch);
           delete resultElement.dataset.rawPassword;
+          resultElement.className = 'red';
           resultIndexElement.textContent = '';
           resultIndexElement.style.visibility = 'hidden';
+          resetExtendedResult();
         }
       }
       
       async function update() {
-        match_display();
         await result_display();
       }
       
@@ -350,6 +391,7 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       document.getElementById('pw2').addEventListener('input', update);
       document.getElementById('dom1').addEventListener('input', update);
       document.getElementById('dom2').addEventListener('input', update);
+      document.getElementById('extension').addEventListener('input', update);
       
       // Configure click for password copying
       document.getElementById('result').addEventListener('click', copy_pw);
