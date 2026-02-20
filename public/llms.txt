@@ -1,6 +1,6 @@
 Site: Stephen Butterfill's Personal Academic Website
 Author: Stephen Butterfill
-Generated: 2025-10-24T17:46:24.072Z
+Generated: 2026-02-20T11:32:02.194Z
 Items: 152
 
 ---
