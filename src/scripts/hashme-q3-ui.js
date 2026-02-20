@@ -6,6 +6,7 @@ import generatePassword from './q3-browser.js';
 const HARD_MODE_COOKIE_NAME = 'q3_hashme_hard_mode';
 const HARD_MODE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 const HARD_MODE_DEBOUNCE_MS = 350;
+const HARD_MODE_CONTEXT = 'hashme-hard-mode-v2';
 
 const textEncoder = new TextEncoder();
 let argon2idPromise;
@@ -60,34 +61,84 @@ function passwordFromBytes(bytes) {
   const lowercase = 'abcdefghijkmnpqrstuvwxyz';
   const digits = '23456789';
   const symbols = '!#$%^&*()-_=+[]{}|;:,.<>/';
-  const all = `${uppercase}${lowercase}${digits}${symbols}`;
-  const chars = [];
+  const all = uppercase + lowercase + digits + symbols;
+  const source = { bytes, index: 0 };
+  const chars = [
+    pickCharUnbiased(uppercase, source),
+    pickCharUnbiased(lowercase, source),
+    pickCharUnbiased(digits, source),
+    pickCharUnbiased(symbols, source),
+  ];
 
-  chars.push(uppercase[bytes[0] % uppercase.length]);
-  chars.push(lowercase[bytes[1] % lowercase.length]);
-  chars.push(digits[bytes[2] % digits.length]);
-  chars.push(symbols[bytes[3] % symbols.length]);
+  while (chars.length < 13) {
+    chars.push(pickCharUnbiased(all, source));
+  }
 
-  for (let i = 4; i < 13; i += 1) {
-    chars.push(all[bytes[i % bytes.length] % all.length]);
+  for (let i = chars.length - 1; i > 0; i -= 1) {
+    const swapIndex = pickIntUnbiased(i + 1, source);
+    const temp = chars[i];
+    chars[i] = chars[swapIndex];
+    chars[swapIndex] = temp;
   }
 
   return chars.join('');
 }
 
+function pickCharUnbiased(alphabet, source) {
+  return alphabet[pickIntUnbiased(alphabet.length, source)];
+}
+
+function pickIntUnbiased(range, source) {
+  if (range <= 0 || range > 256) {
+    throw new Error(`Invalid unbiased range: ${range}`);
+  }
+  const threshold = Math.floor(256 / range) * range;
+  while (source.index < source.bytes.length) {
+    const candidate = source.bytes[source.index];
+    source.index += 1;
+    if (candidate < threshold) {
+      return candidate % range;
+    }
+  }
+  throw new Error('Insufficient entropy while mapping hard mode password characters');
+}
+
+function canonicalizeDomainForHardMode(domainInput) {
+  const trimmed = domainInput.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  try {
+    const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    const parsed = new URL(withScheme);
+    return parsed.hostname.toLowerCase().replace(/\.+$/, '');
+  } catch {
+    return trimmed.toLowerCase().replace(/\.+$/, '');
+  }
+}
+
+async function deriveHardModeSalt(domainInput) {
+  const canonicalDomain = canonicalizeDomainForHardMode(domainInput);
+  const saltMaterial = `${HARD_MODE_CONTEXT}:salt:${canonicalDomain}`;
+  const digest = await crypto.subtle.digest('SHA-256', textEncoder.encode(saltMaterial));
+  return new Uint8Array(digest).slice(0, 16);
+}
+
 async function generateHardModePassword(masterPassword, domain) {
-  const normalizedDomain = domain.trim().toLowerCase();
-  const passwordSeed = await crypto.subtle.digest('SHA-256', textEncoder.encode(`${masterPassword}!@#${normalizedDomain}`));
-  const saltSeed = await crypto.subtle.digest('SHA-256', textEncoder.encode(`q3-hard-mode:${normalizedDomain}`));
+  const canonicalDomain = canonicalizeDomainForHardMode(domain);
+  const passwordMaterial = `${HARD_MODE_CONTEXT}:password:${masterPassword}\u0000${canonicalDomain}`;
+  const passwordSeed = await crypto.subtle.digest('SHA-256', textEncoder.encode(passwordMaterial));
+  const salt = await deriveHardModeSalt(domain);
 
   const argon2id = await getArgon2id();
   const hash = argon2id({
     password: new Uint8Array(passwordSeed),
-    salt: new Uint8Array(saltSeed).slice(0, 16),
+    salt,
     parallelism: 1,
-    passes: 3,
-    memorySize: 64 * 1024,
-    tagLength: 32,
+    passes: 4,
+    memorySize: 256 * 1024,
+    tagLength: 128,
   });
 
   return passwordFromBytes(hash);
@@ -168,6 +219,15 @@ function initUI() {
     clearPasswordResult(hardResultElement, hardResultIndexElement, '');
   }
 
+  function clearHardResultForTyping() {
+    if (!hardModeToggleElement.checked) {
+      return;
+    }
+    hardModeGenerationId += 1;
+    hardResultContainer.style.display = 'block';
+    clearPasswordResult(hardResultElement, hardResultIndexElement, '');
+  }
+
   async function resultDisplay({ includeHardMode = true } = {}) {
     const pw1 = document.getElementById('pw1').value;
     const pw2 = document.getElementById('pw2').value;
@@ -180,7 +240,7 @@ function initUI() {
     const hasDomainConfirmation = dom2 !== '';
     const passwordMismatch = hasPasswordConfirmation && pw1 !== pw2;
     const domainMismatch = hasDomainConfirmation && dom1 !== dom2;
-    const hasPrimaryInputs = Boolean(pw1 && dom1);
+    const hasPrimaryInputs = Boolean(pw1);
     const hasMismatch = passwordMismatch || domainMismatch;
 
     if (hasPrimaryInputs && !hasMismatch) {
@@ -356,6 +416,11 @@ function initUI() {
   document.getElementById('dom1').addEventListener('input', update);
   document.getElementById('dom2').addEventListener('input', update);
   document.getElementById('extension').addEventListener('input', update);
+  document.getElementById('pw1').addEventListener('keydown', clearHardResultForTyping);
+  document.getElementById('pw2').addEventListener('keydown', clearHardResultForTyping);
+  document.getElementById('dom1').addEventListener('keydown', clearHardResultForTyping);
+  document.getElementById('dom2').addEventListener('keydown', clearHardResultForTyping);
+  document.getElementById('extension').addEventListener('keydown', clearHardResultForTyping);
   hardModeToggleElement.addEventListener('change', () => {
     setHardModeCookie(hardModeToggleElement.checked);
     resultDisplay({ includeHardMode: true });

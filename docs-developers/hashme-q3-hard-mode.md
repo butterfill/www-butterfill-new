@@ -51,24 +51,34 @@ The module is lazily instantiated and cached in-memory in the browser so repeate
 1. Normalize domain for hard-mode hashing:
    - `normalizedDomain = domain.trim().toLowerCase()`
 
-2. Build Argon2 input material:
-   - password seed: `SHA-256(masterPassword + "!@#" + normalizedDomain)`
-   - salt seed: `SHA-256("q3-hard-mode:" + normalizedDomain)`
-   - salt: first 16 bytes of salt seed
+2. Canonicalize domain for hard mode:
+   - trim whitespace
+   - if possible parse as URL host (or `https://<input>` host)
+   - lowercase and strip trailing dots
+   - empty input is valid and remains empty
 
-3. Run Argon2id with required parameters:
-   - `memorySize: 64 * 1024` (64 MiB)
-   - `passes: 3` (time cost)
+3. Build Argon2 input material:
+   - password seed: `SHA-256("hashme-hard-mode-v2:password:" + masterPassword + "\\0" + canonicalDomain)`
+   - salt: first 16 bytes of `SHA-256("hashme-hard-mode-v2:salt:" + canonicalDomain)`
+
+4. Run Argon2id with required parameters:
+   - `memorySize: 256 * 1024` (256 MiB)
+   - `passes: 4` (time cost)
    - `parallelism: 1`
-   - `tagLength: 32`
+   - `tagLength: 128`
 
-4. Convert the Argon2 output bytes into a 13-character password with guaranteed mixed character classes and no banned q3 characters used by the legacy checker.
+5. Convert Argon2 output bytes into a 13-character password:
+   - ensure at least one uppercase, lowercase, digit, and symbol
+   - fill remaining characters from full allowed alphabet
+   - use rejection sampling (unbiased mapping, no modulo bias)
+   - deterministically shuffle character order
 
 ## Security/performance notes
 
 - All operations remain in-browser; no passwords are sent to a server.
-- Argon2id at 64 MiB and 3 passes is intentionally heavier than the legacy flow.
+- Argon2id at 256 MiB and 4 passes is intentionally heavier than the legacy flow.
 - The implementation keeps legacy output fully available while adding a stronger optional derivation path.
+- Hard mode output is cleared immediately on keydown, then recomputed after debounce.
 
 ## Files touched
 
