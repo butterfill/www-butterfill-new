@@ -1,5 +1,5 @@
 import loadArgon2idWasm from 'argon2id';
-import generatePassword from '/q3-browser.js';
+import generatePassword from './q3-browser.js';
 
 const HARD_MODE_COOKIE_NAME = 'q3_hashme_hard_mode';
 const HARD_MODE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
