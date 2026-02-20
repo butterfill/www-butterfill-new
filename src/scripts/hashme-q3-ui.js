@@ -5,6 +5,7 @@ import generatePassword from './q3-browser.js';
 
 const HARD_MODE_COOKIE_NAME = 'q3_hashme_hard_mode';
 const HARD_MODE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+const HARD_MODE_DEBOUNCE_MS = 350;
 
 const textEncoder = new TextEncoder();
 let argon2idPromise;
@@ -117,6 +118,8 @@ function initUI() {
   const hardResultContainer = document.getElementById('hard-result-container');
   const hardResultElement = document.getElementById('hard-result');
   const hardResultIndexElement = document.getElementById('hard-result-index');
+  let hardModeDebounceTimer = null;
+  let hardModeGenerationId = 0;
 
   function formatPasswordForDisplay(password) {
     return password.split('').join(' ');
@@ -165,7 +168,7 @@ function initUI() {
     clearPasswordResult(hardResultElement, hardResultIndexElement, '');
   }
 
-  async function resultDisplay() {
+  async function resultDisplay({ includeHardMode = true } = {}) {
     const pw1 = document.getElementById('pw1').value;
     const pw2 = document.getElementById('pw2').value;
     const dom1 = document.getElementById('dom1').value;
@@ -195,17 +198,28 @@ function initUI() {
 
         if (hardModeEnabled) {
           hardResultContainer.style.display = 'block';
-          try {
-            const hardModePassword = await generateHardModePassword(pw1, dom1);
-            showPasswordResult(hardResultElement, hardResultIndexElement, hardModePassword);
-          } catch (error) {
-            clearPasswordResult(hardResultElement, hardResultIndexElement, errorText, 'red');
-            console.error('Error generating hard mode password:', error);
+          if (includeHardMode) {
+            const generationId = ++hardModeGenerationId;
+            try {
+              const hardModePassword = await generateHardModePassword(pw1, dom1);
+              if (generationId !== hardModeGenerationId) {
+                return;
+              }
+              showPasswordResult(hardResultElement, hardResultIndexElement, hardModePassword);
+            } catch (error) {
+              if (generationId !== hardModeGenerationId) {
+                return;
+              }
+              clearPasswordResult(hardResultElement, hardResultIndexElement, errorText, 'red');
+              console.error('Error generating hard mode password:', error);
+            }
           }
         } else {
+          hardModeGenerationId += 1;
           resetHardResult();
         }
       } catch (error) {
+        hardModeGenerationId += 1;
         clearPasswordResult(resultElement, resultIndexElement, errorText, 'red');
         resetExtendedResult();
         resetHardResult();
@@ -216,8 +230,11 @@ function initUI() {
       resetExtendedResult();
       if (hardModeEnabled) {
         hardResultContainer.style.display = 'block';
-        clearPasswordResult(hardResultElement, hardResultIndexElement, placeholderText);
+        if (includeHardMode) {
+          clearPasswordResult(hardResultElement, hardResultIndexElement, placeholderText);
+        }
       } else {
+        hardModeGenerationId += 1;
         resetHardResult();
       }
     } else {
@@ -226,15 +243,29 @@ function initUI() {
       resetExtendedResult();
       if (hardModeEnabled) {
         hardResultContainer.style.display = 'block';
-        clearPasswordResult(hardResultElement, hardResultIndexElement, mismatchMessage, 'red');
+        if (includeHardMode) {
+          clearPasswordResult(hardResultElement, hardResultIndexElement, mismatchMessage, 'red');
+        }
       } else {
+        hardModeGenerationId += 1;
         resetHardResult();
       }
     }
   }
 
+  function scheduleHardModeRefresh() {
+    if (hardModeDebounceTimer) {
+      clearTimeout(hardModeDebounceTimer);
+    }
+
+    hardModeDebounceTimer = setTimeout(() => {
+      resultDisplay({ includeHardMode: true });
+    }, HARD_MODE_DEBOUNCE_MS);
+  }
+
   async function update() {
-    await resultDisplay();
+    await resultDisplay({ includeHardMode: false });
+    scheduleHardModeRefresh();
   }
 
   function fallbackCopyToClipboard(text, onSuccess) {
@@ -327,7 +358,7 @@ function initUI() {
   document.getElementById('extension').addEventListener('input', update);
   hardModeToggleElement.addEventListener('change', () => {
     setHardModeCookie(hardModeToggleElement.checked);
-    update();
+    resultDisplay({ includeHardMode: true });
   });
 
   resultElement.addEventListener('click', () => copyPassword(resultElement));
