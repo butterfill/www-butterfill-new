@@ -1,6 +1,5 @@
 ---
 import EmptyLayout from '../layouts/EmptyLayout.astro';
-import hashmeQ3UiScriptUrl from '../scripts/hashme-q3-ui.js?url';
 ---
 <EmptyLayout title="q3-hashme Utility">
 
@@ -199,5 +198,7 @@ import hashmeQ3UiScriptUrl from '../scripts/hashme-q3-ui.js?url';
     <p>Note: This tool works entirely in your browser. Your master password is never sent to any server.</p>
   </div>
 
-  <script type="module" src={hashmeQ3UiScriptUrl}></script>
+  <script type="module">
+    import '../scripts/hashme-q3-ui.js';
+  </script>
 </EmptyLayout>
