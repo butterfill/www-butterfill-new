@@ -1,4 +1,6 @@
-import loadArgon2idWasm from 'argon2id';
+import setupArgon2idWasm from 'argon2id/lib/setup.js';
+import argon2idSimdWasmUrl from 'argon2id/dist/simd.wasm?url';
+import argon2idNoSimdWasmUrl from 'argon2id/dist/no-simd.wasm?url';
 import generatePassword from './q3-browser.js';
 
 const HARD_MODE_COOKIE_NAME = 'q3_hashme_hard_mode';
@@ -9,9 +11,28 @@ let argon2idPromise;
 
 function getArgon2id() {
   if (!argon2idPromise) {
-    argon2idPromise = loadArgon2idWasm();
+    argon2idPromise = setupArgon2idWasm(
+      (importObject) => instantiateWasmFromUrl(argon2idSimdWasmUrl, importObject),
+      (importObject) => instantiateWasmFromUrl(argon2idNoSimdWasmUrl, importObject),
+    );
   }
   return argon2idPromise;
+}
+
+async function instantiateWasmFromUrl(wasmUrl, importObject) {
+  const response = await fetch(wasmUrl);
+
+  if (WebAssembly.instantiateStreaming) {
+    try {
+      return await WebAssembly.instantiateStreaming(response, importObject);
+    } catch {
+      // Some browsers/CDNs serve wasm with a non-wasm content-type.
+      // In that case we fall back to ArrayBuffer instantiation.
+    }
+  }
+
+  const wasmBytes = await response.arrayBuffer();
+  return WebAssembly.instantiate(wasmBytes, importObject);
 }
 
 function getCookie(name) {
