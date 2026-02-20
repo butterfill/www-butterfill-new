@@ -329,6 +329,7 @@ You probably do not want these as they’re specific to my old site.
 
 Additional docs cover specific features and were mostly auto generated.
 - [`docs-developers/`](docs-developers/) - about fulltext, command pallet, llms.txt, etc
+- [`docs-developers/hashme-q3-hard-mode.md`](docs-developers/hashme-q3-hard-mode.md) - q3 hashme hard-mode implementation details
 - [`specs/`](specs/) - design specs for some of the features
 
 ## License

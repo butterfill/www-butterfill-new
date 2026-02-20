@@ -31,6 +31,12 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       box-sizing: border-box;
       font-size: 16px; /* Prevents zoom on iOS */
     }
+    input[type="checkbox"] {
+      width: auto;
+      padding: 0;
+      margin: 0;
+      transform: scale(1.2);
+    }
     input:focus {
       outline: none;
       border-color: #4a90e2;
@@ -42,7 +48,8 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       font-weight: bold;
     }
     #result,
-    #extended-result {
+    #extended-result,
+    #hard-result {
       font-weight: bold;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       padding: 12px;
@@ -56,12 +63,11 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       transition: background-color 0.2s;
       word-break: break-all;
       margin-top: 5px;
-    }
-    #result {
       cursor: pointer;
     }
     #result-index,
-    #extended-result-index {
+    #extended-result-index,
+    #hard-result-index {
       margin-top: 8px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 1rem;
@@ -72,14 +78,17 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       visibility: hidden;
     }
     #result:hover,
-    #extended-result:hover {
+    #extended-result:hover,
+    #hard-result:hover {
       background-color: #f0f0f0;
     }
     #result:active,
-    #extended-result:active {
+    #extended-result:active,
+    #hard-result:active {
       background-color: #e0e0e0;
     }
-    #extended-result-container {
+    #extended-result-container,
+    #hard-result-container {
       margin-top: 15px;
       display: none;
     }
@@ -90,6 +99,11 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .red {
       color: #e74c3c;
@@ -106,7 +120,7 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
     .note p {
       margin: 0.5em 0;
     }
-    
+
     /* Media queries for responsive design */
     @media (max-width: 480px) {
       body {
@@ -127,29 +141,29 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
 
   <!-- Paste the old HTML form structure here -->
   <h1>q3-hashme</h1>
-  
+
   <form>
     <div class="input-group">
       <label for="pw1">Master Password:</label>
       <input id="pw1" type="password" autocomplete="off" placeholder="Enter your master password" />
     </div>
-    
+
     <div class="input-group">
       <label for="dom1">Domain:</label>
       <input id="dom1" type="text" placeholder="e.g., example.com" />
     </div>
-    
+
     <div class="input-group">
       <label for="pw2">Confirm Password:</label>
       <input id="pw2" type="password" autocomplete="off" placeholder="Re-enter your master password" />
     </div>
-    
+
     <div class="input-group">
       <label for="dom2">Confirm Domain:</label>
       <input id="dom2" type="text" placeholder="Re-enter the domain" />
     </div>
   </form>
-  
+
   <div class="result-container">
     <div>
       <span class="result-label">Generated Password:</span>
@@ -165,8 +179,20 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       <div id="extended-result"></div>
       <div id="extended-result-index"></div>
     </div>
+    <div class="input-group" style="margin-top: 15px;">
+      <label for="hard-mode-enabled">Hard mode:</label>
+      <div class="checkbox-row">
+        <input id="hard-mode-enabled" type="checkbox" />
+        <span>Generate additional password with Argon2id</span>
+      </div>
+    </div>
+    <div id="hard-result-container">
+      <span class="result-label">Generated Password (hard mode):</span>
+      <div id="hard-result"></div>
+      <div id="hard-result-index"></div>
+    </div>
   </div>
-  
+
   <div class="note">
     <p>Click on the generated password to copy it to clipboard.</p>
     <p>Note: This tool works entirely in your browser. Your master password is never sent to any server.</p>
@@ -174,9 +200,79 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
 
   <!-- Import the q3.js module -->
   <script type="module">
-    // Import the go function from q3.js (from public directory)
+    import loadArgon2idWasm from 'argon2id';
     import generatePassword from '/q3-browser.js';
-    
+
+    const HARD_MODE_COOKIE_NAME = 'q3_hashme_hard_mode';
+    const HARD_MODE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+
+    const textEncoder = new TextEncoder();
+    let argon2idPromise;
+
+    function getArgon2id() {
+      if (!argon2idPromise) {
+        argon2idPromise = loadArgon2idWasm();
+      }
+      return argon2idPromise;
+    }
+
+    function getCookie(name) {
+      const cookie = document.cookie
+        .split(';')
+        .map((item) => item.trim())
+        .find((item) => item.startsWith(`${name}=`));
+      if (!cookie) {
+        return null;
+      }
+      return cookie.slice(name.length + 1);
+    }
+
+    function setHardModeCookie(enabled) {
+      document.cookie = `${HARD_MODE_COOKIE_NAME}=${enabled ? '1' : '0'}; Max-Age=${HARD_MODE_COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`;
+    }
+
+    function readHardModeCookie() {
+      return getCookie(HARD_MODE_COOKIE_NAME) === '1';
+    }
+
+    function passwordFromBytes(bytes) {
+      const uppercase = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+      const lowercase = 'abcdefghijkmnpqrstuvwxyz';
+      const digits = '23456789';
+      const symbols = '!#$%^&*()-_=+[]{}|;:,.<>/';
+      const all = `${uppercase}${lowercase}${digits}${symbols}`;
+      const chars = [];
+
+      chars.push(uppercase[bytes[0] % uppercase.length]);
+      chars.push(lowercase[bytes[1] % lowercase.length]);
+      chars.push(digits[bytes[2] % digits.length]);
+      chars.push(symbols[bytes[3] % symbols.length]);
+
+      for (let i = 4; i < 13; i += 1) {
+        chars.push(all[bytes[i % bytes.length] % all.length]);
+      }
+
+      return chars.join('');
+    }
+
+    async function generateHardModePassword(masterPassword, domain) {
+      const normalizedDomain = domain.trim().toLowerCase();
+      const passwordSeed = await crypto.subtle.digest('SHA-256', textEncoder.encode(`${masterPassword}!@#${normalizedDomain}`));
+      const saltSeed = await crypto.subtle.digest('SHA-256', textEncoder.encode(`q3-hard-mode:${normalizedDomain}`));
+
+      const argon2id = await getArgon2id();
+      const hash = argon2id({
+        password: new Uint8Array(passwordSeed),
+        salt: new Uint8Array(saltSeed).slice(0, 16),
+        parallelism: 1,
+        passes: 3,
+        memorySize: 64 * 1024,
+        tagLength: 32,
+      });
+
+      return passwordFromBytes(hash);
+    }
+
     // Make the function available globally for the UI code
     window.q3_generate_password = async function(masterPassword, domain) {
       try {
@@ -187,13 +283,22 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
       }
     };
 
-    // UI functionality - define and initialize immediately
     function initUI() {
       const placeholderText = 'Enter details above';
       const mismatchInputsText = '--- match inputs first! ---';
       const mismatchDomainsText = '--- match domains first! ---';
       const mismatchPasswordsText = '--- match passwords first! ---';
       const errorText = 'Error';
+
+      const resultElement = document.getElementById('result');
+      const resultIndexElement = document.getElementById('result-index');
+      const extendedResultContainer = document.getElementById('extended-result-container');
+      const extendedResultElement = document.getElementById('extended-result');
+      const extendedResultIndexElement = document.getElementById('extended-result-index');
+      const hardModeToggleElement = document.getElementById('hard-mode-enabled');
+      const hardResultContainer = document.getElementById('hard-result-container');
+      const hardResultElement = document.getElementById('hard-result');
+      const hardResultIndexElement = document.getElementById('hard-result-index');
 
       function formatPasswordForDisplay(password) {
         return password.split('').join(' ');
@@ -216,191 +321,204 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
         return mismatchInputsText;
       }
 
-      function resetExtendedResult() {
-        const extendedResultContainer = document.getElementById('extended-result-container');
-        const extendedResultElement = document.getElementById('extended-result');
-        const extendedResultIndexElement = document.getElementById('extended-result-index');
-
-        extendedResultContainer.style.display = 'none';
-        extendedResultElement.textContent = '';
-        extendedResultIndexElement.textContent = '';
-        extendedResultIndexElement.style.visibility = 'hidden';
+      function showPasswordResult(element, indexElement, password) {
+        element.textContent = formatPasswordForDisplay(password);
+        element.dataset.rawPassword = password;
+        element.className = '';
+        indexElement.textContent = formatIndexForLength(password.length);
+        indexElement.style.visibility = 'visible';
       }
-      
-      // Generate and display the password
+
+      function clearPasswordResult(element, indexElement, text, className = '') {
+        element.textContent = text;
+        delete element.dataset.rawPassword;
+        element.className = className;
+        indexElement.textContent = '';
+        indexElement.style.visibility = 'hidden';
+      }
+
+      function resetExtendedResult() {
+        extendedResultContainer.style.display = 'none';
+        clearPasswordResult(extendedResultElement, extendedResultIndexElement, '');
+      }
+
+      function resetHardResult() {
+        hardResultContainer.style.display = 'none';
+        clearPasswordResult(hardResultElement, hardResultIndexElement, '');
+      }
+
       async function result_display() {
-        var pw1 = document.getElementById('pw1').value;
-        var pw2 = document.getElementById('pw2').value;
-        var dom1 = document.getElementById('dom1').value;
-        var dom2 = document.getElementById('dom2').value;
-        var extension = document.getElementById('extension').value.trim();
-        
-        const resultElement = document.getElementById('result');
-        const resultIndexElement = document.getElementById('result-index');
-        const extendedResultContainer = document.getElementById('extended-result-container');
-        const extendedResultElement = document.getElementById('extended-result');
-        const extendedResultIndexElement = document.getElementById('extended-result-index');
+        const pw1 = document.getElementById('pw1').value;
+        const pw2 = document.getElementById('pw2').value;
+        const dom1 = document.getElementById('dom1').value;
+        const dom2 = document.getElementById('dom2').value;
+        const extension = document.getElementById('extension').value.trim();
+        const hardModeEnabled = hardModeToggleElement.checked;
+
         const hasPasswordConfirmation = pw2 !== '';
         const hasDomainConfirmation = dom2 !== '';
         const passwordMismatch = hasPasswordConfirmation && pw1 !== pw2;
         const domainMismatch = hasDomainConfirmation && dom1 !== dom2;
         const hasPrimaryInputs = Boolean(pw1 && dom1);
         const hasMismatch = passwordMismatch || domainMismatch;
-        
+
         if (hasPrimaryInputs && !hasMismatch) {
           try {
             const generatedPassword = await window.q3_generate_password(pw1, dom1);
-            resultElement.textContent = formatPasswordForDisplay(generatedPassword);
-            resultElement.dataset.rawPassword = generatedPassword;
-            resultElement.className = '';
-            resultIndexElement.textContent = formatIndexForLength(generatedPassword.length);
-            resultIndexElement.style.visibility = 'visible';
+            showPasswordResult(resultElement, resultIndexElement, generatedPassword);
 
             if (extension) {
               const extendedPassword = await window.q3_generate_password(pw1, `${dom1}${extension}`);
               extendedResultContainer.style.display = 'block';
-              extendedResultElement.textContent = formatPasswordForDisplay(extendedPassword);
-              extendedResultIndexElement.textContent = formatIndexForLength(extendedPassword.length);
-              extendedResultIndexElement.style.visibility = 'visible';
+              showPasswordResult(extendedResultElement, extendedResultIndexElement, extendedPassword);
             } else {
               resetExtendedResult();
             }
+
+            if (hardModeEnabled) {
+              hardResultContainer.style.display = 'block';
+              try {
+                const hardModePassword = await generateHardModePassword(pw1, dom1);
+                showPasswordResult(hardResultElement, hardResultIndexElement, hardModePassword);
+              } catch (error) {
+                clearPasswordResult(hardResultElement, hardResultIndexElement, errorText, 'red');
+                console.error('Error generating hard mode password:', error);
+              }
+            } else {
+              resetHardResult();
+            }
           } catch (error) {
-            resultElement.textContent = errorText;
-            delete resultElement.dataset.rawPassword;
-            resultElement.className = 'red';
-            resultIndexElement.textContent = '';
-            resultIndexElement.style.visibility = 'hidden';
+            clearPasswordResult(resultElement, resultIndexElement, errorText, 'red');
             resetExtendedResult();
+            resetHardResult();
             console.error(error);
           }
         } else if (!hasPrimaryInputs) {
-          resultElement.textContent = placeholderText;
-          delete resultElement.dataset.rawPassword;
-          resultElement.className = '';
-          resultIndexElement.textContent = '';
-          resultIndexElement.style.visibility = 'hidden';
+          clearPasswordResult(resultElement, resultIndexElement, placeholderText);
           resetExtendedResult();
-        } else {
-          resultElement.textContent = getMismatchMessage(passwordMismatch, domainMismatch);
-          delete resultElement.dataset.rawPassword;
-          resultElement.className = 'red';
-          resultIndexElement.textContent = '';
-          resultIndexElement.style.visibility = 'hidden';
-          resetExtendedResult();
-        }
-      }
-      
-      async function update() {
-        await result_display();
-      }
-      
-      // Copy password to clipboard
-      function copy_pw() {
-        const resultElement = document.getElementById('result');
-        var res = resultElement.dataset.rawPassword;
-        if (res) {
-          // Try to use the modern clipboard API
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(res)
-              .then(() => {
-                showCopiedFeedback();
-              })
-              .catch(err => {
-                fallbackCopyToClipboard(res);
-              });
+          if (hardModeEnabled) {
+            hardResultContainer.style.display = 'block';
+            clearPasswordResult(hardResultElement, hardResultIndexElement, placeholderText);
           } else {
-            fallbackCopyToClipboard(res);
+            resetHardResult();
+          }
+        } else {
+          const mismatchMessage = getMismatchMessage(passwordMismatch, domainMismatch);
+          clearPasswordResult(resultElement, resultIndexElement, mismatchMessage, 'red');
+          resetExtendedResult();
+          if (hardModeEnabled) {
+            hardResultContainer.style.display = 'block';
+            clearPasswordResult(hardResultElement, hardResultIndexElement, mismatchMessage, 'red');
+          } else {
+            resetHardResult();
           }
         }
       }
-      
-      // Fallback method for copying to clipboard
-      function fallbackCopyToClipboard(text) {
-        // Create a temporary textarea element
+
+      async function update() {
+        await result_display();
+      }
+
+      function fallbackCopyToClipboard(text, onSuccess) {
         const textArea = document.createElement('textarea');
         textArea.value = text;
-        
-        // Make it non-visible
+
         textArea.style.position = 'fixed';
         textArea.style.opacity = '0';
         textArea.style.left = '0';
         textArea.style.top = '0';
-        
+
         document.body.appendChild(textArea);
-        
-        // Handle iOS devices specifically
+
         if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
-          // Save current selection
           const editable = textArea.contentEditable;
           const readOnly = textArea.readOnly;
-          
+
           textArea.contentEditable = true;
           textArea.readOnly = false;
-          
-          // Create a range and select the text
+
           const range = document.createRange();
           range.selectNodeContents(textArea);
-          
+
           const selection = window.getSelection();
           selection.removeAllRanges();
           selection.addRange(range);
-          
+
           textArea.setSelectionRange(0, 999999);
-          
-          // Restore contentEditable and readOnly states
+
           textArea.contentEditable = editable;
           textArea.readOnly = readOnly;
         } else {
           textArea.select();
         }
-        
+
         try {
           document.execCommand('copy');
-          showCopiedFeedback();
-        } catch (err) {
-          console.error('Failed to copy text: ', err);
+          onSuccess();
+        } catch (error) {
+          console.error('Failed to copy text: ', error);
           alert('Could not copy password. Please long-press and copy manually.');
         }
-        
+
         document.body.removeChild(textArea);
       }
-      
-      // Show visual feedback that the password was copied
-      function showCopiedFeedback() {
-        const resultElement = document.getElementById('result');
-        const originalPassword = resultElement.dataset.rawPassword;
-        
-        resultElement.textContent = 'Copied!';
-        resultElement.style.backgroundColor = '#d4edda';
-        resultElement.style.color = '#155724';
-        resultElement.style.borderColor = '#c3e6cb';
-        
+
+      function showCopiedFeedback(resultContainerElement) {
+        const originalPassword = resultContainerElement.dataset.rawPassword;
+
+        resultContainerElement.textContent = 'Copied!';
+        resultContainerElement.style.backgroundColor = '#d4edda';
+        resultContainerElement.style.color = '#155724';
+        resultContainerElement.style.borderColor = '#c3e6cb';
+
         setTimeout(() => {
           if (originalPassword) {
-            resultElement.textContent = formatPasswordForDisplay(originalPassword);
+            resultContainerElement.textContent = formatPasswordForDisplay(originalPassword);
           }
-          resultElement.style.backgroundColor = '';
-          resultElement.style.color = '';
-          resultElement.style.borderColor = '';
+          resultContainerElement.style.backgroundColor = '';
+          resultContainerElement.style.color = '';
+          resultContainerElement.style.borderColor = '';
         }, 1500);
       }
-      
-      // Configure event listeners
+
+      function copyPassword(element) {
+        const rawPassword = element.dataset.rawPassword;
+        if (!rawPassword) {
+          return;
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(rawPassword)
+            .then(() => {
+              showCopiedFeedback(element);
+            })
+            .catch(() => {
+              fallbackCopyToClipboard(rawPassword, () => showCopiedFeedback(element));
+            });
+        } else {
+          fallbackCopyToClipboard(rawPassword, () => showCopiedFeedback(element));
+        }
+      }
+
+      hardModeToggleElement.checked = readHardModeCookie();
+
       document.getElementById('pw1').addEventListener('input', update);
       document.getElementById('pw2').addEventListener('input', update);
       document.getElementById('dom1').addEventListener('input', update);
       document.getElementById('dom2').addEventListener('input', update);
       document.getElementById('extension').addEventListener('input', update);
-      
-      // Configure click for password copying
-      document.getElementById('result').addEventListener('click', copy_pw);
-      
-      // Initial update
+      hardModeToggleElement.addEventListener('change', () => {
+        setHardModeCookie(hardModeToggleElement.checked);
+        update();
+      });
+
+      resultElement.addEventListener('click', () => copyPassword(resultElement));
+      extendedResultElement.addEventListener('click', () => copyPassword(extendedResultElement));
+      hardResultElement.addEventListener('click', () => copyPassword(hardResultElement));
+
       update();
     }
 
-    // Initialize the UI now that everything is loaded
     initUI();
   </script>
 </EmptyLayout>

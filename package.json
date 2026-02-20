@@ -14,12 +14,13 @@
     "e2e:install": "playwright install chromium"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.2.0",
     "@astrojs/cloudflare": "^12.6.4",
+    "@astrojs/sitemap": "^3.2.0",
     "@astrojs/svelte": "^7.1.0",
     "@astrojs/tailwind": "^6.0.2",
     "@orcid/bibtex-parse-js": "^0.0.25",
     "@tailwindcss/typography": "^0.5.16",
+    "argon2id": "^1.0.1",
     "astro": "^5.12.9",
     "katex": "^0.16.10",
     "marked": "^16.2.0",
@@ -34,7 +35,9 @@
     "@astrojs/check": "^0.9.4",
     "@internationalized/date": "^3.8.2",
     "@lucide/svelte": "^0.515.0",
+    "@playwright/test": "^1.48.2",
     "@tailwindcss/vite": "^4.1.11",
+    "@testing-library/svelte": "^5.2.6",
     "bits-ui": "^2.9.2",
     "chalk": "^5.3.0",
     "clsx": "^2.1.1",
@@ -50,8 +53,6 @@
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
-    "yaml": "^2.8.1",
-    "@playwright/test": "^1.48.2",
-    "@testing-library/svelte": "^5.2.6"
+    "yaml": "^2.8.1"
   }
 }
