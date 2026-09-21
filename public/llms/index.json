@@ -637,7 +637,7 @@
     "contentPath": "llms/content/teaching/words_and_things.md"
   },
   "writing/apperly2025_mindreading": {
-    "title": "Mindreading is an Asynchronous Joint Activity: The M-a-J-a Account of Theory of Mind Performance, and Individual Differences",
+    "title": "Mindreading as asynchronous coordination: The MAC account of theory of mind performance, and individual differences",
     "type": "Publication",
     "url": "/writing/apperly2025_mindreading/",
     "summary": "Research on mindreading has been dominated by questions about the presence, absence or nature of mindreading concepts or structures, and by paradigms designed to create the most favourable circumstances for demonstrating such abilities. This focus on competence has led to a neglect of questions about performance.",
@@ -724,8 +724,8 @@
     "title": "Cue Competition Effects and Young Children's Causal and Counterfactual Inferences",
     "type": "Publication",
     "url": "/writing/cue_competition_effects/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "The authors examined cue competition effects in young children using the blicket detector paradigm, in which objects are placed either singly or in pairs on a novel machine and children must judge which objects have the causal power to make the machine work. Cue competition effects were found in a 5- to 6-year-old group but not in a 4-year-old group.",
+    "contentPath": "llms/content/writing/cue_competition_effects.md"
   },
   "writing/dellagatta2017_drawn": {
     "title": "Drawn Together: When Motor Representations Ground Joint Actions",
@@ -794,15 +794,15 @@
     "title": "Joint Action and Development",
     "type": "Publication",
     "url": "/writing/joint_action_development/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "Given the premise that joint action plays some role in explaining how humans come to understand minds, what could joint action be? Not what a leading account, Michael Bratman's, says it is.",
+    "contentPath": "llms/content/writing/joint_action_development.md"
   },
   "writing/joint_action_minimalist_approach": {
     "title": "Joint Action: A Minimalist Approach",
     "type": "Publication",
     "url": "/writing/joint_action_minimalist_approach/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "Introduction There are phenomena, call them joint actions, paradigm cases of which are held to involve two people painting a house together (Bratman 1992), lifting a heavy sofa together (Velleman 1997), preparing a hollandaise sauce together (Searle 1990), going to Chicago together (Kutz 2000), and walking together (Gilbert 1990).",
+    "contentPath": "llms/content/writing/joint_action_minimalist_approach.md"
   },
   "writing/joint_action_rpp_edited_volume": {
     "title": "Joint Action: What Is Shared?",
@@ -871,15 +871,15 @@
     "title": "Motor Representation and Action Experience in Joint Action",
     "type": "Publication",
     "url": "/writing/motor_representation_action_experience/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "Acting together with a purpose is a familiar feature of everyday life. We jump together, play music together and move tables together. But what do we experience of action in acting together?",
+    "contentPath": "llms/content/writing/motor_representation_action_experience.md"
   },
   "writing/motor_representation_in_goal_ascription": {
     "title": "Motor Representation in Goal Ascription",
     "type": "Publication",
     "url": "/writing/motor_representation_in_goal_ascription/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "Goal ascription, the process of identifying outcomes to which purposive actions are directed, is indispensable for predicting others behaviours and understanding their minds. But which mechanisms underpin goal ascription? This chapter examines several ways in which motor representations and processes are involved in different forms of goal ascription.",
+    "contentPath": "llms/content/writing/motor_representation_in_goal_ascription.md"
   },
   "writing/motor_representation_skill": {
     "title": "Motor Representation and Knowledge of Skilled Action",
@@ -906,15 +906,15 @@
     "title": "Perceiving Expressions of Emotion: What evidence could bear on questions about perceptual experience of mental states?",
     "type": "Publication",
     "url": "/writing/perceiving_expressions_emotion/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "What evidence could bear on questions about whether humans ever perceptually experience any of another’s mental states, and how might those questions be made precise enough to test experimentally? This paper focusses on emotions and their expression.",
+    "contentPath": "llms/content/writing/perceiving_expressions_emotion.md"
   },
   "writing/planning_for_collective_agency": {
     "title": "Planning for Collective Agency",
     "type": "Publication",
     "url": "/writing/planning_for_collective_agency/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "Which planning mechanisms enable agents to coordinate their actions, and what if anything do these tell us about the nature of collective agency? On the leading, best developed account, Michael Bratman's, collective agency is explained in terms of interconnected planning.",
+    "contentPath": "llms/content/writing/planning_for_collective_agency.md"
   },
   "writing/primal_self": {
     "title": "From foraging to autonoetic consciousness: The primal self as a consequence of embodied prospective foraging",
@@ -927,15 +927,15 @@
     "title": "Psychological Research on Joint Action: Theory and Data",
     "type": "Publication",
     "url": "/writing/psychological_research_on_joint_action/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "When two or more people coordinate their actions in space and time to produce a joint outcome, they perform a joint action.",
+    "contentPath": "llms/content/writing/psychological_research_on_joint_action.md"
   },
   "writing/puzzle_thought_experience_motoric": {
     "title": "On a Puzzle about Relations between Thought, Experience and the Motoric",
     "type": "Publication",
     "url": "/writing/puzzle_thought_experience_motoric/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "Motor representations live a kind of double life. Although paradigmatically involved in performing actions, they also occur when merely observing others act and sometimes influence thoughts about the goals of observed actions.",
+    "contentPath": "llms/content/writing/puzzle_thought_experience_motoric.md"
   },
   "writing/review_consciousness": {
     "title": "Review of Consciousness: New Philosophical Perspectives. Edited by Quentin Smith and Aleksander Jokic",
@@ -1032,8 +1032,8 @@
     "title": "Do Humans Have Two Systems to Track Beliefs and Belief-like States?",
     "type": "Publication",
     "url": "/writing/two_systems/",
-    "summary": "Summary not available.",
-    "contentPath": null
+    "summary": "The lack of consensus on how to characterize humans' capacity for belief reasoning has been brought into sharp focus by recent research. Children fail critical tests of belief reasoning before 3 to 4 years , yet infants apparently pass false belief tasks at 13 or 15 months .",
+    "contentPath": "llms/content/writing/two_systems.md"
   },
   "writing/two_systems_goal_ascription": {
     "title": "Is Goal Ascription Possible in Minimal Mindreading?",

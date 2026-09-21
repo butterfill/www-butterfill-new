@@ -1,6 +1,6 @@
 Site: Stephen Butterfill's Personal Academic Website
 Author: Stephen Butterfill
-Generated: 2026-02-20T14:26:07.370Z
+Generated: 2026-09-21T18:00:08.099Z
 Items: 152
 
 ---
@@ -1060,11 +1060,11 @@ Summary: --- title: "Words and Things" url: "https://words-and-things. butterfil
 
 ---
 
-Title: Mindreading is an Asynchronous Joint Activity: The M-a-J-a Account of Theory of Mind Performance, and Individual Differences
-Authors: Apperly, Ian and Devine, Rory T. and Butterfill, Stephen A.
+Title: Mindreading as asynchronous coordination: The MAC account of theory of mind performance, and individual differences
+Authors: Apperly, Ian A. and Devine, Rory T. and Butterfill, Stephen A.
 Type: Publication
 URL: /writing/apperly2025_mindreading/
-Year: 2025
+Year: 2026
 
 Summary: Research on mindreading has been dominated by questions about the presence, absence or nature of mindreading concepts or structures, and by paradigms designed to create the most favourable circumstances for demonstrating such abilities. This focus on competence has led to a neglect of questions about performance.
 
@@ -1186,7 +1186,7 @@ Type: Publication
 URL: /writing/cue_competition_effects/
 Year: 2009
 
-Summary: Summary not available.
+Summary: The authors examined cue competition effects in young children using the blicket detector paradigm, in which objects are placed either singly or in pairs on a novel machine and children must judge which objects have the causal power to make the machine work. Cue competition effects were found in a 5- to 6-year-old group but not in a 4-year-old group.
 
 ---
 
@@ -1286,7 +1286,7 @@ Type: Publication
 URL: /writing/joint_action_development/
 Year: 2011
 
-Summary: Summary not available.
+Summary: Given the premise that joint action plays some role in explaining how humans come to understand minds, what could joint action be? Not what a leading account, Michael Bratman's, says it is.
 
 ---
 
@@ -1296,7 +1296,7 @@ Type: Publication
 URL: /writing/joint_action_minimalist_approach/
 Year: 2016
 
-Summary: Summary not available.
+Summary: Introduction There are phenomena, call them joint actions, paradigm cases of which are held to involve two people painting a house together (Bratman 1992), lifting a heavy sofa together (Velleman 1997), preparing a hollandaise sauce together (Searle 1990), going to Chicago together (Kutz 2000), and walking together (Gilbert 1990).
 
 ---
 
@@ -1396,7 +1396,7 @@ Type: Publication
 URL: /writing/motor_representation_action_experience/
 Year: 2020
 
-Summary: Summary not available.
+Summary: Acting together with a purpose is a familiar feature of everyday life. We jump together, play music together and move tables together. But what do we experience of action in acting together?
 
 ---
 
@@ -1406,7 +1406,7 @@ Type: Publication
 URL: /writing/motor_representation_in_goal_ascription/
 Year: 2016
 
-Summary: Summary not available.
+Summary: Goal ascription, the process of identifying outcomes to which purposive actions are directed, is indispensable for predicting others behaviours and understanding their minds. But which mechanisms underpin goal ascription? This chapter examines several ways in which motor representations and processes are involved in different forms of goal ascription.
 
 ---
 
@@ -1446,7 +1446,7 @@ Type: Publication
 URL: /writing/perceiving_expressions_emotion/
 Year: 2015
 
-Summary: Summary not available.
+Summary: What evidence could bear on questions about whether humans ever perceptually experience any of another’s mental states, and how might those questions be made precise enough to test experimentally? This paper focusses on emotions and their expression.
 
 ---
 
@@ -1456,7 +1456,7 @@ Type: Publication
 URL: /writing/planning_for_collective_agency/
 Year: 2016
 
-Summary: Summary not available.
+Summary: Which planning mechanisms enable agents to coordinate their actions, and what if anything do these tell us about the nature of collective agency? On the leading, best developed account, Michael Bratman's, collective agency is explained in terms of interconnected planning.
 
 ---
 
@@ -1476,7 +1476,7 @@ Type: Publication
 URL: /writing/psychological_research_on_joint_action/
 Year: 2011
 
-Summary: Summary not available.
+Summary: When two or more people coordinate their actions in space and time to produce a joint outcome, they perform a joint action.
 
 ---
 
@@ -1486,7 +1486,7 @@ Type: Publication
 URL: /writing/puzzle_thought_experience_motoric/
 Year: 2015
 
-Summary: Summary not available.
+Summary: Motor representations live a kind of double life. Although paradigmatically involved in performing actions, they also occur when merely observing others act and sometimes influence thoughts about the goals of observed actions.
 
 ---
 
@@ -1626,7 +1626,7 @@ Type: Publication
 URL: /writing/two_systems/
 Year: 2009
 
-Summary: Summary not available.
+Summary: The lack of consensus on how to characterize humans' capacity for belief reasoning has been brought into sharp focus by recent research. Children fail critical tests of belief reasoning before 3 to 4 years , yet infants apparently pass false belief tasks at 13 or 15 months .
 
 ---
 
