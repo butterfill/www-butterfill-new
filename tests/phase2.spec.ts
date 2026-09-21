@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-async function waitForClientHydration(page) {
+async function waitForClientHydration(page: Page) {
   // Wait for a known client:load component to be interactive
   await expect(page.getByRole('button', { name: 'Toggle theme' })).toBeVisible();
 }
 
-async function openPaletteViaKeyboard(page) {
+async function openPaletteViaKeyboard(page: Page) {
   // Try Control+K then Meta+K as fallback
   await page.keyboard.press('Control+k');
   const input = page.getByPlaceholder('Type a command or search...');
