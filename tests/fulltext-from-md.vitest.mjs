@@ -36,6 +36,15 @@ describe('renderFulltextFromMarkdown', () => {
     expect(html).toMatch(/<h1[^>]*>Heading<\/h1>/);
   });
 
+  it('adds stable unique ids to generated headings', async () => {
+    const md = '# 1. Outline\nBody.\n\n# 1. Outline\nMore.\n\n## Mapping & selection\nDetails.';
+    const html = await renderFulltextFromMarkdown(md);
+
+    expect(html).toContain('<h1 id="section-1-outline">1. Outline</h1>');
+    expect(html).toContain('<h1 id="section-1-outline-2">1. Outline</h1>');
+    expect(html).toContain('<h2 id="section-mapping-selection">Mapping &#x26; selection</h2>');
+  });
+
   it('does not create footnotes section when marks have no definitions', async () => {
     const md = 'Para[^1].';
     const html = await renderFulltextFromMarkdown(md);

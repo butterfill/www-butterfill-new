@@ -31,13 +31,37 @@
     if (!article) return;
 
     const headingElements = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headings = Array.from(headingElements).map((heading, index) => ({
-      id: heading.id,
-      text: heading.textContent,
-      level: parseInt(heading.tagName.charAt(1)),
-      element: heading,
-      shortcut: index < 10 ? (index + 1) % 10 : null // 1-9, then 0 for 10th item
-    }));
+    const usedIds = new Set(
+      Array.from(article.querySelectorAll('[id]'))
+        .map((element) => element.id)
+        .filter(Boolean)
+    );
+
+    headings = Array.from(headingElements).map((heading, index) => {
+      let id = heading.id;
+
+      if (!id) {
+        const baseId = `toc-section-${index + 1}`;
+        let candidate = baseId;
+        let suffix = 2;
+
+        while (usedIds.has(candidate)) {
+          candidate = `${baseId}-${suffix++}`;
+        }
+
+        heading.id = candidate;
+        id = candidate;
+        usedIds.add(id);
+      }
+
+      return {
+        id,
+        text: heading.textContent,
+        level: parseInt(heading.tagName.charAt(1)),
+        element: heading,
+        shortcut: index < 10 ? (index + 1) % 10 : null // 1-9, then 0 for 10th item
+      };
+    });
 
     // Add References and Footnotes sections if they exist
     const references = article.querySelector('.references, #refs');

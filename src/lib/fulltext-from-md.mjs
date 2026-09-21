@@ -195,11 +195,63 @@ function rehypeNormalizeFootnotes() {
   };
 }
 
+function hastText(node) {
+  if (!node) return '';
+  if (node.type === 'text') return node.value || '';
+  if (!Array.isArray(node.children)) return '';
+  return node.children.map(hastText).join('');
+}
+
+function headingSlug(text) {
+  const slug = String(text || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || 'section';
+}
+
+function rehypeHeadingIds() {
+  return (tree) => {
+    const usedIds = new Set();
+
+    function visit(node) {
+      if (!node || typeof node !== 'object') return;
+
+      if (
+        node.type === 'element' &&
+        /^h[1-6]$/.test(node.tagName || '')
+      ) {
+        const properties = node.properties || (node.properties = {});
+        const existingId = typeof properties.id === 'string' ? properties.id.trim() : '';
+        const baseId = existingId || `section-${headingSlug(hastText(node))}`;
+        let id = baseId;
+        let suffix = 2;
+
+        while (usedIds.has(id)) {
+          id = `${baseId}-${suffix++}`;
+        }
+
+        properties.id = id;
+        usedIds.add(id);
+      }
+
+      if (Array.isArray(node.children)) {
+        node.children.forEach(visit);
+      }
+    }
+
+    visit(tree);
+  };
+}
+
 async function mdastToHtml(mdastRoot) {
   const processor = unified()
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeKatex)
+    .use(rehypeHeadingIds)
     .use(rehypeNormalizeFootnotes)
     .use(rehypeStringify);
 
