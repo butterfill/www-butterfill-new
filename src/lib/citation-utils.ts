@@ -309,7 +309,7 @@ export function parsePageRange(pages: string): { first: string; last: string } {
 // Interface for Astro content entry (simplified for our needs)
 interface AstroContentEntry {
   data: {
-    bibtex: string;
+    bibtex?: string;
     pdfUrl?: string;
   };
 }
