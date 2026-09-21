@@ -109,7 +109,7 @@ slideImages:
 
 ### Step 3: Test
 
-1. Start the dev server: `npm run dev`
+1. Start the dev server: `pnpm dev`
 2. Navigate to your talk page: `http://localhost:4321/talks/YYYY/your-talk-slug`
 3. Verify slides appear and are navigable with arrow keys
 
@@ -160,7 +160,7 @@ The implementation uses `embedded: true` to integrate slides within the page lay
 
 ## Dependencies
 
-- `reveal.js` npm package (installed in package.json)
+- `reveal.js` dependency (managed by pnpm) (installed in package.json)
 - Static asset copying (manual step during setup)
 - Astro's static site generation
 - Compatible with Tailwind CSS (with overrides)

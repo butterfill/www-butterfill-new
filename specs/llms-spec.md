@@ -47,7 +47,7 @@
    - Add a simple Vitest (or Node script) that runs in CI/build to assert expected invariants (e.g., metadata count matches Astro collection entries, `llms.txt` size below threshold).
 
 ## Build & Tooling Changes
-- Update `scripts/generate-llms.mjs` to implement the new pipeline, retaining its integration with `npm run build`.
+- Update `scripts/generate-llms.mjs` to implement the new pipeline, retaining its integration with `pnpm build`.
 - Introduce helper utilities (e.g., `scripts/lib/content-utils.mjs`) if complexity grows.
 - Ensure `fs-extra` usage accounts for new directories (create `public/llms/content` as needed).
 - Document new outputs and usage in `docs-developers/generate-llms-script.md` and README.
@@ -55,7 +55,7 @@
 
 ## Testing & Verification
 - Unit/integration tests for summary extraction, HTML→markdown conversion, and metadata assembly using representative fixtures (including entries with/without `<div class="fulltext">`).
-- Post-generation sanity check script (e.g., `npm run check:llms`) that verifies file presence, counts, and size constraints.
+- Post-generation sanity check script (e.g., `pnpm check:llms`) that verifies file presence, counts, and size constraints.
 - Manual QA: spot-check a few entries in the generated bundle to confirm summaries match expectations and long-form content renders cleanly.
 
 ## Decisions (Resolved Questions)

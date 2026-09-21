@@ -35,7 +35,7 @@ Phase 1 – Smoke (site loads without console errors)
   - Ensure each page renders and hydrates with no console errors, and no failed network requests (4xx/5xx, missing assets).
 - Implementation
   - Playwright E2E “smoke” suite against `astro dev` for speed. Implemented files:
-    - `playwright.config.ts` (webServer: `npm run dev`, baseURL `http://localhost:4321`)
+    - `playwright.config.ts` (webServer: `pnpm dev`, baseURL `http://localhost:4321`)
     - `tests/smoke.spec.ts` (asserts no console errors, no failed/4xx/5xx requests, and header nav visible for: `/`, `/writing/apperly2025_mindreading/`, `/talks/2012/cuny_2011/`, `/teaching/joint_action_and_the_emergence/`).
     - `package.json` scripts: `test:e2e:dev`, `e2e:open`, `e2e:install`.
   - Allowlist for warnings can be added later if needed.
@@ -80,10 +80,10 @@ Local Developer Experience (no CI yet)
   - `test:e2e:dev` → runs Playwright smoke suite against `astro dev`
   - `e2e:install` → installs Playwright Chromium browser locally (optional)
 - Run locally:
-  - `npm install`
-  - `npm run e2e:install` (first time)
-  - `npm run test:e2e:dev`
-  - For an interactive runner: `npm run e2e:open`
+  - `pnpm install`
+  - `pnpm e2e:install` (first time)
+  - `pnpm test:e2e:dev`
+  - For an interactive runner: `pnpm e2e:open`
 
 Cloudflare Parity (deferred)
 - No `wrangler dev` integration yet; add later when available with a tiny parity subset.

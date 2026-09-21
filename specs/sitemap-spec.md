@@ -85,7 +85,7 @@
 - Ensure trailing slash handling matches final route output when parsing URLs.
 
 **Acceptance Criteria**
-- `dist/sitemap.xml` exists after `npm run build`.
+- `dist/sitemap.xml` exists after `pnpm build`.
 - Every included `<url>` has a `<loc>` rooted at `https://www.butterfill.com/` and a `<lastmod>` in strict ISO‑8601 (e.g., `2025-01-31T15:04:05Z` or with timezone offset).
 - Sitemap excludes `/api/*` and non-HTML routes.
 - `public/robots.txt` includes a `Sitemap:` line pointing to the canonical URL.

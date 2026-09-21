@@ -36,7 +36,7 @@ The toggle initializes from this cookie on page load.
 
 ## Argon2id integration
 
-Hard mode uses the `argon2id` npm package (OpenPGPJS implementation) as an ES module import in the Astro page script:
+Hard mode uses the `argon2id` dependency (managed by pnpm) (OpenPGPJS implementation) as an ES module import in the Astro page script:
 
 ```js
 import loadArgon2idWasm from 'argon2id';

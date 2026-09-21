@@ -46,6 +46,6 @@
 - Directory `public/md/` absent: create recursively before first copy.
 
 **Acceptance Criteria**
-- Running `npm run build` attempts resolution for every `src/content/writing/*.md` without a corresponding `public/md/<slug>.md`.
+- Running `pnpm build` attempts resolution for every `src/content/writing/*.md` without a corresponding `public/md/<slug>.md`.
 - When `cite2md` can locate a corresponding `.md`, the file is copied to `public/md/<slug>.md` (basename equals slug).
 - Build logs list unresolved slugs; build does not fail solely due to unresolved items.

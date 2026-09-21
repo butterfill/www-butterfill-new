@@ -11,8 +11,8 @@ with the codex and claude cli tools; and (iii) it’s still work in progress.
 
 ### Prerequisites
 
-- Node.js 18 or higher
-- npm or yarn
+- Node.js 22 or higher
+- pnpm 11.25.0 (pinned in `package.json`; enable it with Corepack)
 
 ### 1. Installation
 
@@ -21,8 +21,10 @@ Clone this repository and install dependencies:
 ```bash
 git clone <your-fork-url>
 cd <project-directory>
-npm install
-cd scripts && npm install && cd ..
+corepack enable
+corepack install
+pnpm install
+pnpm --dir scripts install
 ```
 
 ### 1b. Tweak the build script
@@ -92,7 +94,7 @@ rm -rf public/md/*
 Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Visit `http://localhost:4321` to see your site.
@@ -102,13 +104,13 @@ Visit `http://localhost:4321` to see your site.
 Run the test suite:
 
 ```bash
-npm test
+pnpm test
 ```
 
 For a single test run without watching for changes:
 
 ```bash
-npm test -- --run
+ppnpm test:unit
 ```
 #### Playwright Tests (Not Meaningful)
 The playwright tests are not meaningful guarantees of anything (I always start with good intentions 
@@ -118,13 +120,13 @@ Commands:
 
 ```bash
 # One-time: install the Playwright browser
-npm run e2e:install
+pnpm e2e:install
 
-# Run smoke tests (starts `npm run dev` automatically on :4321)
-npm run test:e2e:dev
+# Run smoke tests (starts `pnpm dev` automatically on :4321)
+ppnpm test:e2e:dev
 
 # Optional interactive UI runner
-npm run e2e:open
+pnpm e2e:open
 ```
 
 Notes:
@@ -134,8 +136,8 @@ Notes:
 ### 6. Build and Deploy
 
 ```bash
-npm run build  # Builds the site and generates llms.txt
-npm run preview  # Preview the built site locally
+pnpm build  # Builds the site and generates llms.txt
+pnpm preview  # Preview the built site locally
 ```
 
 ## Project Structure
@@ -277,7 +279,7 @@ slideImages:
 ### Local Build
 
 ```bash
-npm run build
+pnpm build
 ```
 
 This command:
@@ -287,7 +289,7 @@ This command:
 ### Preview Build
 
 ```bash
-npm run preview
+pnpm preview
 ```
 
 Preview the built site locally before deployment.
@@ -301,19 +303,18 @@ I currently use Cloudflare Pages with manual deploy. (Have used s3 in the past; 
 
 0. **Set up Cloudflare Pages** (one-time setup)
    ```bash
-   npm install -g wrangler
-   npx wrangler login
-   wrangler pages project create <project name, e.g. 'www-butterfill-new' for me>
+   pnpm dlx wrangler login
+   pnpm dlx wrangler pages project create <project name, e.g. 'www-butterfill-new' for me>
    ```
 
 1. **Build the site:**
    ```bash
-   npm run build
+   pnpm build
    ```
 
 2. **Deploy to Cloudflare Pages:**
    ```bash
-   npx wrangler pages deploy dist
+   pnpm dlx wrangler pages deploy dist
    ```
 
 

@@ -84,7 +84,7 @@ An auxiliary `public/llms/index.json` maps `slug -> { title, type, url, summary,
 ## Running the Script
 
 - **Standalone:** `node scripts/generate-llms.mjs`
-- **Build pipeline:** automatically invoked via `npm run build`
+- **Build pipeline:** automatically invoked via `pnpm build`
 
 The script rewrites `public/llms.txt` and the entire `public/llms/` folder each run.
 
@@ -95,7 +95,7 @@ A Vitest suite (`tests/llms-generator.spec.ts`) exercises the generator in dry-r
 - Metadata counts align with processed content
 - Long-form descriptors include frontmatter + body for publication entries
 
-Run with `npm test -- llms-generator.spec.ts` (or `npm test` for full suite). If the environment blocks Vitest worker IPC, rerun with `VITEST_POOL=forks` (already configured in `vitest.config.ts`).
+Run with `pnpm exec vitest run llms-generator.spec.ts` (or `pnpm test:unit` for the full suite). If the environment blocks Vitest worker IPC, rerun with `VITEST_POOL=forks` (already configured in `vitest.config.ts`).
 
 ## Extending the Bundle
 
@@ -111,7 +111,7 @@ Run with `npm test -- llms-generator.spec.ts` (or `npm test` for full suite). If
 | `Generated llms.txt would be … tokens` | Summaries push the text catalogue past the 10–15k token window. | Reduce `SUMMARY_CHAR_LIMIT`, prune optional lines, or split more content into per-item files. |
 | Missing teaching entries | `src/content/teaching` file lacked valid frontmatter or summary text. | Confirm titles and optional abstracts are present; run generator again. |
 | Summaries read “Summary not available.” | No abstract/intro text was found. | Add an `abstract` field or opening paragraph to the source markdown. |
-| Tests fail with IPC `Channel closed` | Worker threads blocked in runtime environment. | Vitest is configured for forked workers; rerun with `npm test --run`. |
+| Tests fail with IPC `Channel closed` | Worker threads blocked in runtime environment. | Vitest is configured for forked workers; rerun with `pnpm test:unit`. |
 
 ## Key Files
 

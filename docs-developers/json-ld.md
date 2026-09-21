@@ -164,9 +164,9 @@ The implementation includes 30 automated tests in `src/lib/jsonld-utils.test.ts`
 ### Running Tests
 
 ```bash
-npm test
+pnpm test
 # or
-npm test -- --run  # for single run without watching
+pnpm test:unit  # for a single run without watching
 ```
 
 ## Adding New Content Types
