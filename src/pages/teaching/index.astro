@@ -9,8 +9,8 @@ const allTeaching = (await getCollection('teaching'))
   .sort(
   (a, b) => {
     // Convert year strings to numbers for comparison
-    const aYear = parseInt(a.data.year.split('-')[0]);
-    const bYear = parseInt(b.data.year.split('-')[0]);
+    const aYear = parseInt(a.data.year?.split('-')[0] ?? '0');
+    const bYear = parseInt(b.data.year?.split('-')[0] ?? '0');
     return bYear - aYear;
   }
 );
