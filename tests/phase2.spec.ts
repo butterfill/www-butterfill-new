@@ -49,7 +49,7 @@ test.describe('Phase 2: Command Palette interactions', () => {
     await inp.fill('mindreading');
     const dialog = page.locator('[data-slot="dialog-content"]');
     // Click the matching item inside the command palette dialog (not the page background)
-    await dialog.getByText('Mindreading is an Asynchronous Joint Activity', { exact: false }).first().click();
+    await dialog.getByText('Mindreading as asynchronous coordination', { exact: false }).first().click();
     await expect(page).toHaveURL(/\/writing\/apperly2025_mindreading\//);
   });
 
