@@ -1,7 +1,11 @@
 {
-  "name": "",
+  "name": "www-butterfill-new",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "node ./scripts/get-md-for-writing.mjs && node ./scripts/generate-llms.mjs && astro build",
@@ -9,6 +13,9 @@
     "astro": "astro",
     "surge": "surge dist --domain butterfill-com-test.surge.sh",
     "test": "vitest",
+    "test:unit": "vitest run",
+    "typecheck": "astro check",
+    "verify": "pnpm typecheck && pnpm test:unit && pnpm build",
     "test:e2e:dev": "playwright test -c playwright.config.ts --project=smoke",
     "e2e:open": "playwright test -c playwright.config.ts --ui --project=smoke",
     "e2e:install": "playwright install chromium"
