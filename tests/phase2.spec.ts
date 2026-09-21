@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-async function waitForClientHydration(page) {
+async function waitForClientHydration(page: Page) {
   // Wait for a known client:load component to be interactive
   await expect(page.getByRole('button', { name: 'Toggle theme' })).toBeVisible();
 }
 
-async function openPaletteViaKeyboard(page) {
+async function openPaletteViaKeyboard(page: Page) {
   // Try Control+K then Meta+K as fallback
   await page.keyboard.press('Control+k');
   const input = page.getByPlaceholder('Type a command or search...');
@@ -49,7 +49,7 @@ test.describe('Phase 2: Command Palette interactions', () => {
     await inp.fill('mindreading');
     const dialog = page.locator('[data-slot="dialog-content"]');
     // Click the matching item inside the command palette dialog (not the page background)
-    await dialog.getByText('Mindreading is an Asynchronous Joint Activity', { exact: false }).first().click();
+    await dialog.getByText('Mindreading as asynchronous coordination', { exact: false }).first().click();
     await expect(page).toHaveURL(/\/writing\/apperly2025_mindreading\//);
   });
 

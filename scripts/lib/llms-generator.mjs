@@ -40,6 +40,11 @@ export async function generateLlmsBundle({
       type: collection.type,
       root: collectionDir,
     });
+
+    if (collection.name === 'writing') {
+      await hydrateWritingMarkdownFallbacks(collectionItems, rootDir);
+    }
+
     items.push(...collectionItems);
   }
 
@@ -224,6 +229,17 @@ function buildLlmsEntry(item) {
   lines.push('', `Summary: ${item.summary}`, '', '---', '');
 
   return lines.join('\n');
+}
+
+async function hydrateWritingMarkdownFallbacks(items, rootDir) {
+  for (const item of items) {
+    if (item.body.trim()) continue;
+
+    const fallbackPath = path.join(rootDir, 'public', 'md', `${item.slug}.md`);
+    if (!(await fs.pathExists(fallbackPath))) continue;
+
+    item.body = await fs.readFile(fallbackPath, 'utf8');
+  }
 }
 
 async function readMarkdownCollection(dir, { collection, type, root }) {
