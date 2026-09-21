@@ -31,9 +31,4 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Verify
-        run: |
-          if ! pnpm verify > /tmp/verify.log 2>&1; then
-            tail -n 250 /tmp/verify.log
-            exit 1
-          fi
-          tail -n 250 /tmp/verify.log
+        run: pnpm verify

@@ -222,7 +222,7 @@ if (bibtexData) {
     <CitationDisplay 
     bibtex={bibtexData}
     authors={entry.data.authors}
-    year={entry.data.year}
+    year={String(entry.data.year)}
     journal={entry.data.journal}
     doi={entry.data.doi}
     client:load 
