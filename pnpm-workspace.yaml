@@ -1,4 +1,5 @@
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
-  - workerd
+strictDepBuilds: true
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
